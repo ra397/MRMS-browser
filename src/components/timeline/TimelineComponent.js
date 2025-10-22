@@ -39,6 +39,17 @@ class TimelineComponent extends HTMLElement {
         );
 
         const timelineController = new TimelineController(timeline, shadow.getElementById('timeline'));
+
+        timelineController.onRangeSelected(({ startDate, endDate }) => {
+            this.dispatchEvent(new CustomEvent('time-selected', {
+                bubbles: true,
+                composed: true,
+                detail: {
+                    startDate,
+                    endDate,
+                },
+            }))
+        });
     }
 }
 customElements.define('interval-selector', TimelineComponent);
