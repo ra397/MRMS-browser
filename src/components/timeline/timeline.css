@@ -6,6 +6,8 @@
     display: flex;
     flex-direction: column;
     padding-top: var(--unit-width);
+
+    position: relative;
 }
 
 #timeline-container #line {

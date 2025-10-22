@@ -1,4 +1,4 @@
-class ProductSelectionComponent extends HTMLElement {
+class DropdownComponent extends HTMLElement {
     constructor() {
         super();
 
@@ -54,4 +54,4 @@ class ProductSelectionComponent extends HTMLElement {
         });
     }
 }
-customElements.define('product-selector', ProductSelectionComponent);
+customElements.define('product-selector', DropdownComponent);

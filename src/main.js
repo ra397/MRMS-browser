@@ -1,7 +1,7 @@
-import './components/Map/map.js'
-import './components/Map/map.css'
+import './components/map/map.js'
+import './components/map/map.css'
 
-import './components/Menu/MenuComponent.js'
+import './components/menu/MenuComponent.js'
 
 import './style.css'
 

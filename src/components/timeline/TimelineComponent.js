@@ -21,12 +21,22 @@ class TimelineComponent extends HTMLElement {
         // add timeline.css
         const cssLink = document.createElement("link");
         cssLink.setAttribute("rel", "stylesheet");
-        cssLink.setAttribute("href", "src/components/Timeline/timeline.css");
+        cssLink.setAttribute("href", "src/components/timeline/timeline.css");
         shadow.appendChild(cssLink);
 
-        const timeline = new Timeline(shadow.getElementById('timeline'),
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setHours(today.getHours() - 6);
+
+        const timeline = new Timeline(
+            shadow.getElementById('timeline'),
             shadow.getElementById('start-marker'),
-            shadow.getElementById('stop-marker'));
+            shadow.getElementById('stop-marker'),
+            {
+                resolution: "hour",
+                startDate: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours()),
+            }
+        );
 
         const timelineController = new TimelineController(timeline, shadow.getElementById('timeline'));
     }

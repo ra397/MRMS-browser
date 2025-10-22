@@ -1,5 +1,5 @@
-import '../ProductSelection/ProductSelectionComponent.js'
-import '../Timeline/TimelineComponent.js'
+import '../dropdown/DropdownComponent.js'
+import '../timeline/TimelineComponent.js'
 
 class MenuComponent extends HTMLElement {
     constructor() {
@@ -12,6 +12,7 @@ class MenuComponent extends HTMLElement {
         .container {
             display: grid;
             grid-template-columns: 20ch 1fr;
+            row-gap: 1ch;
             padding: 1ch;
         }
         `;

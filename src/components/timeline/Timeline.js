@@ -1,15 +1,12 @@
 class Timeline {
-    constructor(timelineEl, startMarkerEl, stopMarkerEl) {
+    constructor(timelineEl, startMarkerEl, stopMarkerEl, initialState) {
         this.timelineEl = timelineEl;
         this.startMarkerEl = startMarkerEl;
         this.stopMarkerEl = stopMarkerEl;
 
         this.selectedStartDate = null;
         this.selectedEndDate = null;
-        this.state = {
-            resolution: "year",
-            startDate: new Date(2016, 0, 1, 0),
-        }
+        this.state = initialState;
     }
 
     getUnits(startDate, resolution, count) {
