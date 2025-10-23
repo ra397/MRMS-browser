@@ -18,7 +18,7 @@ class DropdownComponent extends HTMLElement {
         this.select.setAttribute("id", "product-selection");
 
         // Listen to internal change event and re-emit it
-        this.select.addEventListener('change', (e) => {
+        this.select.addEventListener('change', () => {
             this.dispatchEvent(new Event('change'));
         });
 

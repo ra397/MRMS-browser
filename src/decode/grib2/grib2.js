@@ -2110,9 +2110,9 @@ function float (i) { // not needed in JS; but added for clarity and make the cod
 }
 
 if (typeof window !== "undefined") {
-    window.grib2class = GRIB2CLASS;
+    window.Grib2Decoder = GRIB2CLASS;
 }
 
 export {
-    GRIB2CLASS as grib2class
+    GRIB2CLASS as Grib2Decoder
 };
