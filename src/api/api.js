@@ -26,7 +26,11 @@ document.addEventListener('time-selected', async event => {
     }
 
     const results = await fetchAllConcurrent(files_to_fetch);
-    console.log(results);
+    document.dispatchEvent(new CustomEvent('decode-files', {
+        detail: results,
+        composed: true,
+        bubbles: true,
+    }))
 });
 
 async function getFiles(day) {
@@ -55,9 +59,13 @@ async function getFiles(day) {
 
 async function fetchFiles(url) {
     try {
-        const response = await fetch(url);
         console.log("Fetching files from " + url);
-        return await response.arrayBuffer();
+
+        const response = await fetch(url);
+        const gzippedData = (await response.blob()).stream();
+        const ds = new DecompressionStream("gzip");
+        const decompressedData = gzippedData.pipeThrough(ds);
+        return await new Response(decompressedData).arrayBuffer();
     } catch (err) {
         console.error(err.message);
         return null;

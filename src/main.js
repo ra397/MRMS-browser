@@ -6,6 +6,7 @@ import './components/menu/MenuComponent.js'
 import './style.css'
 
 import './api/api.js'
+import './decode/decode.js'
 
 document.getElementById('app').innerHTML = `
     <div id="map"></div>
