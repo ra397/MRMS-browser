@@ -27,7 +27,7 @@ document.addEventListener('time-selected', async event => {
 
     const results = await fetchAllConcurrent(files_to_fetch);
     document.dispatchEvent(new CustomEvent('decode-files', {
-        detail: results,
+        detail: { results: results },
         composed: true,
         bubbles: true,
     }))

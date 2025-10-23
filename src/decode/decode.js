@@ -1,5 +1,7 @@
-import {Grib2Decoder} from './grib2/grib2.js';
+import { Grib2Decoder } from './grib2/grib2.js';
 import './lut/generateLUT.js';
+
+import { RasterOverlay } from '../display/rasterOverlay.js';  // Import the class
 
 document.addEventListener('decode-files', async event => {
     function pngDecoder (imageBytes) {
@@ -14,7 +16,7 @@ document.addEventListener('decode-files', async event => {
         }
     )
 
-    for (const rawData of event.detail) {
+    for (const rawData of event.detail.results) {
         grib2Decoder.parse(new Uint8Array(rawData));
         console.log(grib2Decoder.data);
 
@@ -22,7 +24,11 @@ document.addEventListener('decode-files', async event => {
             break;
         }
         const raster = await generateRasterUsingLUT(grib2Decoder.data, LUT.ncols, LUT.nrows);
-        console.log(raster)
+        console.log(raster);
+
+
+        // Display raster
+        const overlay = new RasterOverlay(raster,  LUT.ncols, LUT.nrows, LUT.bbox, map, 0, 100);
     }
 });
 
