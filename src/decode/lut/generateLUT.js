@@ -2,7 +2,7 @@ let LUT = null;
 (async function () {
     try {
         // Load LUT
-        const response = await fetch("src/decode/lut/MRMS_LUT.json");
+        const response = await fetch("MRMS_LUT.json");
         LUT = await response.json();
 
         // Convert "mrms_1d_ix" from base64 string to typed array

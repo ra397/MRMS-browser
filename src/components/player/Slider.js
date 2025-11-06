@@ -14,7 +14,7 @@ class Slider extends HTMLElement {
         style.textContent = `
         input[type="range"] {
             width: 100ch;
-            accent-color: blue;
+            accent-color: black;
         }
         input[type="range"]:hover {
             cursor: pointer;

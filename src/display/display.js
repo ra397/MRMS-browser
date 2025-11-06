@@ -23,6 +23,4 @@ document.addEventListener('display-matrices', async event => {
     //     console.log(img);
     //     const overlay = new CustomOverlay(img, LUT.bbox, map, 'OverlayView', 1);
     // }
-
-    console.log(Object.keys(requestFileDataMap));
 });

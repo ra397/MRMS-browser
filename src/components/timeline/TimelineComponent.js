@@ -21,7 +21,7 @@ class TimelineComponent extends HTMLElement {
         // add timeline.css
         const cssLink = document.createElement("link");
         cssLink.setAttribute("rel", "stylesheet");
-        cssLink.setAttribute("href", "src/components/timeline/timeline.css");
+        cssLink.setAttribute("href", "timeline.css");
         shadow.appendChild(cssLink);
 
         const today = new Date();
