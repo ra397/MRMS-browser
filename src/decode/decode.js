@@ -26,7 +26,10 @@ document.addEventListener('decode-files', async event => {
     }
 
     document.dispatchEvent(new CustomEvent('display-matrices', {
-        detail: { results: matrices },
+        detail: {
+            results: matrices,
+            files: event.detail.files,
+        },
         composed: true,
         bubbles: true,
     }));
