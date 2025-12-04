@@ -1,26 +1,20 @@
 import { RasterGenerator } from "./rasterGenerator.js";
 import { customOverlay } from "./customOverlay.js";
 
-/*
-* Per request fileDataMap
-* Display an img with data from the first file
-* Add an event listener to a slider, to shuffle through and display the other files
-*  */
+// Running map of filename -> generated overlay/img
+const fileOverlayMap = new Map();
 
-document.addEventListener('display-matrices', async event => {
-    const requestFileDataMap = {};
+document.addEventListener('display-file', async event => {
+    const file_name = event.detail.file_name;
+    const file_data = event.detail.file_data;
 
-    const files = event.detail.files;
-    const matrices = event.detail.results;
+    const raster = new RasterGenerator(file_data, LUT.ncols, LUT.nrows);
+    const img = await raster.generateUrl();
 
-    for (let i = 0; i < files.length; i++) {
-        requestFileDataMap[files[i]] = matrices[i];
-    }
+    const overlay = customOverlay(img, LUT.bbox, map, 'OverlayView', 1);
 
-    for (const matrix of matrices) {
-        const raster = new RasterGenerator(matrix, LUT.ncols, LUT.nrows);
-        const img = await raster.generateUrl();
-        console.log(img);
-        const overlay = customOverlay(img, LUT.bbox, map, 'OverlayView', 1);
-    }
+    // Store in running map
+    fileOverlayMap.set(file_name, img);
+
+    console.log(`Ready for display: ${file_name}`, img);
 });

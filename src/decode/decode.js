@@ -1,7 +1,7 @@
 import { Grib2Decoder } from './grib2/grib2.js';
 import './lut/generateLUT.js';
 
-document.addEventListener('decode-files', async event => {
+document.addEventListener('decode-file', async event => {
     function pngDecoder (imageBytes) {
         return fastPng.decode(imageBytes).data.slice(0);
     }
@@ -14,21 +14,22 @@ document.addEventListener('decode-files', async event => {
         }
     )
 
-    const matrices = [];
-    for (const rawData of event.detail.results) {
-        grib2Decoder.parse(new Uint8Array(rawData));
+    const rawData = event.detail.file_data;
+    const file_name = event.detail.file_name;
 
-        if (!LUT) {
-            break;
-        }
-        const matrix = await generateMatrixUsingLUT(grib2Decoder.data, LUT.ncols, LUT.nrows);
-        matrices.push(matrix);
+    grib2Decoder.parse(new Uint8Array(rawData));
+
+    if (!LUT) {
+        console.error("LUT is not available.");
+        return;
     }
 
-    document.dispatchEvent(new CustomEvent('display-matrices', {
+    const decodedData = await generateMatrixUsingLUT(grib2Decoder.data, LUT.ncols, LUT.nrows);
+
+    document.dispatchEvent(new CustomEvent('display-file', {
         detail: {
-            results: matrices,
-            files: event.detail.files,
+            file_data: decodedData,
+            file_name: file_name,
         },
         composed: true,
         bubbles: true,
