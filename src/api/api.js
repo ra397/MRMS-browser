@@ -1,3 +1,5 @@
+import { db } from '../database/db.js';
+
 document.addEventListener('time-selected', async event => {
     const localStartTime = event.detail.startDate;
     const localEndTime = event.detail.endDate;
@@ -27,16 +29,29 @@ document.addEventListener('time-selected', async event => {
 
     // Stream files one at a time for decoder
     for (const file_name of files_to_fetch) {
-        const file_data = await fetchFile(file_name);
-        if (file_data) {
+        const isCached = await db.hasFile(file_name);
+
+        if (isCached) {
             document.dispatchEvent(new CustomEvent('decode-file', {
                 detail: {
-                    file_data: file_data,
+                    file_data: null,
                     file_name: file_name,
                 },
                 composed: true,
                 bubbles: true,
             }));
+        } else {
+            const file_data = await fetchFile(file_name);
+            if (file_data) {
+                document.dispatchEvent(new CustomEvent('decode-file', {
+                    detail: {
+                        file_data: file_data,
+                        file_name: file_name,
+                    },
+                    composed: true,
+                    bubbles: true,
+                }));
+            }
         }
     }
 });
