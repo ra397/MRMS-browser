@@ -8,7 +8,7 @@ class Slider extends HTMLElement {
         this.slider.type = 'range';
         this.slider.value = '0';
         this.slider.min = '0';
-        this.slider.max = '5';
+        this.slider.max = '0';
 
         const style = document.createElement('style');
         style.textContent = `
@@ -26,7 +26,14 @@ class Slider extends HTMLElement {
     }
 
     connectedCallback() {
-
+        this.slider.addEventListener('input', () => {
+            const index = parseInt(this.slider.value, 10);
+            document.dispatchEvent(new CustomEvent('player-seek', {
+                detail: { index },
+                bubbles: true,
+                composed: true
+            }));
+        });
     }
 
     setRange(min, max) {
@@ -34,5 +41,14 @@ class Slider extends HTMLElement {
         this.slider.max = max;
         this.slider.value = min;
     }
+
+    setValue(value) {
+        this.slider.value = value;
+    }
+
+    getValue() {
+        return parseInt(this.slider.value, 10);
+    }
 }
+
 customElements.define('slider-component', Slider);

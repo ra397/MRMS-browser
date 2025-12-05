@@ -27,6 +27,23 @@ document.addEventListener('time-selected', async event => {
         }
     }
 
+    // Sort files by timestamp to ensure correct playback order
+    files_to_fetch.sort((a, b) => {
+        const timestampA = extractTimestampFromKey(a);
+        const timestampB = extractTimestampFromKey(b);
+        return timestampA.localeCompare(timestampB);
+    });
+
+    // Dispatch total files count BEFORE streaming files
+    document.dispatchEvent(new CustomEvent('files-total', {
+        detail: {
+            total: files_to_fetch.length,
+            fileNames: files_to_fetch
+        },
+        composed: true,
+        bubbles: true,
+    }));
+
     // Stream files one at a time for decoder
     for (const file_name of files_to_fetch) {
         const isCached = await db.hasFile(file_name);
@@ -91,7 +108,7 @@ async function fetchFile(path) {
     }
 }
 
-function extractTimestampFromKey(filename) {
+export function extractTimestampFromKey(filename) {
     const match = filename.match(/(\d{8})-(\d{6})\.grib2\.gz$/);
 
     if (!match) {

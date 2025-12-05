@@ -12,7 +12,13 @@ let LUT = null;
         LUT.mrms_1d_ix = new Int32Array(bytes.buffer);
 
         // Expose so it can be used by decode.js
-        window.LUT = LUT;
+        globalThis.LUT = LUT;
+
+        // dispatch event that LUT is ready
+        document.dispatchEvent(new CustomEvent("LUT-ready", {
+            bubbles: true,
+            composed: true,
+        }))
     } catch (e) {
         console.error(e);
     }
