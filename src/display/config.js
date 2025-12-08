@@ -15,6 +15,23 @@ const defaultColorMap = [
     { min: 2540, max: Infinity, rgba: [53, 37, 0, 255] },
 ];
 
+export const overlayInfo = {
+    bbox: {
+        "sw": {
+            "lng": -130.004188,
+            "lat": 21.101622
+        },
+        "ne": {
+            "lng": -60.869844,
+            "lat": 52.636275
+        }
+    },
+    numCols: 1924,
+    numRows: 1128,
+    transparentImgSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z/" +
+        "CfAQADgwGf6tJVEwAAAABJRU5ErkJggg==",
+}
+
 export const products = {
     "Q3 Multi-Sensor 1 hr (Pass 1)": {
         display_name: "Q3 Multi-Sensor 1 hr (Pass 1)",

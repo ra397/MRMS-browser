@@ -1,4 +1,3 @@
-import { db } from '../database/db.js';
 import { products } from "../display/config.js";
 
 // State tracking
@@ -6,6 +5,34 @@ const state = {
     product: null,
     startTime: null,
     endTime: null,
+};
+
+// Web Worker instance - initialized once at module load
+const fetchAndDecodeWorker = new Worker(new URL('./api-worker.js', import.meta.url), { type: 'module' });
+
+fetchAndDecodeWorker.onmessage = (event) => {
+    const { type, product_name, file_name, file_data, error } = event.data;
+
+    if (type === 'file-ready') {
+        // Dispatch directly to display module (decoding already done in worker)
+        document.dispatchEvent(new CustomEvent('display-file', {
+            detail: {
+                product_name: product_name,
+                file_data: file_data,
+                file_name: file_name,
+            },
+            composed: true,
+            bubbles: true,
+        }));
+    } else if (type === 'file-error') {
+        console.error(`Failed to process file: ${file_name}`, error);
+    } else if (type === 'batch-complete') {
+        console.log('All files have been processed by worker');
+    }
+};
+
+fetchAndDecodeWorker.onerror = (error) => {
+    console.error('Worker error:', error);
 };
 
 document.addEventListener('product-selected', event => {
@@ -66,42 +93,18 @@ async function fetchData() {
         bubbles: true,
     }));
 
-    // Stream files one at a time for decoder
-    for (const file_name of files_to_fetch) {
-        const isCached = await db.hasFile(file_name);
-
-        if (isCached) {
-            document.dispatchEvent(new CustomEvent('decode-file', {
-                detail: {
-                    product_name: state.product,
-                    file_data: null,
-                    file_name: file_name,
-                },
-                composed: true,
-                bubbles: true,
-            }));
-        } else {
-            const file_data = await fetchFile(file_name);
-            if (file_data) {
-                document.dispatchEvent(new CustomEvent('decode-file', {
-                    detail: {
-                        product_name: state.product,
-                        file_data: file_data,
-                        file_name: file_name,
-                    },
-                    composed: true,
-                    bubbles: true,
-                }));
-            }
-        }
-    }
+    // Send files to worker for fetching and decoding
+    fetchAndDecodeWorker.postMessage({
+        type: 'fetch-files',
+        files: files_to_fetch,
+        productName: state.product,
+    });
 }
 
 async function getFiles(day) {
     const product = products[state.product].s3_name;
     try {
-        const response = await fetch(`https://noaa-mrms-pds.s3.amazonaws.com/?list-type=2&delimiter=/
-        &prefix=CONUS/${product}/${day}/`);
+        const response = await fetch(`https://noaa-mrms-pds.s3.amazonaws.com/?list-type=2&delimiter=/&prefix=CONUS/${product}/${day}/`);
         const xmlString = await response.text();
 
         const parser = new DOMParser();
@@ -117,20 +120,6 @@ async function getFiles(day) {
     } catch (e) {
         console.error(e);
         return [];
-    }
-}
-
-async function fetchFile(path) {
-    const url = "https://noaa-mrms-pds.s3.amazonaws.com/" + path;
-    try {
-        const response = await fetch(url);
-        const gzippedData = (await response.blob()).stream();
-        const ds = new DecompressionStream("gzip");
-        const decompressedData = gzippedData.pipeThrough(ds);
-        return await new Response(decompressedData).arrayBuffer();
-    } catch (err) {
-        console.error(err.message);
-        return null;
     }
 }
 

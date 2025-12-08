@@ -1,8 +1,7 @@
 import { RasterGenerator } from "./rasterGenerator.js";
 import { customOverlay } from "./customOverlay.js";
-import '../components/player/Player.js';
 import { extractTimestampFromKey } from "../api/api.js";
-import { products } from "./config.js";
+import { products, overlayInfo } from "./config.js";
 
 // Running map of filename -> generated overlay/img
 const fileImgMap = new Map();
@@ -15,10 +14,9 @@ let isPlaying = false;
 let playInterval = null;
 
 let overlay;
-const transparentImgSrc = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z/" +
-    "CfAQADgwGf6tJVEwAAAABJRU5ErkJggg==";
-document.addEventListener("LUT-ready", () => {
-    overlay = customOverlay(transparentImgSrc, LUT.bbox, map, 'OverlayView', false);
+
+document.addEventListener("DOMContentLoaded", () => {
+    overlay = customOverlay(overlayInfo.transparentImgSrc, overlayInfo.bbox, map, 'OverlayView', false);
 });
 
 // Listen for total files count (dispatch this from your fetcher when you know the total)
@@ -39,7 +37,7 @@ document.addEventListener('display-file', async event => {
     const product_name = event.detail.product_name;
 
     const colorMap = products[product_name].color_map;
-    const raster = new RasterGenerator(file_data, LUT.ncols, LUT.nrows, colorMap);
+    const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, colorMap);
     const img = await raster.generateUrl();
 
     // Store in running map

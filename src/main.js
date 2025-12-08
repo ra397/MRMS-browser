@@ -7,7 +7,6 @@ import './components/player/Player.js';
 import './style.css';
 
 import './api/api.js';
-import './decode/decode.js';
 import './display/display.js';
 
 document.getElementById('app').innerHTML = `
