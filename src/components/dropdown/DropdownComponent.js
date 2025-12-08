@@ -1,3 +1,5 @@
+import { products } from "../../display/config.js";
+
 class DropdownComponent extends HTMLElement {
     constructor() {
         super();
@@ -17,13 +19,29 @@ class DropdownComponent extends HTMLElement {
         this.select = document.createElement("select");
         this.select.setAttribute("id", "product-selection");
 
-        // Listen to internal change event and re-emit it
         this.select.addEventListener('change', () => {
-            this.dispatchEvent(new Event('change'));
+            this._emitProductSelected();
         });
 
         shadow.appendChild(style);
         shadow.append(this.select);
+
+        // Populate options
+        this.options = Object.keys(products);
+    }
+
+    connectedCallback() {
+        if (this.select.value) {
+            this._emitProductSelected();
+        }
+    }
+
+    _emitProductSelected() {
+        this.dispatchEvent(new CustomEvent('product-selected', {
+            detail: { product: this.select.value },
+            bubbles: true,
+            composed: true
+        }));
     }
 
     get value() {
@@ -34,7 +52,6 @@ class DropdownComponent extends HTMLElement {
         this.select.value = val;
     }
 
-    // Set options
     set options(items) {
         this._options = items;
         this._renderOptions();

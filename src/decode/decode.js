@@ -3,6 +3,7 @@ import './lut/generateLUT.js';
 import { db } from '../database/db.js';
 
 document.addEventListener('decode-file', async event => {
+    const product_name = event.detail.product_name;
     const rawData = event.detail.file_data;
     const file_name = event.detail.file_name;
 
@@ -47,6 +48,7 @@ document.addEventListener('decode-file', async event => {
     // Dispatch to display module
     document.dispatchEvent(new CustomEvent('display-file', {
         detail: {
+            product_name: product_name,
             file_data: decodedData,
             file_name: file_name,
         },

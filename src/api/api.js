@@ -1,11 +1,33 @@
 import { db } from '../database/db.js';
+import { products } from "../display/config.js";
 
-document.addEventListener('time-selected', async event => {
-    const localStartTime = event.detail.startDate;
-    const localEndTime = event.detail.endDate;
+// State tracking
+const state = {
+    product: null,
+    startTime: null,
+    endTime: null,
+};
 
-    const start_YYYYMMDD = extractYYYYMMDD(localStartTime.toISOString());
-    const end_YYYYMMDD = extractYYYYMMDD(localEndTime.toISOString());
+document.addEventListener('product-selected', event => {
+    state.product = event.detail.product;
+
+    if (state.startTime && state.endTime) {
+        fetchData();
+    }
+});
+
+document.addEventListener('time-selected', event => {
+    state.startTime = event.detail.startDate;
+    state.endTime = event.detail.endDate;
+
+    if (state.product) {
+        fetchData();
+    }
+});
+
+async function fetchData() {
+    const start_YYYYMMDD = extractYYYYMMDD(state.startTime.toISOString());
+    const end_YYYYMMDD = extractYYYYMMDD(state.endTime.toISOString());
 
     const dates = getDatesBetween(start_YYYYMMDD, end_YYYYMMDD);
 
@@ -22,7 +44,7 @@ document.addEventListener('time-selected', async event => {
 
     for (const file of possible_files) {
         const file_timestamp = extractTimestampFromKey(file);
-        if (file_timestamp > localStartTime.toISOString() && file_timestamp <= localEndTime.toISOString()) {
+        if (file_timestamp > state.startTime.toISOString() && file_timestamp <= state.endTime.toISOString()) {
             files_to_fetch.push(file);
         }
     }
@@ -51,6 +73,7 @@ document.addEventListener('time-selected', async event => {
         if (isCached) {
             document.dispatchEvent(new CustomEvent('decode-file', {
                 detail: {
+                    product_name: state.product,
                     file_data: null,
                     file_name: file_name,
                 },
@@ -62,6 +85,7 @@ document.addEventListener('time-selected', async event => {
             if (file_data) {
                 document.dispatchEvent(new CustomEvent('decode-file', {
                     detail: {
+                        product_name: state.product,
                         file_data: file_data,
                         file_name: file_name,
                     },
@@ -71,11 +95,13 @@ document.addEventListener('time-selected', async event => {
             }
         }
     }
-});
+}
 
 async function getFiles(day) {
+    const product = products[state.product].s3_name;
     try {
-        const response = await fetch(`https://noaa-mrms-pds.s3.amazonaws.com/?list-type=2&delimiter=/&prefix=CONUS/MultiSensor_QPE_01H_Pass1_00.00/${day}/`);
+        const response = await fetch(`https://noaa-mrms-pds.s3.amazonaws.com/?list-type=2&delimiter=/
+        &prefix=CONUS/${product}/${day}/`);
         const xmlString = await response.text();
 
         const parser = new DOMParser();
