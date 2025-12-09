@@ -46,7 +46,9 @@ function decodeGrib2(rawData) {
     });
 
     grib2Decoder.parse(new Uint8Array(rawData));
-    return grib2Decoder.data;
+    const gribData =  grib2Decoder.data;
+    const scaleFactor = grib2Decoder.DecimalScaleFactor;
+    return { gribData, scaleFactor };
 }
 
 function generateMatrixUsingLUT(values, numCols, numRows) {
@@ -96,13 +98,13 @@ async function processFiles(files, productName) {
                 }
 
                 // Decode GRIB2
-                const gribData = decodeGrib2(rawData);
+                const { gribData, scaleFactor } = decodeGrib2(rawData);
 
                 // Apply LUT transformation
                 decodedData = generateMatrixUsingLUT(gribData, LUT.ncols, LUT.nrows);
 
                 // Save to IndexedDB
-                await db.saveDecodedData(fileName, decodedData);
+                await db.saveDecodedData(fileName, decodedData, scaleFactor);
             }
 
             // Send decoded data back to main thread

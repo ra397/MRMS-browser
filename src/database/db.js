@@ -24,11 +24,11 @@ function openDB() {
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME);
+                const store = db.createObjectStore(STORE_NAME);
+                store.createIndex("byIngestTime", "ingestTime");
             }
         };
     });
-
     return dbPromise;
 }
 
@@ -100,16 +100,22 @@ async function getDecodedData(fileName) {
     }
 }
 
-async function saveDecodedData(fileName, decodedData) {
+async function saveDecodedData(fileName, decodedData, scaleFactor) {
     try {
         // Compress before storing
         const compressedData = await compress(decodedData);
+
+        const record = {
+            data: compressedData,
+            scaleFactor: scaleFactor,
+            ingestTime: Date.now(),
+        }
 
         const db = await openDB();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(STORE_NAME, 'readwrite');
             const store = transaction.objectStore(STORE_NAME);
-            const request = store.put(compressedData, fileName);
+            const request = store.put(record, fileName);
 
             request.onsuccess = () => {
                 resolve(true);
