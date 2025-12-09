@@ -51,7 +51,7 @@ function decodeGrib2(rawData) {
 
 function generateMatrixUsingLUT(values, numCols, numRows) {
     const total = numCols * numRows;
-    const raster = new Float32Array(total);
+    const raster = new Uint16Array(total);
 
     for (let i = 0; i < total; i++) {
         const dataIndex = LUT.mrms_1d_ix[i];
