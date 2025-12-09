@@ -9,8 +9,12 @@ import './style.css';
 import './api/api.js';
 import './display/display.js';
 
+// import './components/datatable/DataTable.js';
+
 document.getElementById('app').innerHTML = `
     <div id="map"></div>
     <menu-component></menu-component>
     <player-component></player-component>
+    
+<!--    <table id="dataTable"></table>-->
 `;
