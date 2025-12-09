@@ -32,6 +32,21 @@ function openDB() {
     return dbPromise;
 }
 
+// Compression utilities
+async function compress(uint16Array) {
+    const stream = new Blob([uint16Array])
+        .stream()
+        .pipeThrough(new CompressionStream('gzip'));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+async function decompress(compressedData) {
+    const stream = new Blob([compressedData])
+        .stream()
+        .pipeThrough(new DecompressionStream('gzip'));
+    return new Uint16Array(await new Response(stream).arrayBuffer());
+}
+
 async function hasFile(fileName) {
     try {
         const db = await openDB();
@@ -58,7 +73,7 @@ async function hasFile(fileName) {
 async function getDecodedData(fileName) {
     try {
         const db = await openDB();
-        return new Promise((resolve, reject) => {
+        const compressedData = await new Promise((resolve, reject) => {
             const transaction = db.transaction(STORE_NAME, 'readonly');
             const store = transaction.objectStore(STORE_NAME);
             const request = store.get(fileName);
@@ -72,6 +87,13 @@ async function getDecodedData(fileName) {
                 reject(request.error);
             };
         });
+
+        if (!compressedData) {
+            return null;
+        }
+
+        // Decompress before returning
+        return await decompress(compressedData);
     } catch (error) {
         console.error('Error in getDecodedData:', error);
         return null;
@@ -80,11 +102,14 @@ async function getDecodedData(fileName) {
 
 async function saveDecodedData(fileName, decodedData) {
     try {
+        // Compress before storing
+        const compressedData = await compress(decodedData);
+
         const db = await openDB();
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(STORE_NAME, 'readwrite');
             const store = transaction.objectStore(STORE_NAME);
-            const request = store.put(decodedData, fileName);
+            const request = store.put(compressedData, fileName);
 
             request.onsuccess = () => {
                 resolve(true);
