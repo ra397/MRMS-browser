@@ -20,7 +20,7 @@
 #menus > * {
     position: absolute;
     top: 15ch;
-    right: 12ch;
+    right: 114px;
     max-height: 500px;
     background: white;
     overflow: auto;
