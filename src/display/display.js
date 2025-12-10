@@ -2,6 +2,7 @@ import { RasterGenerator } from "./rasterGenerator.js";
 import { customOverlay } from "./customOverlay.js";
 import { extractTimestampFromKey } from "../api/api.js";
 import { products, overlayInfo } from "./config.js";
+import { setSliderRange, setSliderValue } from "../components/player/player.js";
 
 // Running map of filename -> generated overlay/img
 const fileImgMap = new Map();
@@ -25,10 +26,7 @@ document.addEventListener('files-total', event => {
     orderedFileNames = event.detail.fileNames; // sorted list of filenames
 
     // Update slider range
-    const player = document.querySelector('player-component');
-    if (player) {
-        player.setTotalFiles(totalExpectedFiles);
-    }
+    setSliderRange(0, totalExpectedFiles - 1);
 });
 
 document.addEventListener('display-file', async event => {
@@ -64,10 +62,7 @@ function displayFrame(index) {
         currentIndex = index;
 
         // Update slider position
-        const player = document.querySelector('player-component');
-        if (player) {
-            player.setCurrentIndex(index);
-        }
+        setSliderValue(index);
     }
 }
 

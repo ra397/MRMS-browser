@@ -93,7 +93,7 @@ async function getDecodedData(fileName) {
         }
 
         // Decompress before returning
-        return await decompress(compressedData);
+        return await decompress(compressedData.data);
     } catch (error) {
         console.error('Error in getDecodedData:', error);
         return null;

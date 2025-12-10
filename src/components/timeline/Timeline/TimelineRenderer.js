@@ -1,4 +1,4 @@
-class Timeline {
+class TimelineRenderer {
     constructor(timelineEl, startMarkerEl, stopMarkerEl, initialState) {
         this.timelineEl = timelineEl;
         this.startMarkerEl = startMarkerEl;
@@ -325,4 +325,4 @@ class Timeline {
         }
     }
 }
-window.Timeline = Timeline;
+window.Timeline = TimelineRenderer;

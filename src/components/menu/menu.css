@@ -1,0 +1,13 @@
+#menu-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12ch;
+    background: white;
+
+    display: grid;
+    grid-template-columns: 20ch 1fr;
+    row-gap: 1ch;
+    padding: 1ch;
+}
