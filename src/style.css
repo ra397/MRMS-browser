@@ -17,6 +17,17 @@
     padding: 1ch;
 }
 
+#menus > * {
+    position: absolute;
+    top: 15ch;
+    right: 12ch;
+    max-height: 500px;
+    background: white;
+    overflow: auto;
+    padding: 1ch;
+    border: 1px solid #ccc;
+}
+
 .hidden {
     display: none;
 }

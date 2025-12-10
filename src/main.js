@@ -17,6 +17,7 @@ import './components/sidebar/sidebar.js';
 import './components/sidebar/sidebar.css';
 
 import './components/datatable/datatable.js';
-import './components/datatable/datatable.css';
+
+import './components/settings/settings.js';
 
 import './style.css';

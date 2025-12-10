@@ -1,0 +1,1 @@
+document.getElementById('settings').classList.add('hidden');
