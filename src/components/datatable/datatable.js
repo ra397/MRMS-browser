@@ -15,5 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
         data: dataSet
     });
-    document.getElementById('datatable_wrapper').classList.add('hidden');
+    document.getElementById('database-manager').classList.add('hidden');
 });

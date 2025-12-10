@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="//uiowa.edu/profiles/custom/sitenow/assets/favicon.ico" />
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTYZ2ogy4XY8GmiIpiw89OpE9iRk5MnxM"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTYZ2ogy4XY8GmiIpiw89OpE9iRk5MnxM&loading=async"></script>
     <title>MRMS Browser</title>
   </head>
   <body>
@@ -32,12 +32,14 @@
 
 
       <div id="sidebar">
-          <span class="sidebar-item" data-menu="datatable_wrapper">Database Manager</span>
+          <span class="sidebar-item" data-menu="database-manager">Database Manager</span>
           <span class="sidebar-item" data-menu="settings">Settings</span>
       </div>
 
       <div id="menus">
-          <table id="datatable"></table>
+          <div id="database-manager">
+            <table id="datatable"></table>
+          </div>
 
           <div id="settings">
               This is the settings menu.
