@@ -1,3 +1,5 @@
+import './sidebar.css';
+
 const sidebarOptions = document.querySelectorAll('.sidebar-item');
 
 let activeMenu = null;

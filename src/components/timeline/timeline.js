@@ -1,5 +1,6 @@
 import './Timeline/TimelineRenderer.js';
 import './Timeline/TimelineController.js';
+import './timeline.css';
 
 const today = new Date();
 const startDate = new Date(today);

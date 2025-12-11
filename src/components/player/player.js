@@ -1,3 +1,5 @@
+import './player.css';
+
 let isPlaying = false;
 
 /* Player Play/Pause Button */

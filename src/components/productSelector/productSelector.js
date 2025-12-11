@@ -1,4 +1,5 @@
 import { products } from "../../display/config.js";
+import './productSelector.css';
 
 const dropdown = document.getElementById('product');
 
