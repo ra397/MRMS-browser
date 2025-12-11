@@ -1,0 +1,4 @@
+#datatable tbody tr {
+    user-select: none;
+    cursor: default;
+}

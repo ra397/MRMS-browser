@@ -3,6 +3,8 @@ import 'datatables.net-dt/css/dataTables.dataTables.css';
 import { extractTimestampFromKey } from "../../api/api.js";
 import { db } from '../../database/db.js';
 import { products } from "../../display/config.js";
+import { SelectionManager } from './selectionManager.js';
+import "./datatable.css";
 
 /* Helpers */
 
@@ -52,6 +54,7 @@ async function refreshDataFromDB() {
 
 /* Datatable initialization */
 let dataTable;
+let selectionManager;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const dataSet = await loadDataFromDB();
@@ -65,6 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         ],
         data: dataSet
     });
+
+    selectionManager = new SelectionManager(dataTable);
 
     document.getElementById('database-manager').classList.add('hidden');
 });
