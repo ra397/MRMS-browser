@@ -26,8 +26,6 @@ fetchAndDecodeWorker.onmessage = (event) => {
         }));
     } else if (type === 'file-error') {
         console.error(`Failed to process file: ${file_name}`, error);
-    } else if (type === 'batch-complete') {
-        console.log('All files have been processed by worker');
     } else if (type === 'db-change') {
         emitDBChange();
     }
