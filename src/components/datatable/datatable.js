@@ -7,7 +7,6 @@ import { SelectionManager } from './selectionManager.js';
 import "./datatable.css";
 
 /* Helpers */
-
 function formatBytes(bytes) {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -18,24 +17,25 @@ function formatIngestTime(ingestTime) {
     return new Date(ingestTime).toLocaleString();
 }
 
-function parseFileName(fileKey) {
+function parseDisplayName(fileKey) {
     const path = fileKey.replace(/\/+$/, "");
     const parts = path.split("/");
     const s3_name = parts[1];
     return products.find(p => p.s3_name === s3_name)?.display_name;
 }
 
-/* Main function: gets all the records from db */
-
+/* Main functions: gets all the records from db */
 async function loadDataFromDB() {
     const records = await db.getAllRecords();
     return records.map(record => {
-        const product = parseFileName(record.fileName);
+        const product = parseDisplayName(record.fileName);
+        const s3Name = record.fileName;
         const validTime = extractTimestampFromKey(record.fileName).toLocaleString();
         const ingestTime = formatIngestTime(record.ingestTime);
         const compressedSize = formatBytes(record.compressedSize);
         return [
             product,
+            s3Name,
             validTime,
             ingestTime,
             compressedSize,
@@ -62,11 +62,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     dataTable = new DataTable('#datatable', {
         columns: [
             { title: 'Product' },
+            { title: 's3Name', visible: false },
             { title: 'Valid Time' },
             { title: 'Ingest Time' },
             { title: 'Memory Usage' },
         ],
-        data: dataSet
+        data: dataSet,
+        createdRow: function(row, data, dataIndex) {
+            row.dataset.key = data[1];
+        }
     });
 
     selectionManager = new SelectionManager(dataTable);
