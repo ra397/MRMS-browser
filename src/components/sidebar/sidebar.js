@@ -2,7 +2,7 @@ const sidebarOptions = document.querySelectorAll('.sidebar-item');
 
 let activeMenu = null;
 let closeTimeout = null;
-const CLOSE_DELAY = 200; // ms delay before closing menu
+const CLOSE_DELAY = 1300; // ms delay before closing menu
 
 function showMenu(menuId) {
     if (closeTimeout) {
@@ -55,8 +55,6 @@ sidebarOptions.forEach(item => {
     const menuId = item.dataset.menu;
     const menuElement = document.getElementById(menuId);
 
-    console.log("menuId ", menuId);
-    console.log("menuElement", menuElement);
     if (menuElement) {
         menuElement.addEventListener('mouseenter', () => {
             cancelClose();

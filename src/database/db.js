@@ -132,6 +132,42 @@ async function saveDecodedData(fileName, decodedData, scaleFactor) {
     }
 }
 
+async function getAllRecords() {
+    try {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.openCursor();
+
+            const records = [];
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    records.push({
+                        fileName: cursor.key,
+                        ingestTime: cursor.value.ingestTime,
+                        scaleFactor: cursor.value.scaleFactor,
+                        compressedSize: cursor.value.data.byteLength // This is compressed size
+                    });
+                    cursor.continue();
+                } else {
+                    resolve(records);
+                }
+            };
+
+            request.onerror = () => {
+                console.error('Error getting all records:', request.error);
+                reject(request.error);
+            };
+        });
+    } catch (error) {
+        console.error('Error in getAllRecords:', error);
+        return [];
+    }
+}
+
 async function clearCache() {
     try {
         const db = await openDB();
@@ -155,9 +191,18 @@ async function clearCache() {
     }
 }
 
+export function emitDBChange() {
+    if (typeof document !== 'undefined') {
+        document.dispatchEvent(new CustomEvent('db-change'));
+    } else {
+        console.error("Trying to dispatchEvent outside of browser context.")
+    }
+}
+
 export const db = {
     hasFile,
     getDecodedData,
     saveDecodedData,
+    getAllRecords,
     clearCache
 };

@@ -1,6 +1,5 @@
 import { RasterGenerator } from "./rasterGenerator.js";
 import { customOverlay } from "./customOverlay.js";
-import { extractTimestampFromKey } from "../api/api.js";
 import { products, overlayInfo } from "./config.js";
 import { setSliderRange, setSliderValue } from "../components/player/player.js";
 
@@ -34,7 +33,7 @@ document.addEventListener('display-file', async event => {
     const file_data = event.detail.file_data;
     const product_name = event.detail.product_name;
 
-    const colorMap = products[product_name].color_map;
+    const colorMap = products.find(p => p.s3_name === product_name)?.color_map;
     const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, colorMap);
     const img = await raster.generateUrl();
 
@@ -54,8 +53,6 @@ function displayFrame(index) {
 
     const fileName = orderedFileNames[index];
     const img = fileImgMap.get(fileName);
-
-    console.log(`Displaying: ${extractTimestampFromKey(fileName)}`);
 
     if (img) {
         overlay.setSource(img);

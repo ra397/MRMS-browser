@@ -15,13 +15,12 @@ function emitProductSelected() {
 function renderProducts() {
     dropdown.innerHTML = '';
 
-    const options = Object.keys(products);
-    options.forEach(option => {
+    products.forEach((product) => {
         const opt = document.createElement('option');
-        opt.value = option;
-        opt.textContent = option;
+        opt.value = product.s3_name;
+        opt.textContent = product.display_name;
         dropdown.appendChild(opt);
-    })
+    });
 }
 
 renderProducts();

@@ -1,10 +1,12 @@
-:root {
+body {
     font-size: 16px;
     font-family: "Roboto", sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 #menu-container {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -18,14 +20,14 @@
 }
 
 #menus > * {
-    position: absolute;
+    position: fixed;
     top: 15ch;
-    right: 114px;
+    right: calc(12ch + 2 * 0.3ch + 1 * 1px);
     max-height: 500px;
     background: white;
     overflow: auto;
     padding: 1ch;
-    border: 1px solid #ccc;
+    outline: 1px solid #ccc;
 }
 
 .hidden {

@@ -105,6 +105,9 @@ async function processFiles(files, productName) {
 
                 // Save to IndexedDB
                 await db.saveDecodedData(fileName, decodedData, scaleFactor);
+
+                // Notify main thread that DB updated
+                self.postMessage({ type: 'db-change' });
             }
 
             // Send decoded data back to main thread

@@ -32,42 +32,41 @@ export const overlayInfo = {
         "CfAQADgwGf6tJVEwAAAABJRU5ErkJggg==",
 }
 
-export const products = {
-    "Q3 Multi-Sensor 1 hr (Pass 1)": {
+export const products = [
+    {
         display_name: "Q3 Multi-Sensor 1 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_01H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    "Q3 Multi-Sensor 3 hr (Pass 1)": {
+    {
         display_name: "Q3 Multi-Sensor 3 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_03H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    "Q3 Multi-Sensor 6 hr (Pass 1)": {
+    {
         display_name: "Q3 Multi-Sensor 6 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_06H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    "Q3 Multi-Sensor 12 hr (Pass 1)": {
+    {
         display_name: "Q3 Multi-Sensor 12 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_12H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    "Q3 Multi-Sensor 24 hr (Pass 1)": {
+    {
         display_name: "Q3 Multi-Sensor 24 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_24H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    "Q3 Multi-Sensor 48 hr (Pass 1)": {
+    {
         display_name: "Q3 Multi-Sensor 48 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_48H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    "Q3 Multi-Sensor 72 hr (Pass 1)": {
+    {
         display_name: "Q3 Multi-Sensor 72 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_72H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    // add more products here:
-    // "Another Product Name": { ... },
-};
+    // add more products here
+];
