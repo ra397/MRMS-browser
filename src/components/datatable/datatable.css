@@ -8,3 +8,7 @@
 tr.group-start {
     background: #ccc !important;
 }
+
+.group-icon {
+    cursor: pointer;
+}

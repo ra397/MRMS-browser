@@ -92,13 +92,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             dataSrc: 0,
             startRender: function(rows, group) {
                 const collapsed = !!collapsedGroups[group];
+                const icon = collapsed ? '▶' : '▼';
 
                 rows.nodes().each(function(r) {
                     r.style.display = collapsed ? 'none' : '';
                 });
 
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="8">${group} (${rows.count()})</td>`;
+                tr.innerHTML = `<td colspan="8"><span class="group-icon">${icon}</span> ${group} (${rows.count()})</td>`;
                 tr.dataset.name = group;
                 tr.classList.add('group-start');
                 if (collapsed) {
