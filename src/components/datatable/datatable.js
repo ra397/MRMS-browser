@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     selectionManager = new SelectionManager(dataTable);
+    globalThis.selectionManager = selectionManager;
 
     document.getElementById('database-manager').classList.add('hidden');
 });

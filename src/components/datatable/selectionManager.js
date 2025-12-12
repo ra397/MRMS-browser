@@ -8,8 +8,9 @@ export class SelectionManager {
         this.#bindKeyboardHandler();
     }
 
-    getSelectedRows() {
-
+    getSelectedKeys() {
+        const selectedRows = this.dataTable.rows('.selected').data();
+        return selectedRows.toArray().map(r => r[1]);
     }
 
     clearSelection() {
