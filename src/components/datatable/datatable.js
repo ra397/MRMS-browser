@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             { title: 'Memory Usage' },
         ],
         data: dataSet,
-        order: [[0, 'asc']],
+        order: [[0, 'asc'], [2, 'asc']],
+        orderFixed: [[0, 'asc']],
         createdRow: function(row, data) {
             row.dataset.key = data[1];
         },
