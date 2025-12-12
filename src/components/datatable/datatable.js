@@ -85,6 +85,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         data: dataSet,
         order: [[0, 'asc'], [2, 'asc']],
         orderFixed: [[0, 'asc']],
+        lengthMenu: [-1, 10, 25, 50],
+        layout: {
+            topStart: null,
+            topEnd: null,
+            top2Start: 'pageLength',
+            top2End: 'search',
+            top: function () {
+                const div = document.createElement('div');
+                div.className = 'dt-controls';
+                div.innerHTML = `
+                    <button class="btn success" onclick="">Play</button>
+                    <button class="btn primary" onclick="selectionManager.selectAllRows()">Select All</button>
+                    <button class="btn danger" onclick="">Delete</button>
+                `;
+                return div;
+            },
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
         createdRow: function(row, data) {
             row.dataset.key = data[1];
         },
@@ -112,6 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     selectionManager = new SelectionManager(dataTable, collapsedGroups);
+    globalThis.selectionManager = selectionManager;
 
     document.getElementById('database-manager').classList.add('hidden');
 });

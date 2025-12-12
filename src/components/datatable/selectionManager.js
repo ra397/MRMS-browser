@@ -15,6 +15,10 @@ export class SelectionManager {
         return selectedRows.toArray().map(r => r[1]);
     }
 
+    selectAllRows() {
+        this.dataTable.rows().nodes().to$().addClass('selected');
+    }
+
     clearSelection() {
         this.#clearAllSelections();
         this.anchorIndex = null;
