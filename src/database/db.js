@@ -70,6 +70,14 @@ async function hasFile(fileName) {
     }
 }
 
+async function hasFiles(fileNames) {
+    const results = [];
+    for (const fileName of fileNames) {
+        results.push({ fileName, isCached: await hasFile(fileName) });
+    }
+    return results;
+}
+
 async function getDecodedData(fileName) {
     try {
         const db = await openDB();
@@ -201,6 +209,7 @@ export function emitDBChange() {
 
 export const db = {
     hasFile,
+    hasFiles,
     getDecodedData,
     saveDecodedData,
     getAllRecords,

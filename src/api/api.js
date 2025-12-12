@@ -1,4 +1,4 @@
-import { emitDBChange } from "../database/db.js";
+import { db, emitDBChange } from "../database/db.js";
 
 // State tracking
 const state = {
@@ -9,27 +9,6 @@ const state = {
 
 // Web Worker instance - initialized once at module load
 const fetchAndDecodeWorker = new Worker(new URL('./api-worker.js', import.meta.url), { type: 'module' });
-
-fetchAndDecodeWorker.onmessage = (event) => {
-    const { type, product_name, file_name, file_data, error } = event.data;
-
-    if (type === 'file-ready') {
-        // Dispatch directly to display module (decoding already done in worker)
-        document.dispatchEvent(new CustomEvent('display-file', {
-            detail: {
-                product_name: product_name,
-                file_data: file_data,
-                file_name: file_name,
-            },
-            composed: true,
-            bubbles: true,
-        }));
-    } else if (type === 'file-error') {
-        console.error(`Failed to process file: ${file_name}`, error);
-    } else if (type === 'db-change') {
-        emitDBChange();
-    }
-};
 
 fetchAndDecodeWorker.onerror = (error) => {
     console.error('Worker error:', error);
@@ -93,11 +72,58 @@ async function fetchData() {
         bubbles: true,
     }));
 
-    // Send files to worker for fetching and decoding
-    fetchAndDecodeWorker.postMessage({
-        type: 'fetch-files',
-        files: files_to_fetch,
-        productName: state.product,
+    const cacheStatus = await db.hasFiles(files_to_fetch);
+    for (const { fileName, isCached } of cacheStatus) {
+        if (isCached) {
+            console.log("Getting cached file")
+            const decodedData = await db.getDecodedData(fileName);
+            dispatchDisplayFile(state.product, fileName, decodedData);
+        } else {
+            console.log("Getting uncached file")
+            await fetchAndDecodeFile(fileName);
+        }
+    }
+    emitDBChange();
+}
+
+function dispatchDisplayFile(product_name, file_name, file_data) {
+    document.dispatchEvent(new CustomEvent('display-file', {
+        detail: {
+            product_name: product_name,
+            file_data: file_data,
+            file_name: file_name,
+        },
+        composed: true,
+        bubbles: true,
+    }));
+}
+
+function fetchAndDecodeFile(fileName) {
+    return new Promise((resolve, reject) => {
+        const handler = async (event) => {
+            const {type, product_name, file_name, file_data, scale_factor, error} = event.data;
+
+            if (file_name !== fileName) return; // Not our file, ignore
+
+            fetchAndDecodeWorker.removeEventListener('message', handler);
+
+            if (type === 'file-ready') {
+                await db.saveDecodedData(file_name, file_data, scale_factor);
+                dispatchDisplayFile(product_name, file_name, file_data);
+                resolve();
+            } else if (type === 'file-error') {
+                console.error(`Failed to process: ${file_name}`, error);
+                reject(error);
+            }
+        };
+
+        fetchAndDecodeWorker.addEventListener('message', handler);
+
+        fetchAndDecodeWorker.postMessage({
+            type: 'fetch-file',
+            fileName: fileName,
+            productName: state.product,
+        });
     });
 }
 

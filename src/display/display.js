@@ -40,8 +40,6 @@ document.addEventListener('display-file', async event => {
     // Store in running map
     fileImgMap.set(file_name, img);
 
-    console.log(`Ready for display: ${file_name}`, img);
-
     // If this is the first file, and we're not playing, display it
     if (fileImgMap.size === 1 && !isPlaying) {
         displayFrame(0);
