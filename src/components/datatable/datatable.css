@@ -1,4 +1,10 @@
+@import url('datatables.net-dt');
+
 #datatable tbody tr {
     user-select: none;
     cursor: default;
+}
+
+tr.group-start {
+    background: #ccc !important;
 }

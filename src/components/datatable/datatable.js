@@ -1,5 +1,5 @@
 import DataTable from 'datatables.net-dt';
-import 'datatables.net-dt/css/dataTables.dataTables.css';
+import 'datatables.net-rowgroup-dt';
 import { extractTimestampFromKey } from "../../api/api.js";
 import { db } from '../../database/db.js';
 import { products } from "../../display/config.js";
@@ -14,7 +14,14 @@ function formatBytes(bytes) {
 }
 
 function formatIngestTime(ingestTime) {
-    return new Date(ingestTime).toLocaleString();
+    return new Date(ingestTime).toLocaleString('en-CA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    });
 }
 
 function parseDisplayName(fileKey) {
@@ -30,7 +37,14 @@ async function loadDataFromDB() {
     return records.map(record => {
         const product = parseDisplayName(record.fileName);
         const s3Name = record.fileName;
-        const validTime = extractTimestampFromKey(record.fileName).toLocaleString();
+        const validTime = extractTimestampFromKey(record.fileName).toLocaleString('en-CA', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
         const ingestTime = formatIngestTime(record.ingestTime);
         const compressedSize = formatBytes(record.compressedSize);
         return [
@@ -57,6 +71,7 @@ let dataTable;
 let selectionManager;
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const collapsedGroups = {};
     const dataSet = await loadDataFromDB();
 
     dataTable = new DataTable('#datatable', {
@@ -68,13 +83,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             { title: 'Memory Usage' },
         ],
         data: dataSet,
-        createdRow: function(row, data, dataIndex) {
+        order: [[0, 'asc']],
+        createdRow: function(row, data) {
             row.dataset.key = data[1];
+        },
+        rowGroup: {
+            dataSrc: 0,
+            startRender: function(rows, group) {
+                const collapsed = !!collapsedGroups[group];
+
+                rows.nodes().each(function(r) {
+                    r.style.display = collapsed ? 'none' : '';
+                });
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="8">${group} (${rows.count()})</td>`;
+                tr.dataset.name = group;
+                tr.classList.add('group-start');
+                if (collapsed) {
+                    tr.classList.add('collapsed');
+                }
+
+                return tr;
+            }
         }
     });
 
-    selectionManager = new SelectionManager(dataTable);
-    globalThis.selectionManager = selectionManager;
+    selectionManager = new SelectionManager(dataTable, collapsedGroups);
 
     document.getElementById('database-manager').classList.add('hidden');
 });

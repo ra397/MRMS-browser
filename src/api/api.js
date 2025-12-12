@@ -75,11 +75,9 @@ async function fetchData() {
     const cacheStatus = await db.hasFiles(files_to_fetch);
     for (const { fileName, isCached } of cacheStatus) {
         if (isCached) {
-            console.log("Getting cached file")
             const decodedData = await db.getDecodedData(fileName);
             dispatchDisplayFile(state.product, fileName, decodedData);
         } else {
-            console.log("Getting uncached file")
             await fetchAndDecodeFile(fileName);
         }
     }

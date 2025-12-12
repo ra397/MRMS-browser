@@ -1,8 +1,10 @@
 export class SelectionManager {
-    constructor(dataTable) {
+    constructor(dataTable, collapsedGroups) {
         this.dataTable = dataTable;
         this.anchorIndex = null;
         this.currentIndex = null;
+
+        this.collapsedGroups = collapsedGroups;
 
         this.#bindClickHandler();
         this.#bindKeyboardHandler();
@@ -22,7 +24,16 @@ export class SelectionManager {
     #bindClickHandler() {
         this.dataTable.on('click', 'tbody tr', (e) => {
             const row = e.currentTarget;
+
+            if (row.classList.contains('group-start')) {
+                this.#handleGroupClick(row);
+                return;
+            }
+
             const rowIndex = this.dataTable.row(row).index();
+
+            if (rowIndex === undefined) return;
+
             const isSelected = row.classList.contains('selected');
 
             if (e.shiftKey && this.anchorIndex !== null) {
@@ -33,6 +44,12 @@ export class SelectionManager {
                 this.#handleSingleClick(row, rowIndex, isSelected);
             }
         });
+    }
+
+    #handleGroupClick(groupRow) {
+        const name = groupRow.dataset.name;
+        this.collapsedGroups[name] = !this.collapsedGroups[name];
+        this.dataTable.draw(false);
     }
 
     #bindKeyboardHandler() {
