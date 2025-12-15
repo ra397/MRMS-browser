@@ -1,7 +1,7 @@
 import DataTable from 'datatables.net-dt';
-import 'datatables.net-rowgroup-dt';
+import 'datatables.net-rowgroup-dt'; // grouping rows
 import { extractTimestampFromKey } from "../../api/api.js";
-import { db } from '../../database/db.js';
+import {db, emitDBChange} from '../../database/db.js';
 import { products } from "../../display/config.js";
 import { SelectionManager } from './selectionManager.js';
 import "./datatable.css";
@@ -86,6 +86,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         order: [[0, 'asc'], [2, 'asc']],
         orderFixed: [[0, 'asc']],
         lengthMenu: [-1, 10, 25, 50],
+        fixedHeader: {
+            header: true,
+        },
         layout: {
             topStart: null,
             topEnd: null,
@@ -95,9 +98,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const div = document.createElement('div');
                 div.className = 'dt-controls';
                 div.innerHTML = `
-                    <button class="btn success" onclick="">Play</button>
-                    <button id="select-all-btn" class="btn primary" onclick="selectionManager.toggleSelectAll()">Select All</button>
-                    <button class="btn danger" onclick="">Delete</button>
+                    <button id="play-files-btn" class="btn success">Play</button>
+                    <button id="select-all-btn" class="btn primary">Select All</button>
+                    <button id="delete-btn" class="btn danger">Delete</button>
                 `;
                 return div;
             },
@@ -138,9 +141,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     globalThis.selectionManager = selectionManager;
 
     document.getElementById('database-manager').classList.add('hidden');
+
+    document.dispatchEvent(new CustomEvent('datatable-ready'));
 });
 
 /* React to DB changes */
 document.addEventListener('db-change', () => {
     refreshDataFromDB();
+});
+
+
+/* On click handlers for datatable buttons */
+document.addEventListener('datatable-ready', async () => {
+    document.getElementById("play-files-btn").addEventListener('click', () => {
+
+    });
+
+    document.getElementById('select-all-btn').addEventListener('click', () => {
+        selectionManager.toggleSelectAll();
+    });
+
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+        const keys = selectionManager.getSelectedKeys();
+        await db.deleteFiles(keys);
+        emitDBChange();
+    });
 });

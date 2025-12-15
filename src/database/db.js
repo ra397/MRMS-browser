@@ -176,6 +176,37 @@ async function getAllRecords() {
     }
 }
 
+async function deleteFiles(fileNames) {
+    try {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+
+            let deletedCount = 0;
+            let errorCount = 0;
+
+            for (const fileName of fileNames) {
+                const request = store.delete(fileName);
+                request.onsuccess = () => deletedCount++;
+                request.onerror = () => errorCount++;
+            }
+
+            transaction.oncomplete = () => {
+                resolve({ deletedCount, errorCount });
+            };
+
+            transaction.onerror = () => {
+                console.error('Error deleting files:', transaction.error);
+                reject(transaction.error);
+            };
+        });
+    } catch (error) {
+        console.error('Error in deleteFiles:', error);
+        return { deletedCount: 0, errorCount: fileNames.length };
+    }
+}
+
 async function clearCache() {
     try {
         const db = await openDB();
@@ -213,5 +244,6 @@ export const db = {
     getDecodedData,
     saveDecodedData,
     getAllRecords,
+    deleteFiles,
     clearCache
 };
