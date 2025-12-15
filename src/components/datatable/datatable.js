@@ -1,9 +1,9 @@
 import DataTable from 'datatables.net-dt';
 import 'datatables.net-rowgroup-dt'; // grouping rows
-import { extractTimestampFromKey } from "../../api/api.js";
+import {extractTimestampFromKey} from "../../api/api.js";
 import {db, emitDBChange} from '../../database/db.js';
-import { products } from "../../display/config.js";
-import { SelectionManager } from './selectionManager.js';
+import {products} from "../../display/config.js";
+import {SelectionManager} from './selectionManager.js';
 import "./datatable.css";
 
 /* Helpers */
@@ -153,8 +153,36 @@ document.addEventListener('db-change', () => {
 
 /* On click handlers for datatable buttons */
 document.addEventListener('datatable-ready', async () => {
-    document.getElementById("play-files-btn").addEventListener('click', () => {
+    document.getElementById("play-files-btn").addEventListener('click', async () => {
+        const keys = selectionManager.getSelectedKeys();
+        if (keys.length === 0) return;
+        keys.sort((a, b) => {
+            const timestampA = extractTimestampFromKey(a).toISOString();
+            const timestampB = extractTimestampFromKey(b).toISOString();
+            return timestampA.localeCompare(timestampB);
+        });
 
+        document.dispatchEvent(new CustomEvent('display-reset'));
+
+        document.dispatchEvent(new CustomEvent('files-total', {
+            detail: {
+                total: keys.length,
+                fileNames: keys
+            },
+        }));
+
+        for (const key of keys) {
+            const file_data = await db.getDecodedData(key);
+            const product_name = key.split("/")[1];
+
+            document.dispatchEvent(new CustomEvent('display-file', {
+                detail: {
+                    product_name: product_name,
+                    file_data: file_data,
+                    file_name: key,
+                },
+            }));
+        }
     });
 
     document.getElementById('select-all-btn').addEventListener('click', () => {

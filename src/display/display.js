@@ -19,6 +19,15 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay = customOverlay(overlayInfo.transparentImgSrc, overlayInfo.bbox, map, 'OverlayView', false);
 });
 
+document.addEventListener("display-reset", () => {
+    fileImgMap.clear();
+    orderedFileNames = [];
+    totalExpectedFiles = 0;
+    currentIndex = 0;
+    pause();
+    overlay.setSource(overlayInfo.transparentImgSrc);
+});
+
 // Listen for total files count (dispatch this from your fetcher when you know the total)
 document.addEventListener('files-total', event => {
     totalExpectedFiles = event.detail.total;
