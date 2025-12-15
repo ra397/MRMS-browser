@@ -69,6 +69,7 @@ async function refreshDataFromDB() {
 /* Datatable initialization */
 let dataTable;
 let selectionManager;
+let isLoading = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const collapsedGroups = {};
@@ -150,12 +151,30 @@ document.addEventListener('db-change', () => {
     refreshDataFromDB();
 });
 
+/* React to selection changes from selectionManager.js */
+document.addEventListener("dt-selection-change", () => {
+    updateActionButtonState();
+});
+
+function updateActionButtonState() {
+    const playBtn = document.getElementById('play-files-btn');
+    const deleteBtn = document.getElementById('delete-btn');
+    const hasSelection = selectionManager.getSelectedKeys().length > 0;
+
+    playBtn.disabled = !hasSelection || isLoading;
+    deleteBtn.disabled = !hasSelection || isLoading;
+}
 
 /* On click handlers for datatable buttons */
 document.addEventListener('datatable-ready', async () => {
+    updateActionButtonState();
     document.getElementById("play-files-btn").addEventListener('click', async () => {
         const keys = selectionManager.getSelectedKeys();
         if (keys.length === 0) return;
+
+        isLoading = true;
+        updateActionButtonState();
+
         keys.sort((a, b) => {
             const timestampA = extractTimestampFromKey(a).toISOString();
             const timestampB = extractTimestampFromKey(b).toISOString();
@@ -183,6 +202,9 @@ document.addEventListener('datatable-ready', async () => {
                 },
             }));
         }
+
+        isLoading = false;
+        updateActionButtonState();
     });
 
     document.getElementById('select-all-btn').addEventListener('click', () => {
@@ -191,7 +213,16 @@ document.addEventListener('datatable-ready', async () => {
 
     document.getElementById('delete-btn').addEventListener('click', async () => {
         const keys = selectionManager.getSelectedKeys();
+        if (keys.length === 0) return;
+
+        isLoading = true;
+        updateActionButtonState();
+
         await db.deleteFiles(keys);
+
+        isLoading = false;
+        updateActionButtonState();
+
         emitDBChange();
     });
 });
