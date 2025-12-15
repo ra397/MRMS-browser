@@ -12,3 +12,7 @@ tr.group-start {
 .group-icon {
     cursor: pointer;
 }
+
+.collapsed-row {
+    display: none !important;
+}

@@ -15,14 +15,63 @@ export class SelectionManager {
         return selectedRows.toArray().map(r => r[1]);
     }
 
-    selectAllRows() {
-        this.dataTable.rows().nodes().to$().addClass('selected');
+    toggleSelectAll() {
+        if (this.#areAllVisibleRowsSelected()) {
+            this.clearSelection();
+        } else {
+            this.selectAllVisibleRows();
+        }
+    }
+
+    selectAllVisibleRows() {
+        const visibleRows = this.dataTable
+            .rows()
+            .nodes()
+            .toArray()
+            .filter(row =>
+                !row.classList.contains('collapsed-row') &&
+                !row.classList.contains('group-start')
+            );
+
+        visibleRows.forEach(row => row.classList.add('selected'));
+
+        this.#updateSelectAllButtonText();
     }
 
     clearSelection() {
-        this.#clearAllSelections();
+        this.#clearAllVisibleSelections();
         this.anchorIndex = null;
         this.currentIndex = null;
+        this.#updateSelectAllButtonText();
+    }
+
+    #updateSelectAllButtonText() {
+        const selectAllBtn = document.getElementById("select-all-btn");
+
+        if (this.#areAllVisibleRowsSelected()) {
+            selectAllBtn.textContent = "Unselect All";
+        } else {
+            selectAllBtn.textContent = "Select All";
+        }
+    }
+
+    #areAllVisibleRowsSelected() {
+        const visibleRows = this.dataTable
+            .rows()
+            .nodes()
+            .toArray()
+            .filter(row =>
+                !row.classList.contains('collapsed-row') &&
+                !row.classList.contains('group-start')
+            );
+
+        const visibleRowsCount = visibleRows.length;
+
+        if (visibleRowsCount === 0) return false;
+
+        const visibleSelectedRowsCount = visibleRows.filter(row => row.classList.contains('selected')).length;
+
+        return visibleRowsCount === visibleSelectedRowsCount;
     }
 
     #bindClickHandler() {
@@ -54,12 +103,13 @@ export class SelectionManager {
         const name = groupRow.dataset.name;
         this.collapsedGroups[name] = !this.collapsedGroups[name];
         this.dataTable.draw(false);
+        this.#updateSelectAllButtonText();
     }
 
     #bindKeyboardHandler() {
         document.addEventListener('keydown', (e) => {
             if (e.key === "Escape") {
-                this.#clearAllSelections();
+                this.clearSelection();
                 return;
             }
 
@@ -81,14 +131,28 @@ export class SelectionManager {
     }
 
     #handleShiftClick(rowIndex, preserveExisting) {
-        this.#selectRange(this.anchorIndex, rowIndex, preserveExisting);
+        let anchor = this.anchorIndex;
+        const anchorRow = this.dataTable.row(anchor).node();
+
+        // If anchor is in a collapsed group, find nearest visible anchor toward the clicked row
+        if (anchorRow.classList.contains('collapsed-row')) {
+            anchorRow.classList.remove('selected');
+
+            const direction = rowIndex > anchor ? 1 : -1;
+            anchor = this.#getNextVisibleIndex(anchor, direction);
+        }
+
+        this.anchorIndex = anchor;
+        this.#selectRange(anchor, rowIndex, preserveExisting);
         this.currentIndex = rowIndex;
+        this.#updateSelectAllButtonText();
     }
 
     #handleCtrlClick(row, rowIndex) {
         row.classList.toggle('selected');
         this.anchorIndex = rowIndex;
         this.currentIndex = rowIndex;
+        this.#updateSelectAllButtonText();
     }
 
     #handleSingleClick(row, rowIndex, isSelected) {
@@ -97,25 +161,34 @@ export class SelectionManager {
             this.anchorIndex = null;
             this.currentIndex = null;
         } else {
-            this.#clearAllSelections();
+            this.#clearAllVisibleSelections();
             row.classList.add('selected');
             this.anchorIndex = rowIndex;
             this.currentIndex = rowIndex;
         }
+        this.#updateSelectAllButtonText();
     }
 
     #extendSelection(direction) {
-        this.currentIndex = this.#clampIndex(this.currentIndex + direction);
+        const nextIndex = this.#getNextVisibleIndex(this.currentIndex, direction);
+        if (nextIndex === this.currentIndex) return;
+
+        this.currentIndex = nextIndex;
         this.#selectRange(this.anchorIndex, this.currentIndex);
         this.#scrollToRow(this.currentIndex);
+        this.#updateSelectAllButtonText();
     }
 
     #moveSelection(direction) {
-        this.currentIndex = this.#clampIndex(this.currentIndex + direction);
-        this.#clearAllSelections();
+        const nextIndex = this.#getNextVisibleIndex(this.currentIndex, direction);
+        if (nextIndex === this.currentIndex) return;
+
+        this.currentIndex = nextIndex;
+        this.#clearAllVisibleSelections();
         this.dataTable.row(this.currentIndex).node().classList.add('selected');
         this.anchorIndex = this.currentIndex;
         this.#scrollToRow(this.currentIndex);
+        this.#updateSelectAllButtonText();
     }
 
     #selectRange(from, to, preserveExisting = false) {
@@ -123,12 +196,44 @@ export class SelectionManager {
         const end = Math.max(from, to);
 
         if (!preserveExisting) {
-            this.#clearAllSelections();
+            this.#clearAllVisibleSelections();
         }
 
         for (let i = start; i <= end; i++) {
-            this.dataTable.row(i).node().classList.add('selected');
+            const row = this.dataTable.row(i).node();
+            if (!row.classList.contains('collapsed-row')) {
+                row.classList.add('selected');
+            }
         }
+    }
+
+    #getNextVisibleIndex(currentIndex, direction) {
+        const totalRows = this.dataTable.rows().count();
+        let nextIndex = currentIndex + direction;
+
+        while (nextIndex >= 0 && nextIndex < totalRows) {
+            const row = this.dataTable.row(nextIndex).node();
+            if (!row.classList.contains('collapsed-row')) {
+                return nextIndex;
+            }
+            nextIndex += direction;
+        }
+
+        // No visible row found in that direction, stay at current position
+        return currentIndex;
+    }
+
+    #clearAllVisibleSelections() {
+        const visibleRows = this.dataTable
+            .rows()
+            .nodes()
+            .toArray()
+            .filter(row =>
+                !row.classList.contains('collapsed-row') &&
+                !row.classList.contains('group-start')
+            );
+        visibleRows.forEach(row => row.classList.remove('selected'));
+        this.#updateSelectAllButtonText();
     }
 
     #clearAllSelections() {

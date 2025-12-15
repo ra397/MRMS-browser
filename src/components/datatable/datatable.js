@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 div.className = 'dt-controls';
                 div.innerHTML = `
                     <button class="btn success" onclick="">Play</button>
-                    <button class="btn primary" onclick="selectionManager.selectAllRows()">Select All</button>
+                    <button id="select-all-btn" class="btn primary" onclick="selectionManager.toggleSelectAll()">Select All</button>
                     <button class="btn danger" onclick="">Delete</button>
                 `;
                 return div;
@@ -114,7 +114,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const icon = collapsed ? '▶' : '▼';
 
                 rows.nodes().each(function(r) {
-                    r.style.display = collapsed ? 'none' : '';
+                    if (collapsed) {
+                        r.classList.add('collapsed-row');
+                    } else {
+                        r.classList.remove('collapsed-row');
+                    }
                 });
 
                 const tr = document.createElement('tr');
