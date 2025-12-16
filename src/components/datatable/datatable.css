@@ -38,3 +38,12 @@ tr.group-start {
 .collapsed-row {
     display: none !important;
 }
+
+table.dataTable > tbody > tr:not(.group-start) > td {
+    text-align: center;
+    border-right: 1px solid #eee;
+}
+
+table.dataTable > tbody > tr > td {
+    white-space: nowrap;
+}
