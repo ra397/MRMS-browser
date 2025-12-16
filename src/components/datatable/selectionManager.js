@@ -15,6 +15,10 @@ export class SelectionManager {
         return selectedRows.toArray().map(r => r[1]);
     }
 
+    getSelectedData() {
+        return this.dataTable.rows('.selected').data().toArray();
+    }
+
     toggleSelectAll() {
         if (this.#areAllVisibleRowsSelected()) {
             this.clearSelection();
@@ -35,21 +39,21 @@ export class SelectionManager {
 
         visibleRows.forEach(row => row.classList.add('selected'));
 
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     clearSelection() {
         this.#clearAllVisibleSelections();
         this.anchorIndex = null;
         this.currentIndex = null;
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
-    #updateBtnStates() {
+    #updateDatatable() {
         const selectAllBtn = document.getElementById("select-all-btn");
 
         if (this.#areAllVisibleRowsSelected()) {
-            selectAllBtn.textContent = "Unselect All";
+            selectAllBtn.textContent = "Clear All";
         } else {
             selectAllBtn.textContent = "Select All";
         }
@@ -105,7 +109,7 @@ export class SelectionManager {
         const name = groupRow.dataset.name;
         this.collapsedGroups[name] = !this.collapsedGroups[name];
         this.dataTable.draw(false);
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #bindKeyboardHandler() {
@@ -147,14 +151,14 @@ export class SelectionManager {
         this.anchorIndex = anchor;
         this.#selectRange(anchor, rowIndex, preserveExisting);
         this.currentIndex = rowIndex;
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #handleCtrlClick(row, rowIndex) {
         row.classList.toggle('selected');
         this.anchorIndex = rowIndex;
         this.currentIndex = rowIndex;
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #handleSingleClick(row, rowIndex, isSelected) {
@@ -168,7 +172,7 @@ export class SelectionManager {
             this.anchorIndex = rowIndex;
             this.currentIndex = rowIndex;
         }
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #extendSelection(direction) {
@@ -178,7 +182,7 @@ export class SelectionManager {
         this.currentIndex = nextIndex;
         this.#selectRange(this.anchorIndex, this.currentIndex);
         this.#scrollToRow(this.currentIndex);
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #moveSelection(direction) {
@@ -190,7 +194,7 @@ export class SelectionManager {
         this.dataTable.row(this.currentIndex).node().classList.add('selected');
         this.anchorIndex = this.currentIndex;
         this.#scrollToRow(this.currentIndex);
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #selectRange(from, to, preserveExisting = false) {
@@ -235,7 +239,7 @@ export class SelectionManager {
                 !row.classList.contains('group-start')
             );
         visibleRows.forEach(row => row.classList.remove('selected'));
-        this.#updateBtnStates();
+        this.#updateDatatable();
     }
 
     #clearAllSelections() {

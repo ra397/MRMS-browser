@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   </td>
                 `;
                 tr.dataset.name = group;
+                tr.dataset.total = groupRawCompressedSize;
                 tr.classList.add('group-start');
                 if (collapsed) {
                     tr.classList.add('collapsed');
@@ -148,15 +149,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 /* React to DB changes */
-document.addEventListener('db-change', () => {
-    refreshDataFromDB();
+document.addEventListener('db-change', async () => {
+    await refreshDataFromDB();
+    updateTotalStorageDisplayGlobal();
 });
 
 /* React to selection changes from selectionManager.js */
 document.addEventListener("dt-selection-change", () => {
     updateActionButtonState();
+    updateSelectedStorageDisplayPerGroup();
+    updateSelectedStorageDisplayGlobal();
 });
 
+/* Helpers that update the state of datatable items */
 function updateActionButtonState() {
     const playBtn = document.getElementById('play-files-btn');
     const deleteBtn = document.getElementById('delete-btn');
@@ -166,9 +171,65 @@ function updateActionButtonState() {
     deleteBtn.disabled = !hasSelection || isLoading;
 }
 
+function getSelectedStorageSizePerGroup() {
+    const selectedData = selectionManager.getSelectedData();
+    const groupSizes = {};
+
+    selectedData.forEach(row => {
+        const group = row[0]; // product name
+        const rawBytes = row[5]; // raw compressed size
+
+        if (!groupSizes[group]) {
+            groupSizes[group] = 0;
+        }
+        groupSizes[group] += rawBytes;
+    });
+
+    return groupSizes;
+}
+
+function updateSelectedStorageDisplayPerGroup() {
+    const selectedSizes = getSelectedStorageSizePerGroup();
+
+    const groupRows = document.querySelectorAll('tr.group-start');
+
+    groupRows.forEach(row => {
+        const groupName = row.dataset.name;
+        const groupSizeSpan = row.querySelector('.group-size');
+
+        const formattedTotalSize = formatBytes(row.dataset.total);
+
+        if (selectedSizes[groupName]) {
+            const formattedSelectedSize = formatBytes(selectedSizes[groupName]);
+            groupSizeSpan.textContent = `${formattedTotalSize} (${formattedSelectedSize})`;
+        } else {
+            groupSizeSpan.textContent = formattedTotalSize;
+        }
+    });
+}
+
+function updateTotalStorageDisplayGlobal() {
+    const data = dataTable.rows().data().toArray();
+    const totalBytes = data.reduce((sum, row) => sum+ row[5], 0);
+    document.getElementById('total-storage').textContent = formatBytes(totalBytes);
+}
+
+function updateSelectedStorageDisplayGlobal() {
+    const selectedData = selectionManager.getSelectedData();
+    const selectedBytes = selectedData.reduce((sum, row) => sum + row[5], 0);
+    const selectedStorageEl = document.getElementById('selected-storage');
+
+    if (selectedBytes > 0) {
+        selectedStorageEl.textContent = `(${formatBytes(selectedBytes)})`;
+    } else {
+        selectedStorageEl.textContent = '';
+    }
+}
+
 /* On click handlers for datatable buttons */
 document.addEventListener('datatable-ready', async () => {
     updateActionButtonState();
+    updateTotalStorageDisplayGlobal();
     document.getElementById("play-files-btn").addEventListener('click', async () => {
         const keys = selectionManager.getSelectedKeys();
         if (keys.length === 0) return;

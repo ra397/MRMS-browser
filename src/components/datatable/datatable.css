@@ -12,12 +12,21 @@
     z-index: 10;
 
     padding: var(--dt-controls-padding);
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dt-storage-info {
+    margin-left: auto;
+    padding-right: 2ch;
 }
 
 /* Styling for the column headers */
 #datatable thead {
     position: sticky;
-    top: calc(var(--btn-height) + var(--dt-controls-padding));
+    top: calc(var(--btn-height) + 2 * var(--dt-controls-padding));
     z-index: 10;
     background: white;
 }
@@ -50,7 +59,6 @@ tr.group-start {
 
 table.dataTable > tbody > tr:not(.group-start) > td {
     text-align: center;
-    border-right: 1px solid #eee;
 }
 
 table.dataTable > tbody > tr > td {
