@@ -70,6 +70,14 @@ async function hasFile(fileName) {
     }
 }
 
+async function hasFiles(fileNames) {
+    const results = [];
+    for (const fileName of fileNames) {
+        results.push({ fileName, isCached: await hasFile(fileName) });
+    }
+    return results;
+}
+
 async function getDecodedData(fileName) {
     try {
         const db = await openDB();
@@ -93,7 +101,7 @@ async function getDecodedData(fileName) {
         }
 
         // Decompress before returning
-        return await decompress(compressedData);
+        return await decompress(compressedData.data);
     } catch (error) {
         console.error('Error in getDecodedData:', error);
         return null;
@@ -132,6 +140,73 @@ async function saveDecodedData(fileName, decodedData, scaleFactor) {
     }
 }
 
+async function getAllRecords() {
+    try {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.openCursor();
+
+            const records = [];
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    records.push({
+                        fileName: cursor.key,
+                        ingestTime: cursor.value.ingestTime,
+                        scaleFactor: cursor.value.scaleFactor,
+                        compressedSize: cursor.value.data.byteLength // This is compressed size
+                    });
+                    cursor.continue();
+                } else {
+                    resolve(records);
+                }
+            };
+
+            request.onerror = () => {
+                console.error('Error getting all records:', request.error);
+                reject(request.error);
+            };
+        });
+    } catch (error) {
+        console.error('Error in getAllRecords:', error);
+        return [];
+    }
+}
+
+async function deleteFiles(fileNames) {
+    try {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+
+            let deletedCount = 0;
+            let errorCount = 0;
+
+            for (const fileName of fileNames) {
+                const request = store.delete(fileName);
+                request.onsuccess = () => deletedCount++;
+                request.onerror = () => errorCount++;
+            }
+
+            transaction.oncomplete = () => {
+                resolve({ deletedCount, errorCount });
+            };
+
+            transaction.onerror = () => {
+                console.error('Error deleting files:', transaction.error);
+                reject(transaction.error);
+            };
+        });
+    } catch (error) {
+        console.error('Error in deleteFiles:', error);
+        return { deletedCount: 0, errorCount: fileNames.length };
+    }
+}
+
 async function clearCache() {
     try {
         const db = await openDB();
@@ -155,9 +230,20 @@ async function clearCache() {
     }
 }
 
+export function emitDBChange() {
+    if (typeof document !== 'undefined') {
+        document.dispatchEvent(new CustomEvent('db-change'));
+    } else {
+        console.error("Trying to dispatchEvent outside of browser context.")
+    }
+}
+
 export const db = {
     hasFile,
+    hasFiles,
     getDecodedData,
     saveDecodedData,
+    getAllRecords,
+    deleteFiles,
     clearCache
 };

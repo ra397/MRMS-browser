@@ -1,4 +1,4 @@
-import { products } from "../display/config.js";
+import { db, emitDBChange } from "../database/db.js";
 
 // State tracking
 const state = {
@@ -9,27 +9,6 @@ const state = {
 
 // Web Worker instance - initialized once at module load
 const fetchAndDecodeWorker = new Worker(new URL('./api-worker.js', import.meta.url), { type: 'module' });
-
-fetchAndDecodeWorker.onmessage = (event) => {
-    const { type, product_name, file_name, file_data, error } = event.data;
-
-    if (type === 'file-ready') {
-        // Dispatch directly to display module (decoding already done in worker)
-        document.dispatchEvent(new CustomEvent('display-file', {
-            detail: {
-                product_name: product_name,
-                file_data: file_data,
-                file_name: file_name,
-            },
-            composed: true,
-            bubbles: true,
-        }));
-    } else if (type === 'file-error') {
-        console.error(`Failed to process file: ${file_name}`, error);
-    } else if (type === 'batch-complete') {
-        console.log('All files have been processed by worker');
-    }
-};
 
 fetchAndDecodeWorker.onerror = (error) => {
     console.error('Worker error:', error);
@@ -70,7 +49,7 @@ async function fetchData() {
     const files_to_fetch = [];
 
     for (const file of possible_files) {
-        const file_timestamp = extractTimestampFromKey(file);
+        const file_timestamp = extractTimestampFromKey(file).toISOString();
         if (file_timestamp > state.startTime.toISOString() && file_timestamp <= state.endTime.toISOString()) {
             files_to_fetch.push(file);
         }
@@ -78,8 +57,8 @@ async function fetchData() {
 
     // Sort files by timestamp to ensure correct playback order
     files_to_fetch.sort((a, b) => {
-        const timestampA = extractTimestampFromKey(a);
-        const timestampB = extractTimestampFromKey(b);
+        const timestampA = extractTimestampFromKey(a).toISOString();
+        const timestampB = extractTimestampFromKey(b).toISOString();
         return timestampA.localeCompare(timestampB);
     });
 
@@ -93,16 +72,61 @@ async function fetchData() {
         bubbles: true,
     }));
 
-    // Send files to worker for fetching and decoding
-    fetchAndDecodeWorker.postMessage({
-        type: 'fetch-files',
-        files: files_to_fetch,
-        productName: state.product,
+    const cacheStatus = await db.hasFiles(files_to_fetch);
+    for (const { fileName, isCached } of cacheStatus) {
+        if (isCached) {
+            const decodedData = await db.getDecodedData(fileName);
+            dispatchDisplayFile(state.product, fileName, decodedData);
+        } else {
+            await fetchAndDecodeFile(fileName);
+        }
+    }
+    emitDBChange();
+}
+
+function dispatchDisplayFile(product_name, file_name, file_data) {
+    document.dispatchEvent(new CustomEvent('display-file', {
+        detail: {
+            product_name: product_name,
+            file_data: file_data,
+            file_name: file_name,
+        },
+        composed: true,
+        bubbles: true,
+    }));
+}
+
+function fetchAndDecodeFile(fileName) {
+    return new Promise((resolve, reject) => {
+        const handler = async (event) => {
+            const {type, product_name, file_name, file_data, scale_factor, error} = event.data;
+
+            if (file_name !== fileName) return; // Not our file, ignore
+
+            fetchAndDecodeWorker.removeEventListener('message', handler);
+
+            if (type === 'file-ready') {
+                await db.saveDecodedData(file_name, file_data, scale_factor);
+                dispatchDisplayFile(product_name, file_name, file_data);
+                resolve();
+            } else if (type === 'file-error') {
+                console.error(`Failed to process: ${file_name}`, error);
+                reject(error);
+            }
+        };
+
+        fetchAndDecodeWorker.addEventListener('message', handler);
+
+        fetchAndDecodeWorker.postMessage({
+            type: 'fetch-file',
+            fileName: fileName,
+            productName: state.product,
+        });
     });
 }
 
 async function getFiles(day) {
-    const product = products[state.product].s3_name;
+    const product = state.product;
     try {
         const response = await fetch(`https://noaa-mrms-pds.s3.amazonaws.com/?list-type=2&delimiter=/&prefix=CONUS/${product}/${day}/`);
         const xmlString = await response.text();
@@ -140,7 +164,7 @@ export function extractTimestampFromKey(filename) {
     const minute = hhmmss.substring(2, 4);
     const second = hhmmss.substring(4, 6);
 
-    const date = new Date(Date.UTC(
+    return new Date(Date.UTC(
         parseInt(year),
         parseInt(month) - 1,
         parseInt(day),
@@ -148,8 +172,6 @@ export function extractTimestampFromKey(filename) {
         parseInt(minute),
         parseInt(second)
     ));
-
-    return date.toISOString();
 }
 
 function extractYYYYMMDD(isoString) {

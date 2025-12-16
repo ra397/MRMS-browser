@@ -1,0 +1,66 @@
+@import url('datatables.net-dt');
+
+#database-manager {
+    --dt-controls-padding: 0.3125em;
+}
+
+/* Styling for the action buttons */
+.dt-controls {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+
+    padding: var(--dt-controls-padding);
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dt-storage-info {
+    margin-left: auto;
+    padding-right: 2ch;
+}
+
+/* Styling for the column headers */
+#datatable thead {
+    position: sticky;
+    top: calc(var(--btn-height) + 2 * var(--dt-controls-padding));
+    z-index: 10;
+    background: white;
+}
+
+#datatable tbody tr {
+    user-select: none;
+    cursor: default;
+}
+
+tr.group-start {
+    background: #ccc !important;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.group-size {
+    padding-right: 4ch;
+}
+
+.group-icon {
+    cursor: pointer;
+}
+
+.collapsed-row {
+    display: none !important;
+}
+
+table.dataTable > tbody > tr:not(.group-start) > td {
+    text-align: center;
+}
+
+table.dataTable > tbody > tr > td {
+    white-space: nowrap;
+}

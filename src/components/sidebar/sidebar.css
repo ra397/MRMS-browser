@@ -1,0 +1,21 @@
+#sidebar {
+    position: absolute;
+    top: 15ch;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-item {
+    width: 12ch;
+    text-align: center;
+    outline: 1px solid #ccc;
+    background: white;
+    padding: 0.3ch;
+}
+
+.sidebar-item:hover {
+    cursor: default;
+    user-select: none;
+    background: #eee;
+}

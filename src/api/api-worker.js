@@ -1,4 +1,3 @@
-import { db } from '../database/db.js';
 import { Grib2Decoder } from '../decode/grib2/grib2.js';
 import fastPng from "../decode/fastpng/fast-png-bundle.js";
 
@@ -62,78 +61,45 @@ function generateMatrixUsingLUT(values, numCols, numRows) {
     return raster;
 }
 
-async function processFiles(files, productName) {
-    // Ensure LUT is loaded before processing
+async function processFile(fileName, productName) {
     await loadLUT();
 
-    for (const fileName of files) {
-        try {
-            const isCached = await db.hasFile(fileName);
-            let decodedData;
+    try {
+        const rawData = await fetchFile(fileName);
 
-            if (isCached) {
-                // Get decoded data from IndexedDB
-                decodedData = await db.getDecodedData(fileName);
-
-                if (!decodedData) {
-                    console.error(`Worker: Failed to retrieve cached data for: ${fileName}`);
-                    self.postMessage({
-                        type: 'file-error',
-                        file_name: fileName,
-                        error: 'Failed to retrieve cached data',
-                    });
-                    continue;
-                }
-            } else {
-                // Fetch from S3
-                const rawData = await fetchFile(fileName);
-
-                if (!rawData) {
-                    self.postMessage({
-                        type: 'file-error',
-                        file_name: fileName,
-                        error: 'Failed to fetch file',
-                    });
-                    continue;
-                }
-
-                // Decode GRIB2
-                const { gribData, scaleFactor } = decodeGrib2(rawData);
-
-                // Apply LUT transformation
-                decodedData = generateMatrixUsingLUT(gribData, LUT.ncols, LUT.nrows);
-
-                // Save to IndexedDB
-                await db.saveDecodedData(fileName, decodedData, scaleFactor);
-            }
-
-            // Send decoded data back to main thread
-            self.postMessage({
-                type: 'file-ready',
-                product_name: productName,
-                file_name: fileName,
-                file_data: decodedData,
-            }, [decodedData.buffer]);
-
-        } catch (err) {
-            console.error(`Worker: Error processing ${fileName}:`, err);
+        if (!rawData) {
             self.postMessage({
                 type: 'file-error',
                 file_name: fileName,
-                error: err.message,
+                error: 'Failed to fetch file',
             });
+            return;
         }
-    }
 
-    self.postMessage({
-        type: 'batch-complete',
-    });
+        const { gribData, scaleFactor } = decodeGrib2(rawData);
+        const decodedData = generateMatrixUsingLUT(gribData, LUT.ncols, LUT.nrows);
+
+        self.postMessage({
+            type: 'file-ready',
+            product_name: productName,
+            file_name: fileName,
+            file_data: decodedData,
+            scale_factor: scaleFactor,
+        }, [decodedData.buffer]);
+
+    } catch (err) {
+        self.postMessage({
+            type: 'file-error',
+            file_name: fileName,
+            error: err.message,
+        });
+    }
 }
 
 self.onmessage = (event) => {
-    const { type, files, productName } = event.data;
+    const { type, fileName, productName } = event.data;
 
-    if (type === 'fetch-files') {
-        processFiles(files, productName);
+    if (type === 'fetch-file') {
+        processFile(fileName, productName);
     }
 };

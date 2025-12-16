@@ -4,11 +4,57 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="//uiowa.edu/profiles/custom/sitenow/assets/favicon.ico" />
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTYZ2ogy4XY8GmiIpiw89OpE9iRk5MnxM"></script>
-    <title>mrms-browser</title>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTYZ2ogy4XY8GmiIpiw89OpE9iRk5MnxM&loading=async"></script>
+    <title>MRMS Browser</title>
   </head>
   <body>
-    <div id="app"></div>
+      <div id="map"></div>
+
+      <div id="menu-container">
+          <label for="product">Select Product:</label>
+          <select id="product"></select>
+
+          <span>Select Interval:</span>
+          <div id="timeline-container">
+              <svg id="start-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='green'/></svg>
+              <svg id="stop-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='red'/></svg>
+              <div id="line"></div>
+              <div id="timeline"></div>
+          </div>
+      </div>
+
+      <div id="player-container">
+          <span id="play-pause-btn"></span>
+          <label>
+              <input id="player-seek" type="range" value="0" min="0" max="0">
+          </label>
+      </div>
+
+
+      <div id="sidebar">
+          <span class="sidebar-item" data-menu="database-manager">Database Manager</span>
+          <span class="sidebar-item" data-menu="settings">Settings</span>
+      </div>
+
+      <div id="menus">
+          <div id="database-manager" class="hidden">
+              <div class="dt-controls">
+                <button id="play-files-btn" class="btn success">Play</button>
+                <button id="select-all-btn" class="btn primary">Select All</button>
+                <button id="delete-btn" class="btn danger">Delete</button>
+                <span class="dt-storage-info">
+                    <span><b>Storage:</b></span>
+                    <span id="total-storage"></span>
+                    <span id="selected-storage"></span>
+                </span>
+              </div>
+              <table id="datatable"></table>
+          </div>
+
+          <div id="settings" class="hidden">
+              This is the settings menu.
+          </div>
+      </div>
   </body>
   <script type="module" src="/src/main.js"></script>
 </html>

@@ -1,16 +1,18 @@
 import './components/map/map.js';
-import './components/map/map.css';
-
-import './components/menu/MenuComponent.js';
-import './components/player/Player.js';
-
-import './style.css';
 
 import './api/api.js';
 import './display/display.js';
 
-document.getElementById('app').innerHTML = `
-    <div id="map"></div>
-    <menu-component></menu-component>
-    <player-component></player-component>
-`;
+import './components/productSelector/productSelector.js';
+
+import './components/timeline/timeline.js';
+
+import './components/player/player.js';
+
+import './components/sidebar/sidebar.js';
+
+import './components/datatable/datatable.js';
+
+import './components/settings/settings.js';
+
+import './style.css';
