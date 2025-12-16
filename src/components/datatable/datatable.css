@@ -31,6 +31,15 @@ tr.group-start {
     background: #ccc !important;
 }
 
+.group-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.group-size {
+    padding-right: 4ch;
+}
+
 .group-icon {
     cursor: pointer;
 }

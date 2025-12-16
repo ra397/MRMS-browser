@@ -46,13 +46,15 @@ async function loadDataFromDB() {
             hour12: false,
         });
         const ingestTime = formatIngestTime(record.ingestTime);
-        const compressedSize = formatBytes(record.compressedSize);
+        const formattedCompressedSize = formatBytes(record.compressedSize);
+        const rawCompressedSize = record.compressedSize;
         return [
             product,
             s3Name,
             validTime,
             ingestTime,
-            compressedSize,
+            formattedCompressedSize,
+            rawCompressedSize,
         ];
     });
 }
@@ -82,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             { title: 'Valid Time' },
             { title: 'Ingest Time' },
             { title: 'Memory Usage' },
+            { title: 'Raw Memory Usage', visible: false },
         ],
         data: dataSet,
         order: [[0, 'asc'], [2, 'asc']],
@@ -112,8 +115,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
 
+                // Sum compressed storage size for each group
+                let groupRawCompressedSize = 0;
+                rows.data().each(function (row) {
+                    groupRawCompressedSize += row[5];
+                });
+                const groupFormattedCompressedSize = formatBytes(groupRawCompressedSize);
+
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="8"><span class="group-icon">${icon}</span> ${group} (${rows.count()})</td>`;
+                tr.innerHTML = `
+                  <td colspan="8">
+                      <div class="group-header">
+                          <span class="group-left"><span class="group-icon">${icon}</span> ${group}</span>
+                          <span class="group-size">${groupFormattedCompressedSize}</span>
+                      </div>
+                  </td>
+                `;
                 tr.dataset.name = group;
                 tr.classList.add('group-start');
                 if (collapsed) {
