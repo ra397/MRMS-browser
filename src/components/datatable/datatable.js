@@ -126,9 +126,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     selectionManager = new SelectionManager(dataTable, collapsedGroups);
-    globalThis.selectionManager = selectionManager;
-
-    document.getElementById('database-manager').classList.add('hidden');
 
     document.dispatchEvent(new CustomEvent('datatable-ready'));
 });
