@@ -86,27 +86,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         data: dataSet,
         order: [[0, 'asc'], [2, 'asc']],
         orderFixed: [[0, 'asc']],
-        lengthMenu: [-1, 10, 25, 50],
-        fixedHeader: {
-            header: true,
-        },
+        lengthMenu: [-1, 10, 25, 50], // DO NOT REMOVE
         layout: {
             topStart: null,
             topEnd: null,
-            top2Start: 'pageLength',
-            top2End: 'search',
-            top: function () {
-                const div = document.createElement('div');
-                div.className = 'dt-controls';
-                div.innerHTML = `
-                    <button id="play-files-btn" class="btn success">Play</button>
-                    <button id="select-all-btn" class="btn primary">Select All</button>
-                    <button id="delete-btn" class="btn danger">Delete</button>
-                `;
-                return div;
-            },
-            bottomStart: 'info',
-            bottomEnd: 'paging'
+            top2Start: null,
+            top2End: null,
+            bottomStart: null,
+            bottomEnd: null,
         },
         createdRow: function(row, data) {
             row.dataset.key = data[1];
