@@ -86,6 +86,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             { title: 'Memory Usage' },
             { title: 'Raw Memory Usage', visible: false },
         ],
+        columnDefs: [
+            { // Order formatted memory usage (97.0 KB, 1.1 MB) by raw memory usage (97000 bytes, 1.1e6 bytes)
+                targets: 4,
+                orderData: [5],
+            }
+        ],
         data: dataSet,
         order: [[0, 'asc'], [2, 'asc']],
         orderFixed: [[0, 'asc']],
