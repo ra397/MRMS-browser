@@ -35,8 +35,9 @@ function parseDisplayName(fileKey) {
 async function loadDataFromDB() {
     const records = await db.getAllRecords();
     return records.map(record => {
-        const product = parseDisplayName(record.fileName);
-        const s3Name = record.fileName;
+        const productDisplayName = parseDisplayName(record.fileName);
+        const fileKey = record.fileName;
+        const productS3Name = fileKey.split("/")[1];
         const validTime = extractTimestampFromKey(record.fileName).toLocaleString('en-CA', {
             year: 'numeric',
             month: '2-digit',
@@ -49,12 +50,13 @@ async function loadDataFromDB() {
         const formattedCompressedSize = formatBytes(record.compressedSize);
         const rawCompressedSize = record.compressedSize;
         return [
-            product,
-            s3Name,
+            productDisplayName,
+            fileKey,
             validTime,
             ingestTime,
             formattedCompressedSize,
             rawCompressedSize,
+            productS3Name,
         ];
     });
 }
@@ -80,21 +82,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     dataTable = new DataTable('#datatable', {
         columns: [
             { title: 'Product' },
-            { title: 's3Name', visible: false },
+            { title: 'fileKey', visible: false }, // Used to set data-key attribute on each table row
             { title: 'Valid Time' },
             { title: 'Ingest Time' },
             { title: 'Memory Usage' },
             { title: 'Raw Memory Usage', visible: false },
+            { title: 's3Name', visible: false }, // Used to fix order the data groups
         ],
         columnDefs: [
             { // Order formatted memory usage (97.0 KB, 1.1 MB) by raw memory usage (97000 bytes, 1.1e6 bytes)
                 targets: 4,
                 orderData: [5],
-            }
+            },
         ],
         data: dataSet,
-        order: [[0, 'asc'], [2, 'asc']],
-        orderFixed: [[0, 'asc']],
+        order: [[6, 'asc'], [2, 'asc']],
+        orderFixed: [[6, 'asc']],
         lengthMenu: [-1, 10, 25, 50], // DO NOT REMOVE
         layout: {
             topStart: null,
@@ -105,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             bottomEnd: null,
         },
         createdRow: function(row, data) {
-            row.dataset.key = data[1];
+            row.dataset.key = data[1]; // fileKey is used as row key -> maps to key in indexedDB
         },
         rowGroup: {
             dataSrc: 0,
