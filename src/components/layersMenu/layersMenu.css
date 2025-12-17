@@ -3,8 +3,6 @@
     --primary-color: green;
     --text-color: #334155;
 
-    display: flex;
-    flex-direction: column;
     padding: 1.5ch;
     box-sizing: border-box;
 }
