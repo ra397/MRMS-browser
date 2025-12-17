@@ -1,0 +1,199 @@
+/* Menu container styling */
+#map-layers {
+    --primary-color: green;
+    --text-color: #334155;
+
+    display: flex;
+    flex-direction: column;
+    padding: 1.5ch;
+    box-sizing: border-box;
+}
+
+/* Menu title and subtitle styling */
+.menu-header h2 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.menu-header p {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #666666;
+}
+
+/* Remove default styling for ul and li */
+.layers-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+/* Border in-between layers */
+.layer-item {
+    border-bottom: 1px solid #dddde3;
+}
+
+.layer-item:last-child {
+    border-bottom: none;
+}
+
+/* Layer header and switch styling */
+.layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1ch 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.layer-label {
+    font-weight: 500;
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5ch;
+}
+
+.chevron {
+    width: 1em;
+    height: 1em;
+    fill: #94a3b8;
+}
+
+.layer-item.active .chevron {
+    transform: rotate(90deg);
+}
+
+/* Toggle Switch Styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 2.5em;
+    height: 1.375em;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .4s;
+    border-radius: 2em;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1em;
+    width: 1em;
+    left: 0.25em;
+    bottom: 0.25em;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(1em);
+}
+
+/* Controls area hiding/showing - default to hidden */
+.layer-controls {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 5px;
+}
+
+.layer-item.active .layer-controls {
+    max-height: 6ch;
+    padding-bottom: 1ch;
+}
+
+/* Controls Styling */
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    padding-top: 0.25em;
+    padding-left: 1.5ch;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.control-group label {
+    font-size: 0.70em;
+    color: #64748b;
+    margin-bottom: 0.375em;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Custom Inputs */
+input[type="number"] {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.75em;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="number"]:focus {
+    border-color: var(--primary-color);
+}
+
+/* Custom Color Input Wrapper */
+.color-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    height: 26px;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background: none;
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+}

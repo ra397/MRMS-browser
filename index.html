@@ -53,7 +53,105 @@
           </div>
 
           <div id="map-layers" class="hidden">
-              This is the map layers menu.
+              <div class="menu-header">
+                  <h2>Map Layers</h2>
+                  <p>Manage the visibility and style of each layer.</p>
+              </div>
+
+              <ul class="layers-list">
+                  <li class="layer-item">
+                      <div class="layer-header" onclick="toggleLayer(this)">
+                          <div class="header-left">
+                              <svg class="chevron" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+                              <span class="layer-label">NEXRAD Radars</span>
+                          </div>
+                          <label class="toggle-switch">
+                              <input type="checkbox">
+                              <span class="slider"></span>
+                          </label>
+                      </div>
+
+                      <div class="layer-controls">
+                          <div class="controls-grid">
+                              <div class="control-group">
+                                  <label>Color:</label>
+                                  <div class="color-wrapper">
+                                      <input type="color" value="#ef4444">
+                                  </div>
+                              </div>
+                              <div class="control-group">
+                                  <label>Size:</label>
+                                  <input type="number" value="12" min="1" max="50">
+                              </div>
+                          </div>
+                      </div>
+                  </li>
+
+                  <li class="layer-item">
+                      <div class="layer-header" onclick="toggleLayer(this)">
+                          <div class="header-left">
+                              <svg class="chevron" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+                              <span class="layer-label">USGS Gauges</span>
+                          </div>
+                          <label class="toggle-switch">
+                              <input type="checkbox">
+                              <span class="slider"></span>
+                          </label>
+                      </div>
+
+                      <div class="layer-controls">
+                          <div class="controls-grid">
+                              <div class="control-group">
+                                  <label>Color:</label>
+                                  <div class="color-wrapper">
+                                      <input type="color" value="#ef4444">
+                                  </div>
+                              </div>
+                              <div class="control-group">
+                                  <label>Size:</label>
+                                  <input type="number" value="12" min="1" max="50">
+                              </div>
+                          </div>
+                      </div>
+                  </li>
+
+                  <li class="layer-item">
+                      <div class="layer-header" onclick="toggleLayer(this)">
+                          <div class="header-left">
+                              <svg class="chevron" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+                              <span class="layer-label">River Network</span>
+                          </div>
+                          <label class="toggle-switch">
+                              <input type="checkbox">
+                              <span class="slider"></span>
+                          </label>
+                      </div>
+
+                      <div class="layer-controls">
+                          <div class="controls-grid">
+                              <div class="control-group" style="grid-column: span 2">
+                                  <label>Color:</label>
+                                  <div class="color-wrapper">
+                                      <input type="color" value="#ef4444">
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </li>
+
+                  <li class="layer-item">
+                      <div class="layer-header" onclick="toggleLayer(this)">
+                          <div class="header-left">
+                              <div style="width: 1em;"></div>
+                              <span class="layer-label">Terrain Layer</span>
+                          </div>
+                          <label class="toggle-switch">
+                              <input type="checkbox">
+                              <span class="slider"></span>
+                          </label>
+                      </div>
+                  </li>
+              </ul>
           </div>
 
           <div id="settings" class="hidden">
