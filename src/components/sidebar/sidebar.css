@@ -7,8 +7,15 @@
 }
 
 .sidebar-item {
-    width: 12ch;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     text-align: center;
+
+    height: 6ch;
+    width: 12ch;
+
     outline: 1px solid #ccc;
     background: white;
     padding: 0.3ch;
