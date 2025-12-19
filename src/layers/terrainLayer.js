@@ -1,4 +1,4 @@
-import { RasterTileLayer } from './RasterTileLayer.js';
+import { RasterTileLayer } from './base/RasterTileLayer.js';
 
 const terrainLayer = new RasterTileLayer({
     name: 'Terrain',

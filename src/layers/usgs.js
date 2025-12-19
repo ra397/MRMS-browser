@@ -1,4 +1,4 @@
-import { MarkerCollection } from "./MarkerCollection.js";
+import { MarkerCollection } from "./base/MarkerCollection.js";
 import Pbf from 'pbf';
 import geobuf from 'geobuf';
 import { getMarkerSizeForZoom } from "../components/map/map.js";

@@ -16,7 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     })
 
-    document.dispatchEvent(new CustomEvent('map-ready'));
+    google.maps.event.addListenerOnce(map, 'idle', () => {
+        document.dispatchEvent(new CustomEvent('map-ready'));
+    });
 });
 
 export function getMarkerSizeForZoom(zoom) {

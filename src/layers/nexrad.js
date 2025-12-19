@@ -1,4 +1,4 @@
-import { MarkerCollection } from "./MarkerCollection.js";
+import { MarkerCollection } from "./base/MarkerCollection.js";
 
 let markers = null;
 
