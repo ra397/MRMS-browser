@@ -5,12 +5,20 @@ const terrainLayer = new TileLayer({
     urlTemplate: (x, y, z) => `https://visualriver.net/api-common/tile?name=hillshade&zxy=/${z}/${x}/${y}`
 });
 
-
 document.addEventListener('map-ready', () => {
     const layerItemElement = document.querySelector('[data-layer="terrain"]');
     const toggle = layerItemElement.querySelector('.toggle-switch input');
+    const slider = layerItemElement.querySelector('input[type="range"]');
+    const layerControlsElement = layerItemElement.querySelector('.layer-controls');
+    const opacityLabel = layerControlsElement.querySelector('label').nextElementSibling;
 
     toggle.addEventListener('change', (e) => {
         e.target.checked ? terrainLayer.setMap(map) : terrainLayer.setMap(null);
     });
+
+    slider.addEventListener('change', (e) => {
+        const newOpacity = e.target.value;
+        terrainLayer.setOpacity(newOpacity / 100);
+        opacityLabel.textContent = newOpacity + "%";
+    })
 });

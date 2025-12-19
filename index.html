@@ -142,13 +142,25 @@
                   <li class="layer-item" data-layer="terrain">
                       <div class="layer-header" onclick="toggleLayer(this)">
                           <div class="header-left">
-                              <div style="width: 1em;"></div>
+                              <svg class="chevron" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
                               <span class="layer-label">Terrain Layer</span>
                           </div>
                           <label class="toggle-switch">
                               <input type="checkbox">
                               <span class="slider"></span>
                           </label>
+                      </div>
+
+                      <div class="layer-controls">
+                          <div class="controls-grid">
+                              <div class="control-group" style="grid-column: span 2">
+                                  <div style="display:flex; justify-content: space-between;">
+                                      <label>Opacity</label>
+                                      <label style="color: var(--text-color); font-weight: 400;">100%</label>
+                                  </div>
+                                  <input type="range" min="0" max="100" value="100" class="range-slider">
+                              </div>
+                          </div>
                       </div>
                   </li>
               </ul>
