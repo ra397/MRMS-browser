@@ -23,8 +23,12 @@ document.addEventListener("map-ready", async () => {
         const lng = feature.geometry.coordinates[0];
         const id = feature.properties['comi_id'];
 
-        markers.add(lat, lng, {
+        const markerObj = markers.add(lat, lng, {
             id: id,
+        });
+
+        markerObj.marker.addListener('click', () => {
+            // TODO: insert custom onclick event here
         });
     }
 
