@@ -17,4 +17,6 @@ import './components/layersMenu/layersMenu.js';
 
 import './components/settings/settings.js';
 
+import './layers/layers.js';
+
 import './style.css';
