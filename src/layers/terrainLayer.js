@@ -1,6 +1,6 @@
-import { TileLayer } from './TileLayer.js';
+import { RasterTileLayer } from './RasterTileLayer.js';
 
-const terrainLayer = new TileLayer({
+const terrainLayer = new RasterTileLayer({
     name: 'Terrain',
     urlTemplate: (x, y, z) => `https://visualriver.net/api-common/tile?name=hillshade&zxy=/${z}/${x}/${y}`
 });

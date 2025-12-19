@@ -1,4 +1,4 @@
-export class TileLayer {
+export class RasterTileLayer {
     constructor(options = {}) {
         // Required
         this.urlTemplate = options.urlTemplate; // Function: (x, y, z) => url string
