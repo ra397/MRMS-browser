@@ -33,6 +33,7 @@ export const overlayInfo = {
 }
 
 export const products = [
+    // Multi-Sensor QPE
     {
         display_name: "Q3 Multi-Sensor 1 hr (Pass 1)",
         s3_name: "MultiSensor_QPE_01H_Pass1_00.00",
@@ -68,5 +69,45 @@ export const products = [
         s3_name: "MultiSensor_QPE_72H_Pass1_00.00",
         color_map: defaultColorMap,
     },
-    // add more products here
+    // RadarOnly QPE
+    {
+        display_name: "Q3 Radar Only 15 min",
+        s3_name: "RadarOnly_QPE_15M_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 1 hr",
+        s3_name: "RadarOnly_QPE_01H_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 3 hr",
+        s3_name: "RadarOnly_QPE_03H_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 6 hr",
+        s3_name: "RadarOnly_QPE_06H_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 12 hr",
+        s3_name: "RadarOnly_QPE_12H_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 24 hr",
+        s3_name: "RadarOnly_QPE_24H_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 48 hr",
+        s3_name: "RadarOnly_QPE_48H_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Radar Only 72 hr",
+        s3_name: "RadarOnly_QPE_72H_00.00",
+        color_map: defaultColorMap,
+    },
 ];
