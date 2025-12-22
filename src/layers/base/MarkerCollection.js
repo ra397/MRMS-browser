@@ -7,7 +7,7 @@ export class MarkerCollection {
 
         this.map.addListener("idle", () => {
             this.#updateVisibleMarkers();
-        })
+        });
     }
 
     #createIcon() {
