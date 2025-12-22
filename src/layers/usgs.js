@@ -21,7 +21,7 @@ document.addEventListener("map-ready", async () => {
 
         const lat = feature.geometry.coordinates[1];
         const lng = feature.geometry.coordinates[0];
-        const id = feature.properties['comi_id'];
+        const id = feature.properties['usgs_id'];
 
         const markerObj = markers.add(lat, lng, {
             id: id,
