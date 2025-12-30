@@ -7,7 +7,7 @@ let LUT = null;
 async function loadLUT() {
     if (LUT) return;
 
-    const response = await fetch("/mrms-browser/MRMS_LUT.json");
+    const response = await fetch("/MRMS_LUT.json");
     LUT = await response.json();
 
     // Convert "mrms_1d_ix" from base64 string to typed array
@@ -35,7 +35,8 @@ async function fetchFile(path) {
 
 function decodeGrib2(rawData) {
     function pngDecoder(imageBytes) {
-        return fastPng.decode(imageBytes).data.slice(0);
+        const decoded = fastPng.decode(imageBytes);
+        return decoded.data.slice(0);
     }
 
     const grib2Decoder = new Grib2Decoder({
