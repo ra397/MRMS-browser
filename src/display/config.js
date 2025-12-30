@@ -181,319 +181,148 @@ export const overlayInfo = {
         "CfAQADgwGf6tJVEwAAAABJRU5ErkJggg==",
 }
 
-export const products = [
-    // Q3 Multi-Sensor
+export const productGroups = [
     {
-        display_name: "Q3 Multi-Sensor 1 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_01H_Pass1_00.00",
-        color_map: defaultColorMap,
+        name: "QPE",
+        type: "category",
+        items: [
+            {
+                name: "Q3 Multi-Sensor",
+                type: "subcategory",
+                items: [
+                    { display_name: "Q3 Multi-Sensor 1 hr (Pass 1)", s3_name: "MultiSensor_QPE_01H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 3 hr (Pass 1)", s3_name: "MultiSensor_QPE_03H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 6 hr (Pass 1)", s3_name: "MultiSensor_QPE_06H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 12 hr (Pass 1)", s3_name: "MultiSensor_QPE_12H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 24 hr (Pass 1)", s3_name: "MultiSensor_QPE_24H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 48 hr (Pass 1)", s3_name: "MultiSensor_QPE_48H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 72 hr (Pass 1)", s3_name: "MultiSensor_QPE_72H_Pass1_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 1 hr (Pass 2)", s3_name: "MultiSensor_QPE_01H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 3 hr (Pass 2)", s3_name: "MultiSensor_QPE_03H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 6 hr (Pass 2)", s3_name: "MultiSensor_QPE_06H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 12 hr (Pass 2)", s3_name: "MultiSensor_QPE_12H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 24 hr (Pass 2)", s3_name: "MultiSensor_QPE_24H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 48 hr (Pass 2)", s3_name: "MultiSensor_QPE_48H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 72 hr (Pass 2)", s3_name: "MultiSensor_QPE_72H_Pass2_00.00", color_map: defaultColorMap },
+                ]
+            },
+            {
+                name: "Q3 Radar Only",
+                type: "subcategory",
+                items: [
+                    { display_name: "Q3 Radar Only 15 min", s3_name: "RadarOnly_QPE_15M_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 1 hr", s3_name: "RadarOnly_QPE_01H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 3 hr", s3_name: "RadarOnly_QPE_03H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 6 hr", s3_name: "RadarOnly_QPE_06H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 12 hr", s3_name: "RadarOnly_QPE_12H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 24 hr", s3_name: "RadarOnly_QPE_24H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 48 hr", s3_name: "RadarOnly_QPE_48H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 72 hr", s3_name: "RadarOnly_QPE_72H_00.00", color_map: defaultColorMap },
+                ]
+            }
+        ]
     },
     {
-        display_name: "Q3 Multi-Sensor 3 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_03H_Pass1_00.00",
-        color_map: defaultColorMap,
+        name: "Reflectivity",
+        type: "category",
+        items: [
+            {
+                name: "Base Reflectivity",
+                type: "subcategory",
+                items: [
+                    { display_name: "Base Reflectivity", s3_name: "MergedBaseReflectivity_00.50", color_map: decibelsColorMap },
+                    { display_name: "Base Reflectivity (Quality Control)", s3_name: "MergedBaseReflectivityQC_00.50", color_map: decibelsColorMap },
+                ]
+            },
+            {
+                name: "Layer Reflectivity",
+                type: "subcategory",
+                items: [
+                    { display_name: "Layer Reflectivity ANC", s3_name: "LayerCompositeReflectivity_ANC_00.50", color_map: decibelsColorMap },
+                    { display_name: "Layer Reflectivity Low (0 - 24,000 ft)", s3_name: "LayerCompositeReflectivity_Low_00.50", color_map: decibelsColorMap },
+                    { display_name: "Layer Reflectivity High (24,000 - 60,000 ft)", s3_name: "LayerCompositeReflectivity_High_00.50", color_map: decibelsColorMap },
+                    { display_name: "Layer Reflectivity Super (33,000 - 60,000 ft)", s3_name: "LayerCompositeReflectivity_Super_00.50", color_map: decibelsColorMap },
+                ]
+            },
+            {
+                name: "Lowest Altitude Reflectivity",
+                type: "subcategory",
+                items: [
+                    { display_name: "Reflectivity at Lowest Altitude", s3_name: "ReflectivityAtLowestAltitude_00.50", color_map: decibelsColorMap },
+                    { display_name: "Merged Reflectivity At Lowest Altitude", s3_name: "MergedReflectivityAtLowestAltitude_00.50", color_map: decibelsColorMap },
+                ]
+            }
+        ]
     },
     {
-        display_name: "Q3 Multi-Sensor 6 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_06H_Pass1_00.00",
-        color_map: defaultColorMap,
+        name: "Echo Top",
+        type: "category",
+        items: [
+            { display_name: "Echo Top 18 dBZ", s3_name: "EchoTop_18_00.50", color_map: echoTopColorMap },
+            { display_name: "Echo Top 30 dBZ", s3_name: "EchoTop_30_00.50", color_map: echoTopColorMap },
+            { display_name: "Echo Top 50 dBZ", s3_name: "EchoTop_50_00.50", color_map: echoTopColorMap },
+            { display_name: "Echo Top 60 dBZ", s3_name: "EchoTop_60_00.50", color_map: echoTopColorMap },
+        ]
     },
     {
-        display_name: "Q3 Multi-Sensor 12 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_12H_Pass1_00.00",
-        color_map: defaultColorMap,
+        name: "Radar Accumulation Quality Index",
+        type: "category",
+        items: [
+            { display_name: "QPE RQI 1 hr", s3_name: "RadarAccumulationQualityIndex_01H_00.00", color_map: qualityIndexColorMap },
+            { display_name: "QPE RQI 3 hr", s3_name: "RadarAccumulationQualityIndex_03H_00.00", color_map: qualityIndexColorMap },
+            { display_name: "QPE RQI 6 hr", s3_name: "RadarAccumulationQualityIndex_06H_00.00", color_map: qualityIndexColorMap },
+            { display_name: "QPE RQI 12 hr", s3_name: "RadarAccumulationQualityIndex_12H_00.00", color_map: qualityIndexColorMap },
+            { display_name: "QPE RQI 24 hr", s3_name: "RadarAccumulationQualityIndex_24H_00.00", color_map: qualityIndexColorMap },
+            { display_name: "QPE RQI 48 hr", s3_name: "RadarAccumulationQualityIndex_48H_00.00", color_map: qualityIndexColorMap },
+            { display_name: "QPE RQI 72 hr", s3_name: "RadarAccumulationQualityIndex_72H_00.00", color_map: qualityIndexColorMap },
+        ]
     },
     {
-        display_name: "Q3 Multi-Sensor 24 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_24H_Pass1_00.00",
-        color_map: defaultColorMap,
+        name: "Gauge Influence Index",
+        type: "category",
+        items: [
+            { display_name: "Gauge Influence Index 1 hr (Pass 1)", s3_name: "GaugeInflIndex_01H_Pass1_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 3 hr (Pass 1)", s3_name: "GaugeInflIndex_03H_Pass1_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 6 hr (Pass 1)", s3_name: "GaugeInflIndex_06H_Pass1_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 12 hr (Pass 1)", s3_name: "GaugeInflIndex_12H_Pass1_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 48 hr (Pass 1)", s3_name: "GaugeInflIndex_48H_Pass1_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 72 hr (Pass 1)", s3_name: "GaugeInflIndex_72H_Pass1_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 1 hr (Pass 2)", s3_name: "GaugeInflIndex_01H_Pass2_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 3 hr (Pass 2)", s3_name: "GaugeInflIndex_03H_Pass2_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 6 hr (Pass 2)", s3_name: "GaugeInflIndex_06H_Pass2_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 12 hr (Pass 2)", s3_name: "GaugeInflIndex_12H_Pass2_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 48 hr (Pass 2)", s3_name: "GaugeInflIndex_48H_Pass2_00.00", color_map: gaugeInfluenceIndexColorMap },
+            { display_name: "Gauge Influence Index 72 hr (Pass 2)", s3_name: "GaugeInflIndex_72H_Pass2_00.00", color_map: gaugeInfluenceIndexColorMap },
+        ]
     },
     {
-        display_name: "Q3 Multi-Sensor 48 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_48H_Pass1_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 72 hr (Pass 1)",
-        s3_name: "MultiSensor_QPE_72H_Pass1_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 1 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_01H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 3 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_03H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 6 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_06H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 12 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_12H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 24 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_24H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 48 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_48H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Multi-Sensor 72 hr (Pass 2)",
-        s3_name: "MultiSensor_QPE_72H_Pass2_00.00",
-        color_map: defaultColorMap,
-    },
-    // Q3 Radar Only
-    {
-        display_name: "Q3 Radar Only 15 min",
-        s3_name: "RadarOnly_QPE_15M_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 1 hr",
-        s3_name: "RadarOnly_QPE_01H_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 3 hr",
-        s3_name: "RadarOnly_QPE_03H_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 6 hr",
-        s3_name: "RadarOnly_QPE_06H_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 12 hr",
-        s3_name: "RadarOnly_QPE_12H_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 24 hr",
-        s3_name: "RadarOnly_QPE_24H_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 48 hr",
-        s3_name: "RadarOnly_QPE_48H_00.00",
-        color_map: defaultColorMap,
-    },
-    {
-        display_name: "Q3 Radar Only 72 hr",
-        s3_name: "RadarOnly_QPE_72H_00.00",
-        color_map: defaultColorMap,
-    },
-    // Reflectivity
-    {
-        display_name: "Base Reflectivity",
-        s3_name: "MergedBaseReflectivity_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-        display_name: "Base Reflectivity (Quality Control)",
-        s3_name: "MergedBaseReflectivityQC_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-        display_name: "Layer Reflectivity ANC",
-        s3_name: "LayerCompositeReflectivity_ANC_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-        display_name: "Layer Reflectivity Low (0 - 24,000 ft)",
-        s3_name: "LayerCompositeReflectivity_Low_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-        display_name: "Layer Reflectivity High (24,000 - 60,000 ft)",
-        s3_name: "LayerCompositeReflectivity_High_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-        display_name: "Layer Reflectivity Super (33,000 - 60,000 ft)",
-        s3_name: "LayerCompositeReflectivity_Super_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-        display_name: "Reflectivity at Lowest Altitude",
-        s3_name: "ReflectivityAtLowestAltitude_00.50",
-        color_map: decibelsColorMap,
-    },
-    {
-      display_name: "Merged Reflectivity At Lowest Altitude",
-      s3_name: "MergedReflectivityAtLowestAltitude_00.50",
-      color_map: decibelsColorMap,
-    },
-    // Lightning
-    // This stuff has 3 channels
-    // {
-    //     display_name: "Lightning Probability (Next 30 Minutes)",
-    //     s3_name: "LightningProbabilityNext30minGrid_scale_1",
-    //     color_map: null,
-    // },
-    // Echo Top
-    {
-        display_name: "Echo Top 18 dBZ",
-        s3_name: "EchoTop_18_00.50",
-        color_map: echoTopColorMap,
-    },
-    {
-        display_name: "Echo Top 30 dBZ",
-        s3_name: "EchoTop_30_00.50",
-        color_map: echoTopColorMap,
-    },
-    {
-        display_name: "Echo Top 50 dBZ",
-        s3_name: "EchoTop_50_00.50",
-        color_map: echoTopColorMap,
-    },
-    {
-        display_name: "Echo Top 60 dBZ",
-        s3_name: "EchoTop_60_00.50",
-        color_map: echoTopColorMap,
-    },
-    // Radar Quality Index
-    {
-        display_name: "QPE RQI 1 hr",
-        s3_name: "RadarAccumulationQualityIndex_01H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    {
-        display_name: "QPE RQI 3 hr",
-        s3_name: "RadarAccumulationQualityIndex_03H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    {
-        display_name: "QPE RQI 6 hr",
-        s3_name: "RadarAccumulationQualityIndex_06H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    {
-        display_name: "QPE RQI 12 hr",
-        s3_name: "RadarAccumulationQualityIndex_12H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    {
-        display_name: "QPE RQI 24 hr",
-        s3_name: "RadarAccumulationQualityIndex_24H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    {
-        display_name: "QPE RQI 48 hr",
-        s3_name: "RadarAccumulationQualityIndex_48H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    {
-        display_name: "QPE RQI 72 hr",
-        s3_name: "RadarAccumulationQualityIndex_72H_00.00",
-        color_map: qualityIndexColorMap,
-    },
-    // Gauge Influence Index
-    {
-        display_name: "Gauge Influence Index 1 hr (Pass 1)",
-        s3_name: "GaugeInflIndex_01H_Pass1_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 3 hr (Pass 1)",
-        s3_name: "GaugeInflIndex_03H_Pass1_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 6 hr (Pass 1)",
-        s3_name: "GaugeInflIndex_06H_Pass1_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 12 hr (Pass 1)",
-        s3_name: "GaugeInflIndex_12H_Pass1_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 48 hr (Pass 1)",
-        s3_name: "GaugeInflIndex_48H_Pass1_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 72 hr (Pass 1)",
-        s3_name: "GaugeInflIndex_72H_Pass1_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 1 hr (Pass 2)",
-        s3_name: "GaugeInflIndex_01H_Pass2_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 3 hr (Pass 2)",
-        s3_name: "GaugeInflIndex_03H_Pass2_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 6 hr (Pass 2)",
-        s3_name: "GaugeInflIndex_06H_Pass2_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 12 hr (Pass 2)",
-        s3_name: "GaugeInflIndex_12H_Pass2_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 48 hr (Pass 2)",
-        s3_name: "GaugeInflIndex_48H_Pass2_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    {
-        display_name: "Gauge Influence Index 72 hr (Pass 2)",
-        s3_name: "GaugeInflIndex_72H_Pass2_00.00",
-        color_map: gaugeInfluenceIndexColorMap,
-    },
-    // Flash
-    // The product below has 3 channels
-    // {
-    //     display_name: "Flash CREST Soil Saturation",
-    //     s3_name: "FLASH_CREST_MAXSOILSAT_00.00",
-    //     color_map: null,
-    // },
-    // Precipitation Flag
-    // This product flag legend in documentation is wrong
-    // {
-    //     display_name: "Precipitation Flag",
-    //     s3_name: "PrecipFlag_00.00",
-    //     color_map: flagMap,
-    // },
-    // Model
-    //This stuff has 3 channels
-    // {
-    //     display_name: "Model Surface Temperature",
-    //     s3_name: "Model_SurfaceTemp_00.50",
-    //     color_map: null,
-    // },
-    // {
-    //     display_name: "Model Wet Bulb Temperature",
-    //     s3_name: "Model_WetBulbTemp_00.50",
-    //     color_map: null,
-    // },
-    {
-        display_name: "Model Freezing Height",
-        s3_name: "Model_0degC_Height_00.50",
-        color_map: freezingHeightColorMap,
-    },
-    {
-        display_name: "Warm Rain Probability",
-        s3_name: "WarmRainProbability_00.50",
-        color_map: warmRainProbabilityColorMap,
+        name: "Models",
+        type: "category",
+        items: [
+            { display_name: "Model Freezing Height", s3_name: "Model_0degC_Height_00.50", color_map: freezingHeightColorMap },
+            { display_name: "Warm Rain Probability", s3_name: "WarmRainProbability_00.50", color_map: warmRainProbabilityColorMap },
+        ]
     }
 ];
+
+export const products = (function flatten(groups) {
+    let flat = [];
+    groups.forEach(g => {
+        if (g.items) {
+            // Check if children are subcategories or direct items
+            const hasSub = g.items.some(i => i.type === 'subcategory');
+            if (hasSub) {
+                // Dig deeper into subcategories
+                g.items.forEach(sub => {
+                    if (sub.items) flat = flat.concat(sub.items);
+                });
+            } else {
+                // Direct items
+                flat = flat.concat(g.items);
+            }
+        }
+    });
+    return flat;
+})(productGroups);
+
+globalThis.products = products;

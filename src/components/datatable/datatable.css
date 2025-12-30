@@ -45,10 +45,6 @@ tr.group-start {
     justify-content: space-between;
 }
 
-.group-size {
-    padding-right: 4ch;
-}
-
 .group-icon {
     cursor: pointer;
 }
@@ -58,7 +54,7 @@ tr.group-start {
 }
 
 table.dataTable > tbody > tr:not(.group-start) > td {
-    text-align: center;
+    text-align: right;
 }
 
 table.dataTable > tbody > tr > td {
