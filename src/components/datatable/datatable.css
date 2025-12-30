@@ -54,7 +54,7 @@ tr.group-start {
 }
 
 table.dataTable > tbody > tr:not(.group-start) > td {
-    text-align: right;
+    text-align: left;
 }
 
 table.dataTable > tbody > tr > td {

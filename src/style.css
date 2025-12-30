@@ -82,11 +82,14 @@ body {
     width: 100%;
     height: 7ch;
     background: white;
-
-    display: grid;
-    grid-template-columns: 20ch 1fr;
-    row-gap: 1ch;
     padding: 1ch;
+
+    display: flex;
+    justify-content: center;
+}
+
+#timeline-container {
+    width: 95%;
 }
 
 /* general styling for all menus */

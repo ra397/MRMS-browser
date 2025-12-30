@@ -64,12 +64,15 @@
 /* Indent content inside a Category */
 .category-group > .accordion-content > .content-inner {
     padding-left: 1ch;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 /* Indent content inside a Subcategory */
 .subcategory-group > .accordion-content > .content-inner {
     padding-left: 1.5ch;
-    padding-bottom: 0.5em;
+    padding-top: 2px;
+    padding-bottom: 5px;
 }
 
 /* Radio Item Styling */
