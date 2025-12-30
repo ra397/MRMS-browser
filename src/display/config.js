@@ -218,6 +218,41 @@ export const products = [
         s3_name: "MultiSensor_QPE_72H_Pass1_00.00",
         color_map: defaultColorMap,
     },
+    {
+        display_name: "Q3 Multi-Sensor 1 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_01H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Multi-Sensor 3 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_03H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Multi-Sensor 6 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_06H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Multi-Sensor 12 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_12H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Multi-Sensor 24 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_24H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Multi-Sensor 48 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_48H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
+    {
+        display_name: "Q3 Multi-Sensor 72 hr (Pass 2)",
+        s3_name: "MultiSensor_QPE_72H_Pass2_00.00",
+        color_map: defaultColorMap,
+    },
     // Q3 Radar Only
     {
         display_name: "Q3 Radar Only 15 min",
@@ -318,6 +353,16 @@ export const products = [
         s3_name: "EchoTop_30_00.50",
         color_map: echoTopColorMap,
     },
+    {
+        display_name: "Echo Top 50 dBZ",
+        s3_name: "EchoTop_50_00.50",
+        color_map: echoTopColorMap,
+    },
+    {
+        display_name: "Echo Top 60 dBZ",
+        s3_name: "EchoTop_60_00.50",
+        color_map: echoTopColorMap,
+    },
     // Radar Quality Index
     {
         display_name: "QPE RQI 1 hr",
@@ -360,6 +405,68 @@ export const products = [
         s3_name: "GaugeInflIndex_01H_Pass1_00.00",
         color_map: gaugeInfluenceIndexColorMap,
     },
+    {
+        display_name: "Gauge Influence Index 3 hr (Pass 1)",
+        s3_name: "GaugeInflIndex_03H_Pass1_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 6 hr (Pass 1)",
+        s3_name: "GaugeInflIndex_06H_Pass1_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 12 hr (Pass 1)",
+        s3_name: "GaugeInflIndex_12H_Pass1_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 48 hr (Pass 1)",
+        s3_name: "GaugeInflIndex_48H_Pass1_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 72 hr (Pass 1)",
+        s3_name: "GaugeInflIndex_72H_Pass1_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 1 hr (Pass 2)",
+        s3_name: "GaugeInflIndex_01H_Pass2_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 3 hr (Pass 2)",
+        s3_name: "GaugeInflIndex_03H_Pass2_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 6 hr (Pass 2)",
+        s3_name: "GaugeInflIndex_06H_Pass2_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 12 hr (Pass 2)",
+        s3_name: "GaugeInflIndex_12H_Pass2_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 48 hr (Pass 2)",
+        s3_name: "GaugeInflIndex_48H_Pass2_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    {
+        display_name: "Gauge Influence Index 72 hr (Pass 2)",
+        s3_name: "GaugeInflIndex_72H_Pass2_00.00",
+        color_map: gaugeInfluenceIndexColorMap,
+    },
+    // Flash
+    // The product below has 3 channels
+    // {
+    //     display_name: "Flash CREST Soil Saturation",
+    //     s3_name: "FLASH_CREST_MAXSOILSAT_00.00",
+    //     color_map: null,
+    // },
     // Precipitation Flag
     // This product flag legend in documentation is wrong
     // {
