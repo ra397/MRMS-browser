@@ -157,6 +157,16 @@ function /* float */ IEEE32 (/* String */ s) {
     return vSign * vFraction * Math.pow(2, vExponent);
 }
 
+function ieee32FromBytes(b1, b2, b3, b4) {
+    var buffer = new ArrayBuffer(4);
+    var view = new DataView(buffer);
+    view.setUint8(0, b1);
+    view.setUint8(1, b2);
+    view.setUint8(2, b3);
+    view.setUint8(3, b4);
+    return view.getFloat32(0, false); // false = big-endian
+}
+
 function /* class */ GRIB2CLASS (options) {
     logger.disable(!options.log);
     var numMembers = options.numMembers || 1;
@@ -914,7 +924,7 @@ function /* class */ GRIB2CLASS (options) {
                 info.DataRepresentationTemplateNumber(lThis);
 
                 printst("Reference value (R):\t");
-                this.ReferenceValue = IEEE32(IntToBinary32(uNumX4(SectionNumbers[12], SectionNumbers[13], SectionNumbers[14], SectionNumbers[15])));
+                this.ReferenceValue = ieee32FromBytes(SectionNumbers[12], SectionNumbers[13], SectionNumbers[14], SectionNumbers[15]);
                 println(this.ReferenceValue);
 
                 printst("Binary Scale Factor (E):\t");

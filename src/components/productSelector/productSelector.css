@@ -1,4 +1,125 @@
-#product {
-    width: fit-content;
-    height: fit-content;
+.menu-group {
+    border-bottom: 1px solid #dddde3;
+}
+
+.menu-group:last-child {
+    border-bottom: none;
+}
+
+/* Remove border for nested subcategories to avoid double lines */
+.subcategory-group {
+    border-bottom: none;
+}
+
+.accordion-header {
+    display: flex;
+    align-items: center;
+    padding: 0.4em 0;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5ch;
+}
+
+.header-label {
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+/* Subcategory headers should be slightly distinct */
+.subcategory-header .header-label {
+    font-weight: 500;
+    font-size: 0.95em;
+    color: #64748b;
+}
+
+.menu-group.active > .accordion-header .chevron {
+    transform: rotate(90deg);
+}
+
+/* The Expansion Animation */
+.accordion-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+}
+
+.content-inner {
+    overflow: hidden;
+}
+
+/* When active, expand */
+.menu-group.active > .accordion-content {
+    grid-template-rows: 1fr;
+}
+
+/* --- Indentation & Radio Styling --- */
+
+/* Indent content inside a Category */
+.category-group > .accordion-content > .content-inner {
+    padding-left: 1ch;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/* Indent content inside a Subcategory */
+.subcategory-group > .accordion-content > .content-inner {
+    padding-left: 1.5ch;
+    padding-top: 2px;
+    padding-bottom: 5px;
+}
+
+/* Radio Item Styling */
+.product-radio-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75ch;
+    padding: 0.4em 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.product-radio-item:hover span {
+    color: var(--primary-color);
+}
+
+/* Custom Radio Button Look */
+.product-radio-item input[type="radio"] {
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: var(--primary-color);
+    width: 1.15em;
+    height: 1.15em;
+    border: 1px solid #cbd5e1;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    flex-shrink: 0;
+}
+
+.product-radio-item input[type="radio"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--primary-color);
+}
+
+.product-radio-item input[type="radio"]:checked {
+    border-color: var(--primary-color);
+}
+
+.product-radio-item input[type="radio"]:checked::before {
+    transform: scale(1);
 }

@@ -1,25 +1,3 @@
-/* Menu container styling */
-#map-layers {
-    --primary-color: green;
-    --text-color: #334155;
-
-    padding: 1.5ch;
-    box-sizing: border-box;
-}
-
-/* Menu title and subtitle styling */
-.menu-header h2 {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-}
-
-.menu-header p {
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
-    color: #666666;
-}
-
 /* Remove default styling for ul and li */
 .layers-list {
     list-style: none;
@@ -58,12 +36,6 @@
     display: flex;
     align-items: center;
     gap: 0.5ch;
-}
-
-.chevron {
-    width: 1em;
-    height: 1em;
-    fill: #94a3b8;
 }
 
 .layer-item.active .chevron {

@@ -11,10 +11,6 @@
       <div id="map"></div>
 
       <div id="menu-container">
-          <label for="product">Select Product:</label>
-          <select id="product"></select>
-
-          <span>Select Interval:</span>
           <div id="timeline-container">
               <svg id="start-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='green'/></svg>
               <svg id="stop-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='red'/></svg>
@@ -32,12 +28,21 @@
 
 
       <div id="sidebar">
+          <span class="sidebar-item" data-menu="product-selector">Select Product</span>
           <span class="sidebar-item" data-menu="database-manager">Database Manager</span>
           <span class="sidebar-item" data-menu="map-layers">Map Layers</span>
           <span class="sidebar-item" data-menu="settings">Settings</span>
       </div>
 
       <div id="menus">
+          <div id="product-selector" class="hidden">
+              <div class="menu-header">
+                  <h2>Products</h2>
+                  <p>Browse and select MRMS products.</p>
+              </div>
+              <div id="product-menu-container" class="layers-list"></div>
+          </div>
+
           <div id="database-manager" class="hidden">
               <div class="dt-controls">
                 <button id="play-files-btn" class="btn success">Play</button>
