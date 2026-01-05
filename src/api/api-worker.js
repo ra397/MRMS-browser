@@ -7,7 +7,7 @@ let LUT = null;
 async function loadLUT() {
     if (LUT) return;
 
-    const response = await fetch("/MRMS_LUT.json");
+    const response = await fetch("/mrms-browser/MRMS_LUT.json");
     LUT = await response.json();
 
     // Convert "mrms_1d_ix" from base64 string to typed array
@@ -47,8 +47,13 @@ function decodeGrib2(rawData) {
 
     grib2Decoder.parse(new Uint8Array(rawData));
     const gribData =  grib2Decoder.data;
-    const scaleFactor = grib2Decoder.DecimalScaleFactor;
-    return { gribData, scaleFactor };
+    const referenceValue = grib2Decoder.ReferenceValue;
+    const decimalScaleFactor = grib2Decoder.DecimalScaleFactor;
+    const binaryScaleFactor = grib2Decoder.BinaryScaleFactor;
+
+    console.log(referenceValue, decimalScaleFactor, binaryScaleFactor);
+
+    return { gribData, decimalScaleFactor };
 }
 
 function generateMatrixUsingLUT(values, numCols, numRows) {

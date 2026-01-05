@@ -1,4 +1,4 @@
-const defaultColorMap = [
+const precipitationColorMap = [
     { min: -Infinity, max: 32, rgba: [0, 0, 0, 0] },
     { min: 32, max: 63, rgba: [191, 255, 232, 255] },
     { min: 63, max: 127, rgba: [80, 209, 250, 255] },
@@ -16,27 +16,28 @@ const defaultColorMap = [
 ];
 
 const qualityIndexColorMap = [
-    { min: -Infinity, max: 1001, rgba: [0, 0, 0, 0] },
-    { min: 1001, max: 1050, rgba: [0, 67, 241, 255] },
-    { min: 1050, max: 1100, rgba: [0, 100, 227, 255] },
-    { min: 1100, max: 1150, rgba: [0, 150, 213, 255] },
-    { min: 1150, max: 1200, rgba: [0, 200, 200, 255] },
-    { min: 1200, max: 1250, rgba: [0, 218, 134, 255] },
-    { min: 1250, max: 1300, rgba: [0, 237, 67, 255] },
-    { min: 1300, max: 1350, rgba: [0, 255, 0, 255] },
-    { min: 1350, max: 1400, rgba: [120, 255, 0, 255] },
-    { min: 1400, max: 1450, rgba: [180, 255, 0, 255] },
-    { min: 1450, max: 1500, rgba: [217, 255, 0, 255] },
-    { min: 1500, max: 1550, rgba: [255, 255, 0, 255] },
-    { min: 1550, max: 1600, rgba: [255, 208, 0, 255] },
-    { min: 1600, max: 1650, rgba: [255, 140, 0, 255] },
-    { min: 1650, max: 1700, rgba: [255, 0, 0, 255] },
-    { min: 1700, max: 1750, rgba: [235, 0, 200, 255] },
-    { min: 1750, max: 1800, rgba: [210, 0, 235, 255] },
-    { min: 1800, max: 1850, rgba: [185, 0, 255, 255] },
-    { min: 1850, max: 1900, rgba: [160, 0, 255, 255] },
-    { min: 1900, max: 1950, rgba: [120, 0, 225, 255] },
-    { min: 1950, max: Infinity, rgba: [120, 0, 225, 255] }
+    { min: -Infinity, max: 1001, rgba: [0, 0, 0, 0] },           // < 0
+    { min: 1001, max: 1050, rgba: [0, 0, 255, 255] },            // 0 to 0.05
+    { min: 1050, max: 1100, rgba: [0, 67, 241, 255] },           // 0.05 to 0.1
+    { min: 1100, max: 1150, rgba: [0, 100, 227, 255] },          // 0.1 to 0.15
+    { min: 1150, max: 1200, rgba: [0, 150, 213, 255] },          // 0.15 to 0.2
+    { min: 1200, max: 1250, rgba: [0, 200, 200, 255] },          // 0.2 to 0.25
+    { min: 1250, max: 1300, rgba: [0, 218, 134, 255] },          // 0.25 to 0.3
+    { min: 1300, max: 1350, rgba: [0, 237, 67, 255] },           // 0.3 to 0.35
+    { min: 1350, max: 1400, rgba: [0, 255, 0, 255] },            // 0.35 to 0.4
+    { min: 1400, max: 1450, rgba: [120, 255, 0, 255] },          // 0.4 to 0.45
+    { min: 1450, max: 1500, rgba: [180, 255, 0, 255] },          // 0.45 to 0.5
+    { min: 1500, max: 1550, rgba: [217, 255, 0, 255] },          // 0.5 to 0.55
+    { min: 1550, max: 1600, rgba: [255, 255, 0, 255] },          // 0.55 to 0.6
+    { min: 1600, max: 1650, rgba: [255, 208, 0, 255] },          // 0.6 to 0.65
+    { min: 1650, max: 1700, rgba: [255, 140, 0, 255] },          // 0.65 to 0.7
+    { min: 1700, max: 1750, rgba: [255, 0, 0, 255] },            // 0.7 to 0.75
+    { min: 1750, max: 1800, rgba: [235, 0, 200, 255] },          // 0.75 to 0.8
+    { min: 1800, max: 1850, rgba: [210, 0, 235, 255] },          // 0.8 to 0.85
+    { min: 1850, max: 1900, rgba: [185, 0, 255, 255] },          // 0.85 to 0.9
+    { min: 1900, max: 1950, rgba: [160, 0, 255, 255] },          // 0.9 to 0.95
+    { min: 1950, max: 2000, rgba: [120, 0, 225, 255] },          // 0.95 to 1.0
+    { min: 2000, max: Infinity, rgba: [120, 0, 225, 255] }       // > 1.0
 ];
 
 const echoTopColorMap = [
@@ -138,30 +139,30 @@ const warmRainProbabilityColorMap = [
 ];
 
 const decibelsColorMap = [
-    { min: -Infinity, max: 9650, rgba: [0, 0, 0, 0] },
-    { min: 9650, max: 9700, rgba: [221, 254, 255, 255] },
-    { min: 9700, max: 9750, rgba: [216, 210, 233, 255] },
-    { min: 9750, max: 9800, rgba: [208, 175, 212, 255] },
-    { min: 9800, max: 9850, rgba: [163, 127, 167, 255] },
-    { min: 9850, max: 9900, rgba: [115, 74, 119, 255] },
-    { min: 9900, max: 9950, rgba: [214, 212, 173, 255] },
-    { min: 9950, max: 10000, rgba: [169, 168, 125, 255] },
-    { min: 10000, max: 10050, rgba: [119, 119, 119, 255] },
-    { min: 10050, max: 10100, rgba: [0, 236, 236, 255] },
-    { min: 10100, max: 10150, rgba: [1, 160, 246, 255] },
-    { min: 10150, max: 10200, rgba: [0, 0, 246, 255] },
-    { min: 10200, max: 10250, rgba: [0, 255, 0, 255] },
-    { min: 10250, max: 10300, rgba: [0, 200, 0, 255] },
-    { min: 10300, max: 10350, rgba: [0, 144, 0, 255] },
-    { min: 10350, max: 10400, rgba: [255, 255, 0, 255] },
-    { min: 10400, max: 10450, rgba: [231, 192, 0, 255] },
-    { min: 10450, max: 10500, rgba: [255, 144, 0, 255] },
-    { min: 10500, max: 10550, rgba: [255, 0, 0, 255] },
-    { min: 10550, max: 10600, rgba: [220, 0, 0, 255] },
-    { min: 10600, max: 10650, rgba: [192, 0, 0, 255] },
-    { min: 10650, max: 10700, rgba: [255, 0, 255, 255] },
-    { min: 10700, max: 10750, rgba: [153, 85, 201, 255] },
-    { min: 10750, max: Infinity, rgba: [153, 85, 201, 255] }
+    { min: -Infinity, max: 9640, rgba: [0, 0, 0, 0] },         // < -35
+    { min: 9640, max: 9690, rgba: [221, 254, 255, 255] },      // -35 to -30
+    { min: 9690, max: 9740, rgba: [216, 210, 233, 255] },      // -30 to -25
+    { min: 9740, max: 9790, rgba: [208, 175, 212, 255] },      // -25 to -20
+    { min: 9790, max: 9840, rgba: [163, 127, 167, 255] },      // -20 to -15
+    { min: 9840, max: 9890, rgba: [115, 74, 119, 255] },       // -15 to -10
+    { min: 9890, max: 9940, rgba: [214, 212, 173, 255] },      // -10 to -5
+    { min: 9940, max: 9990, rgba: [169, 168, 125, 255] },      // -5 to 0
+    { min: 9990, max: 10040, rgba: [119, 119, 119, 255] },     // 0 to 5
+    { min: 10040, max: 10090, rgba: [0, 236, 236, 255] },      // 5 to 10
+    { min: 10090, max: 10140, rgba: [1, 160, 246, 255] },      // 10 to 15
+    { min: 10140, max: 10190, rgba: [0, 0, 246, 255] },        // 15 to 20
+    { min: 10190, max: 10240, rgba: [0, 255, 0, 255] },        // 20 to 25
+    { min: 10240, max: 10290, rgba: [0, 200, 0, 255] },        // 25 to 30
+    { min: 10290, max: 10340, rgba: [0, 144, 0, 255] },        // 30 to 35
+    { min: 10340, max: 10390, rgba: [255, 255, 0, 255] },      // 35 to 40
+    { min: 10390, max: 10440, rgba: [231, 192, 0, 255] },      // 40 to 45
+    { min: 10440, max: 10490, rgba: [255, 144, 0, 255] },      // 45 to 50
+    { min: 10490, max: 10540, rgba: [255, 0, 0, 255] },        // 50 to 55
+    { min: 10540, max: 10590, rgba: [220, 0, 0, 255] },        // 55 to 60
+    { min: 10590, max: 10640, rgba: [192, 0, 0, 255] },        // 60 to 65
+    { min: 10640, max: 10690, rgba: [255, 0, 255, 255] },      // 65 to 70
+    { min: 10690, max: 10740, rgba: [153, 85, 201, 255] },     // 70 to 75
+    { min: 10740, max: Infinity, rgba: [153, 85, 201, 255] }   // > 75
 ];
 
 export const overlayInfo = {
@@ -190,34 +191,34 @@ export const productGroups = [
                 name: "Q3 Multi-Sensor",
                 type: "subcategory",
                 items: [
-                    { display_name: "Q3 Multi-Sensor 1 hr (Pass 1)", s3_name: "MultiSensor_QPE_01H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 3 hr (Pass 1)", s3_name: "MultiSensor_QPE_03H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 6 hr (Pass 1)", s3_name: "MultiSensor_QPE_06H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 12 hr (Pass 1)", s3_name: "MultiSensor_QPE_12H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 24 hr (Pass 1)", s3_name: "MultiSensor_QPE_24H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 48 hr (Pass 1)", s3_name: "MultiSensor_QPE_48H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 72 hr (Pass 1)", s3_name: "MultiSensor_QPE_72H_Pass1_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 1 hr (Pass 2)", s3_name: "MultiSensor_QPE_01H_Pass2_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 3 hr (Pass 2)", s3_name: "MultiSensor_QPE_03H_Pass2_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 6 hr (Pass 2)", s3_name: "MultiSensor_QPE_06H_Pass2_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 12 hr (Pass 2)", s3_name: "MultiSensor_QPE_12H_Pass2_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 24 hr (Pass 2)", s3_name: "MultiSensor_QPE_24H_Pass2_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 48 hr (Pass 2)", s3_name: "MultiSensor_QPE_48H_Pass2_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Multi-Sensor 72 hr (Pass 2)", s3_name: "MultiSensor_QPE_72H_Pass2_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Multi-Sensor 1 hr (Pass 1)", s3_name: "MultiSensor_QPE_01H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 3 hr (Pass 1)", s3_name: "MultiSensor_QPE_03H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 6 hr (Pass 1)", s3_name: "MultiSensor_QPE_06H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 12 hr (Pass 1)", s3_name: "MultiSensor_QPE_12H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 24 hr (Pass 1)", s3_name: "MultiSensor_QPE_24H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 48 hr (Pass 1)", s3_name: "MultiSensor_QPE_48H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 72 hr (Pass 1)", s3_name: "MultiSensor_QPE_72H_Pass1_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 1 hr (Pass 2)", s3_name: "MultiSensor_QPE_01H_Pass2_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 3 hr (Pass 2)", s3_name: "MultiSensor_QPE_03H_Pass2_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 6 hr (Pass 2)", s3_name: "MultiSensor_QPE_06H_Pass2_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 12 hr (Pass 2)", s3_name: "MultiSensor_QPE_12H_Pass2_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 24 hr (Pass 2)", s3_name: "MultiSensor_QPE_24H_Pass2_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 48 hr (Pass 2)", s3_name: "MultiSensor_QPE_48H_Pass2_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Multi-Sensor 72 hr (Pass 2)", s3_name: "MultiSensor_QPE_72H_Pass2_00.00", color_map: precipitationColorMap },
                 ]
             },
             {
                 name: "Q3 Radar Only",
                 type: "subcategory",
                 items: [
-                    { display_name: "Q3 Radar Only 15 min", s3_name: "RadarOnly_QPE_15M_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 1 hr", s3_name: "RadarOnly_QPE_01H_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 3 hr", s3_name: "RadarOnly_QPE_03H_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 6 hr", s3_name: "RadarOnly_QPE_06H_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 12 hr", s3_name: "RadarOnly_QPE_12H_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 24 hr", s3_name: "RadarOnly_QPE_24H_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 48 hr", s3_name: "RadarOnly_QPE_48H_00.00", color_map: defaultColorMap },
-                    { display_name: "Q3 Radar Only 72 hr", s3_name: "RadarOnly_QPE_72H_00.00", color_map: defaultColorMap },
+                    { display_name: "Q3 Radar Only 15 min", s3_name: "RadarOnly_QPE_15M_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 1 hr", s3_name: "RadarOnly_QPE_01H_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 3 hr", s3_name: "RadarOnly_QPE_03H_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 6 hr", s3_name: "RadarOnly_QPE_06H_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 12 hr", s3_name: "RadarOnly_QPE_12H_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 24 hr", s3_name: "RadarOnly_QPE_24H_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 48 hr", s3_name: "RadarOnly_QPE_48H_00.00", color_map: precipitationColorMap },
+                    { display_name: "Q3 Radar Only 72 hr", s3_name: "RadarOnly_QPE_72H_00.00", color_map: precipitationColorMap },
                 ]
             }
         ]
