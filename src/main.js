@@ -19,4 +19,6 @@ import './components/settings/settings.js';
 
 import './layers/layers.js';
 
+import './display/palettes.js';
+
 import './style.css';
