@@ -130,4 +130,8 @@ document.addEventListener('player-seek', event => {
     displayFrame(index);
 });
 
+document.addEventListener('player-step', event => {
+    const newIndex = currentIndex + event.detail.direction;
+    displayFrame(newIndex); // this already calls setSliderValue on success
+});
 export { play, pause, displayFrame, fileImgMap };
