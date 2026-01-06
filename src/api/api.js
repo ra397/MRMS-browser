@@ -99,14 +99,13 @@ function dispatchDisplayFile(product_name, file_name, file_data) {
 function fetchAndDecodeFile(fileName) {
     return new Promise((resolve, reject) => {
         const handler = async (event) => {
-            const {type, product_name, file_name, file_data, scale_factor, error} = event.data;
-
+            const {type, product_name, file_name, file_data, reference_value, binary_scale, decimal_scale, error} = event.data;
             if (file_name !== fileName) return; // Not our file, ignore
 
             fetchAndDecodeWorker.removeEventListener('message', handler);
 
             if (type === 'file-ready') {
-                await db.saveDecodedData(file_name, file_data, scale_factor);
+                await db.saveDecodedData(file_name, file_data, reference_value, binary_scale, decimal_scale);
                 dispatchDisplayFile(product_name, file_name, file_data);
                 resolve();
             } else if (type === 'file-error') {

@@ -108,14 +108,16 @@ async function getDecodedData(fileName) {
     }
 }
 
-async function saveDecodedData(fileName, decodedData, scaleFactor) {
+async function saveDecodedData(fileName, decodedData, referenceValue, binaryScale, decimalScale) {
     try {
         // Compress before storing
         const compressedData = await compress(decodedData);
 
         const record = {
             data: compressedData,
-            scaleFactor: scaleFactor,
+            referenceValue: referenceValue,
+            binaryScale: binaryScale,
+            decimalScale: decimalScale,
             ingestTime: Date.now(),
         }
 

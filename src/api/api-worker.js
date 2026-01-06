@@ -48,12 +48,9 @@ function decodeGrib2(rawData) {
     grib2Decoder.parse(new Uint8Array(rawData));
     const gribData =  grib2Decoder.data;
     const referenceValue = grib2Decoder.ReferenceValue;
-    const decimalScaleFactor = grib2Decoder.DecimalScaleFactor;
     const binaryScaleFactor = grib2Decoder.BinaryScaleFactor;
-
-    console.log(referenceValue, decimalScaleFactor, binaryScaleFactor);
-
-    return { gribData, decimalScaleFactor };
+    const decimalScaleFactor = grib2Decoder.DecimalScaleFactor;
+    return { gribData, referenceValue, binaryScaleFactor, decimalScaleFactor };
 }
 
 function generateMatrixUsingLUT(values, numCols, numRows) {
@@ -82,7 +79,7 @@ async function processFile(fileName, productName) {
             return;
         }
 
-        const { gribData, scaleFactor } = decodeGrib2(rawData);
+        const { gribData, referenceValue, binaryScaleFactor, decimalScaleFactor } = decodeGrib2(rawData);
         const decodedData = generateMatrixUsingLUT(gribData, LUT.ncols, LUT.nrows);
 
         self.postMessage({
@@ -90,7 +87,9 @@ async function processFile(fileName, productName) {
             product_name: productName,
             file_name: fileName,
             file_data: decodedData,
-            scale_factor: scaleFactor,
+            reference_value: referenceValue,
+            binary_scale: binaryScaleFactor,
+            decimal_scale: decimalScaleFactor,
         }, [decodedData.buffer]);
 
     } catch (err) {
