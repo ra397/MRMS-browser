@@ -1,6 +1,7 @@
 import {RasterGenerator} from "./rasterGenerator.js";
 import {customOverlay} from "./customOverlay.js";
 import {overlayInfo, products} from "./config.js";
+import {getActiveColorMap} from "./colorMapUtils.js";
 import {setSliderRange, setSliderValue} from "../components/player/player.js";
 
 // Running map of filename -> generated overlay/img
@@ -58,7 +59,8 @@ document.addEventListener('display-file', async event => {
     const binaryScale = event.detail.binaryScale;
     const decimalScale = event.detail.decimalScale;
 
-    const colorMap = products.find(p => p.s3_name === product_name)?.color_map;
+    const selectedProduct = products.find(p => p.s3_name === product_name);
+    const colorMap = getActiveColorMap(selectedProduct, "greys");
     const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
     const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
     const img = await raster.generateUrl();
