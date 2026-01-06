@@ -99,7 +99,7 @@ const gaugeInfluenceIndexColorMap = [
     { min: 0.95, max: Infinity, rgba: [255, 255, 255, 255] }
 ];
 
-const freezingHeightColorMap = [
+const freezingHeightMetersColorMap = [
     { min: -Infinity, max: 3.01, rgba: [0, 0, 0, 0] },
     { min: 3.01, max: 500, rgba: [0, 236, 236, 255] },
     { min: 500, max: 1000, rgba: [0, 200, 240, 255] },
@@ -123,7 +123,7 @@ const freezingHeightColorMap = [
     { min: 9500, max: 10000, rgba: [120, 0, 120, 255] }
 ];
 
-const warmRainProbabilityColorMap = [
+const warmRainProbabilityPercentageColorMap = [
     { min: -Infinity, max: 3.01, rgba: [0, 0, 0, 0] },
     { min: 3.01, max: 10, rgba: [0, 236, 236, 255] },
     { min: 10, max: 20, rgba: [0, 160, 246, 255] },
@@ -300,8 +300,8 @@ export const productGroups = [
         name: "Models",
         type: "category",
         items: [
-            { display_name: "Model Freezing Height", s3_name: "Model_0degC_Height_00.50", color_map: freezingHeightColorMap },
-            { display_name: "Warm Rain Probability", s3_name: "WarmRainProbability_00.50", color_map: warmRainProbabilityColorMap },
+            { display_name: "Model Freezing Height", s3_name: "Model_0degC_Height_00.50", color_map: freezingHeightMetersColorMap },
+            { display_name: "Warm Rain Probability", s3_name: "WarmRainProbability_00.50", color_map: warmRainProbabilityPercentageColorMap },
         ]
     }
 ];
