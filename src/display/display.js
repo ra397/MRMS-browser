@@ -1,7 +1,7 @@
-import { RasterGenerator } from "./rasterGenerator.js";
-import { customOverlay } from "./customOverlay.js";
-import { products, overlayInfo } from "./config.js";
-import { setSliderRange, setSliderValue } from "../components/player/player.js";
+import {RasterGenerator} from "./rasterGenerator.js";
+import {customOverlay} from "./customOverlay.js";
+import {overlayInfo, products} from "./config.js";
+import {setSliderRange, setSliderValue} from "../components/player/player.js";
 
 // Running map of filename -> generated overlay/img
 const fileImgMap = new Map();
@@ -37,13 +37,30 @@ document.addEventListener('files-total', event => {
     setSliderRange(0, totalExpectedFiles - 1);
 });
 
+function scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale) {
+    // Formula: real_value = (reference_value + scaled_value * 2^binary_scale) / 10^decimal_scale
+    // Inverse:  scaled_value = (real_value * 10^decimal_scale - reference_value) / 2^binary_scale
+    const decimalFactor = Math.pow(10, decimalScale);
+    const binaryFactor = Math.pow(2, binaryScale);
+
+    return colorMap.map(entry => ({
+        min: entry.min === -Infinity ? -Infinity : (entry.min * decimalFactor - referenceValue) / binaryFactor,
+        max: entry.max === Infinity ? Infinity : (entry.max * decimalFactor - referenceValue) / binaryFactor,
+        rgba: entry.rgba,
+    }));
+}
+
 document.addEventListener('display-file', async event => {
     const file_name = event.detail.file_name;
     const file_data = event.detail.file_data;
     const product_name = event.detail.product_name;
+    const referenceValue = event.detail.referenceValue;
+    const binaryScale = event.detail.binaryScale;
+    const decimalScale = event.detail.decimalScale;
 
     const colorMap = products.find(p => p.s3_name === product_name)?.color_map;
-    const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, colorMap);
+    const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
+    const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
     const img = await raster.generateUrl();
 
     // Store in running map

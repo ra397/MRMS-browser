@@ -75,8 +75,9 @@ async function fetchData() {
     const cacheStatus = await db.hasFiles(files_to_fetch);
     for (const { fileName, isCached } of cacheStatus) {
         if (isCached) {
-            const decodedData = await db.getDecodedData(fileName);
-            dispatchDisplayFile(state.product, fileName, decodedData);
+            const result = await db.getDecodedData(fileName);
+            dispatchDisplayFile(state.product, fileName, result.data, result.referenceValue, result.binaryScale,
+                result.decimalScale);
         } else {
             await fetchAndDecodeFile(fileName);
         }
@@ -84,15 +85,16 @@ async function fetchData() {
     emitDBChange();
 }
 
-function dispatchDisplayFile(product_name, file_name, file_data) {
+function dispatchDisplayFile(product_name, file_name, file_data, referenceValue, binaryScale, decimalScale) {
     document.dispatchEvent(new CustomEvent('display-file', {
         detail: {
             product_name: product_name,
             file_data: file_data,
             file_name: file_name,
+            referenceValue: referenceValue,
+            binaryScale: binaryScale,
+            decimalScale: decimalScale,
         },
-        composed: true,
-        bubbles: true,
     }));
 }
 
@@ -106,7 +108,7 @@ function fetchAndDecodeFile(fileName) {
 
             if (type === 'file-ready') {
                 await db.saveDecodedData(file_name, file_data, reference_value, binary_scale, decimal_scale);
-                dispatchDisplayFile(product_name, file_name, file_data);
+                dispatchDisplayFile(product_name, file_name, file_data, reference_value, binary_scale, decimal_scale);
                 resolve();
             } else if (type === 'file-error') {
                 console.error(`Failed to process: ${file_name}`, error);

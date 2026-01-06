@@ -262,14 +262,17 @@ document.addEventListener('datatable-ready', async () => {
         }));
 
         for (const key of keys) {
-            const file_data = await db.getDecodedData(key);
+            const result = await db.getDecodedData(key);
             const product_name = key.split("/")[1];
 
             document.dispatchEvent(new CustomEvent('display-file', {
                 detail: {
                     product_name: product_name,
-                    file_data: file_data,
+                    file_data: result.data,
                     file_name: key,
+                    referenceValue: result.referenceValue,
+                    binaryScale: result.binaryScale,
+                    decimalScale: result.decimalScale,
                 },
             }));
         }

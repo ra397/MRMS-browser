@@ -81,7 +81,7 @@ async function hasFiles(fileNames) {
 async function getDecodedData(fileName) {
     try {
         const db = await openDB();
-        const compressedData = await new Promise((resolve, reject) => {
+        const record = await new Promise((resolve, reject) => {
             const transaction = db.transaction(STORE_NAME, 'readonly');
             const store = transaction.objectStore(STORE_NAME);
             const request = store.get(fileName);
@@ -96,12 +96,17 @@ async function getDecodedData(fileName) {
             };
         });
 
-        if (!compressedData) {
+        if (!record) {
             return null;
         }
 
-        // Decompress before returning
-        return await decompress(compressedData.data);
+        // Decompress and return with scaling factors
+        return {
+            data: await decompress(record.data),
+            referenceValue: record.referenceValue,
+            binaryScale: record.binaryScale,
+            decimalScale: record.decimalScale,
+        };
     } catch (error) {
         console.error('Error in getDecodedData:', error);
         return null;
