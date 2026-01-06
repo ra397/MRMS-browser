@@ -68,8 +68,6 @@ async function fetchData() {
             total: files_to_fetch.length,
             fileNames: files_to_fetch
         },
-        composed: true,
-        bubbles: true,
     }));
 
     const cacheStatus = await db.hasFiles(files_to_fetch);

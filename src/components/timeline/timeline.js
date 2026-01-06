@@ -20,8 +20,6 @@ const timelineController = new TimelineController(timeline, document.getElementB
 
 timelineController.onRangeSelected(({ startDate, endDate }) => {
     document.dispatchEvent(new CustomEvent('time-selected', {
-        bubbles: true,
-        composed: true,
         detail: {
             startDate,
             endDate,
