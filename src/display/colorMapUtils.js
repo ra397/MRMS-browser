@@ -8,7 +8,6 @@ export function samplePalette(palette, numStops) {
         const index = Math.round(i * 254 / (numStops - 1));
         colors.push(palette[index]);
     }
-    console.log(colors);
     return colors;
 }
 

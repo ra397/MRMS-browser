@@ -14,6 +14,7 @@ let currentIndex = 0;
 let isPlaying = false;
 let playInterval = null;
 
+let palette;
 let overlay;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -51,22 +52,48 @@ function scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale) {
     }));
 }
 
-document.addEventListener('display-file', async event => {
-    const file_name = event.detail.file_name;
-    const file_data = event.detail.file_data;
-    const product_name = event.detail.product_name;
-    const referenceValue = event.detail.referenceValue;
-    const binaryScale = event.detail.binaryScale;
-    const decimalScale = event.detail.decimalScale;
+document.addEventListener("palette-set", async event => {
+    palette = event.detail.palette;
 
+    // Regenerate all cached frames with the new palette
+    for (const [file_name, entry] of fileImgMap) {
+        entry.img = await generateImage(
+            entry.file_data,
+            entry.product_name,
+            entry.referenceValue,
+            entry.binaryScale,
+            entry.decimalScale
+        );
+    }
+
+    // Redisplay current frame with new palette
+    if (fileImgMap.size > 0) {
+        displayFrame(currentIndex);
+    }
+});
+
+async function generateImage(file_data, product_name, referenceValue, binaryScale, decimalScale) {
     const selectedProduct = products.find(p => p.s3_name === product_name);
-    const colorMap = getActiveColorMap(selectedProduct, "default");
+    const colorMap = getActiveColorMap(selectedProduct, palette);
     const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
     const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
-    const img = await raster.generateUrl();
+    return await raster.generateUrl();
+}
 
-    // Store in running map
-    fileImgMap.set(file_name, img);
+document.addEventListener('display-file', async event => {
+    const { file_name, file_data, product_name, referenceValue, binaryScale, decimalScale } = event.detail;
+
+    const img = await generateImage(file_data, product_name, referenceValue, binaryScale, decimalScale);
+
+    // Store both the image and raw data for regeneration
+    fileImgMap.set(file_name, {
+        img,
+        file_data,
+        product_name,
+        referenceValue,
+        binaryScale,
+        decimalScale,
+    });
 
     // If this is the first file, and we're not playing, display it
     if (fileImgMap.size === 1 && !isPlaying) {
@@ -78,10 +105,10 @@ function displayFrame(index) {
     if (index < 0 || index >= orderedFileNames.length) return;
 
     const fileName = orderedFileNames[index];
-    const img = fileImgMap.get(fileName);
+    const entry = fileImgMap.get(fileName);
 
-    if (img) {
-        overlay.setSource(img);
+    if (entry) {
+        overlay.setSource(entry.img);
         currentIndex = index;
 
         // Update slider position
