@@ -48,6 +48,7 @@
 
       <div id="sidebar">
           <span class="sidebar-item" data-menu="product-selector">Select Product</span>
+          <span class="sidebar-item" data-menu="mrms-layer">MRMS Layer</span>
           <span class="sidebar-item" data-menu="database-manager">Database Manager</span>
           <span class="sidebar-item" data-menu="map-layers">Map Layers</span>
           <span class="sidebar-item" data-menu="settings">Settings</span>
@@ -60,6 +61,49 @@
                   <p>Browse and select MRMS products.</p>
               </div>
               <div id="product-menu-container" class="layers-list"></div>
+          </div>
+
+          <div id="mrms-layer" class="hidden">
+              <div class="menu-header">
+                  <h2>MRMS Visualization</h2>
+                  <p>Control how MRMS data is displayed.</p>
+              </div>
+
+              <div class="mrms-controls">
+                  <div class="control-group">
+                      <label>Color Palette</label>
+                      <div class="palette-selector">
+                          <input type="radio" id="p-default" name="palette" value="default" checked>
+                          <label for="p-default">Default</label>
+
+                          <input type="radio" id="p-spectral" name="palette" value="spectral">
+                          <label for="p-spectral">Spectral</label>
+
+                          <input type="radio" id="p-viridis" name="palette" value="viridis">
+                          <label for="p-viridis">Viridis</label>
+
+                          <input type="radio" id="p-reds" name="palette" value="reds">
+                          <label for="p-reds">Reds</label>
+                      </div>
+                  </div>
+
+                  <div class="control-group">
+                      <div style="display:flex; justify-content: space-between;">
+                          <label>Value Range</label>
+                          <span id="range-value-label" class="value-display">0 - 100</span>
+                      </div>
+                      <div class="range-slider-container">
+                          <input type="range" id="mrms-min" min="0" max="100" value="0" class="dual-range">
+                          <input type="range" id="mrms-max" min="0" max="100" value="100" class="dual-range">
+                          <div class="slider-track"></div>
+                      </div>
+                  </div>
+
+                  <div class="control-group">
+                      <label for="color-count">Number of Colors</label>
+                      <input type="number" id="color-count" value="15" min="2" max="256" class="text-input">
+                  </div>
+              </div>
           </div>
 
           <div id="database-manager" class="hidden">

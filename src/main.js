@@ -11,6 +11,8 @@ import './components/player/player.js';
 
 import './components/sidebar/sidebar.js';
 
+import './components/mrmsMenu/mrmsMenu.js';
+
 import './components/datatable/datatable.js';
 
 import './components/layersMenu/layersMenu.js';

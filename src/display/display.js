@@ -60,7 +60,7 @@ document.addEventListener('display-file', async event => {
     const decimalScale = event.detail.decimalScale;
 
     const selectedProduct = products.find(p => p.s3_name === product_name);
-    const colorMap = getActiveColorMap(selectedProduct, "greys");
+    const colorMap = getActiveColorMap(selectedProduct, "default");
     const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
     const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
     const img = await raster.generateUrl();

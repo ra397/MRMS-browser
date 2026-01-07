@@ -1,0 +1,99 @@
+/* Container Spacing */
+.mrms-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    width: 280px;
+}
+
+.control-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Palette Radio Buttons as Tags */
+.palette-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.palette-selector input[type="radio"] {
+    display: none;
+}
+
+.palette-selector label {
+    display: block;
+    padding: 0.4rem;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-bottom: 0;
+    transition: all 0.2s;
+}
+
+.palette-selector input[type="radio"]:checked + label {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Text/Number Input Styling */
+.text-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+}
+
+/* Dual Range Slider */
+.range-slider-container {
+    position: relative;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.dual-range {
+    position: absolute;
+    width: 100%;
+    pointer-events: none;
+    appearance: none;
+    background: none;
+    z-index: 2;
+}
+
+.dual-range::-webkit-slider-thumb {
+    appearance: none;
+    pointer-events: auto;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.slider-track {
+    position: absolute;
+    height: 4px;
+    width: 100%;
+    background: #e2e8f0;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.value-display {
+    font-size: 0.75rem;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #475569;
+}
