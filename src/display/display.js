@@ -15,8 +15,10 @@ let isPlaying = false;
 let playInterval = null;
 
 let overlay;
-let palette;
+let palette = 'default';
 let colorCount = null;
+let rangeMin = null;
+let rangeMax = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     overlay = customOverlay(overlayInfo.transparentImgSrc, overlayInfo.bbox, map, 'OverlayView', false);
@@ -98,11 +100,77 @@ document.addEventListener("colorcount-set", async event => {
     }
 });
 
+document.addEventListener("range-set", async event => {
+    rangeMin = event.detail.min;
+    rangeMax = event.detail.max;
+
+    // Regenerate all cached frames with the new range
+    for (const [file_name, entry] of fileImgMap) {
+        entry.img = await generateImage(
+            entry.file_data,
+            entry.product_name,
+            entry.referenceValue,
+            entry.binaryScale,
+            entry.decimalScale
+        );
+    }
+
+    // Redisplay current frame
+    if (fileImgMap.size > 0) {
+        displayFrame(currentIndex);
+    }
+});
+
+const paletteRadioButtons = document.querySelectorAll('input[name="palette"]');
+
+function setSelectedPalette(paletteName) {
+    paletteRadioButtons.forEach(radio => {
+        radio.checked = radio.value === paletteName;
+    });
+}
+
+document.addEventListener("visualization-reset", () => {
+    colorCount = null;
+    rangeMin = null;
+    rangeMax = null;
+});
+
 const colorCountInput = document.getElementById("mrms-color-count");
+const rangeMinSlider = document.getElementById("mrms-min");
+const rangeMaxSlider = document.getElementById("mrms-max");
+const rangeValueLabel = document.getElementById("mrms-range-value-label");
 
 async function generateImage(file_data, product_name, referenceValue, binaryScale, decimalScale) {
     const selectedProduct = products.find(p => p.s3_name === product_name);
-    const colorMap = getActiveColorMap(selectedProduct, palette, colorCount);
+
+    // Initialize range sliders from product thresholds if not set
+    if (rangeMin === null || rangeMax === null) {
+        const productMin = selectedProduct.thresholds[0];
+        const productMax = selectedProduct.thresholds[selectedProduct.thresholds.length - 1];
+
+        const range = productMax - productMin;
+        const step = range / 100;
+
+        rangeMinSlider.min = productMin;
+        rangeMinSlider.max = productMax;
+        rangeMinSlider.step = step;
+        rangeMinSlider.value = productMin;
+
+        rangeMaxSlider.min = productMin;
+        rangeMaxSlider.max = productMax;
+        rangeMaxSlider.step = step;
+        rangeMaxSlider.value = productMax;
+
+        rangeValueLabel.textContent = `${productMin} - ${productMax}`;
+    }
+
+    // If palette is 'default' but we have custom settings, switch to viridis
+    if (palette === 'default' && (colorCount !== null || rangeMin !== null || rangeMax !== null)) {
+        palette = 'viridis';
+        setSelectedPalette('viridis');
+    }
+
+    const colorMap = getActiveColorMap(selectedProduct, palette, colorCount, rangeMin, rangeMax);
 
     colorCountInput.value = colorMap.length - 2;
 

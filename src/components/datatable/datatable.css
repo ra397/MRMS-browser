@@ -2,6 +2,7 @@
 
 #database-manager {
     --dt-controls-padding: 0.3125em;
+    max-width: 730px;
 }
 
 /* Styling for the action buttons */

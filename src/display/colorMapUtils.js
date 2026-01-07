@@ -50,16 +50,18 @@ export function generateEvenThresholds(min, max, numColors) {
 }
 
 
-export function getActiveColorMap(product, paletteName = 'default', numColors = null) {
+export function getActiveColorMap(product, paletteName = 'default', numColors = null, rangeMin = null, rangeMax = null) {
     const { thresholds: productThresholds, defaultColors } = product;
+
+    // Determine the value range
+    const minValue = rangeMin !== null ? rangeMin : productThresholds[0];
+    const maxValue = rangeMax !== null ? rangeMax : productThresholds[productThresholds.length - 1];
 
     // Determine number of color bins
     const colorCount = numColors !== null ? numColors : productThresholds.length - 1;
 
-    // Use custom evenly-spaced thresholds if numColors differs from default
-    const useCustomThresholds = numColors !== null && numColors !== productThresholds.length - 1;
-    const minValue = productThresholds[0];
-    const maxValue = productThresholds[productThresholds.length - 1];
+    // Use custom thresholds if numColors or range differs from default
+    const useCustomThresholds = numColors !== null || rangeMin !== null || rangeMax !== null;
     const thresholds = useCustomThresholds
         ? generateEvenThresholds(minValue, maxValue, colorCount)
         : productThresholds;

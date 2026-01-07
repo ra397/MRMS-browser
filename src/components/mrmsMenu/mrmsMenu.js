@@ -14,6 +14,10 @@ dispatchPalette(document.querySelector('input[name="palette"]:checked').value);
 paletteRadioButtons.forEach(radio => {
     radio.addEventListener('change', (event) => {
         if (event.target.checked) {
+            if (event.target.value === 'default') {
+                // Reset numColors and range to defaults
+                document.dispatchEvent(new CustomEvent('visualization-reset'));
+            }
             dispatchPalette(event.target.value);
         }
     });
@@ -49,4 +53,43 @@ colorCountInput.addEventListener("change", (event) => {
     if (value && !isNaN(value)) {
         dispatchColorCount(value);
     }
+});
+
+// Range Selection
+// Value Range Selection (Min/Max Thresholds)
+const rangeMinSlider = document.getElementById("mrms-min");
+const rangeMaxSlider = document.getElementById("mrms-max");
+const rangeValueLabel = document.getElementById("mrms-range-value-label");
+rangeValueLabel.textContent = "N/A";
+
+const dispatchRange = (min, max) => {
+    document.dispatchEvent(new CustomEvent('range-set', {
+        detail: { min: parseFloat(min), max: parseFloat(max) },
+    }));
+};
+
+const updateRangeLabel = () => {
+    rangeValueLabel.textContent = `${rangeMinSlider.value} - ${rangeMaxSlider.value}`;
+};
+
+rangeMinSlider.addEventListener("input", (event) => {
+    if (parseFloat(event.target.value) > parseFloat(rangeMaxSlider.value)) {
+        event.target.value = rangeMaxSlider.value;
+    }
+    updateRangeLabel();
+});
+
+rangeMaxSlider.addEventListener("input", (event) => {
+    if (parseFloat(event.target.value) < parseFloat(rangeMinSlider.value)) {
+        event.target.value = rangeMinSlider.value;
+    }
+    updateRangeLabel();
+});
+
+rangeMinSlider.addEventListener("change", () => {
+    dispatchRange(rangeMinSlider.value, rangeMaxSlider.value);
+});
+
+rangeMaxSlider.addEventListener("change", () => {
+    dispatchRange(rangeMinSlider.value, rangeMaxSlider.value);
 });
