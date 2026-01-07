@@ -1,10 +1,10 @@
 import "./mrmsMenu.css";
+
 const minInput = document.getElementById('mrms-min');
 const maxInput = document.getElementById('mrms-max');
-const rangeLabel = document.getElementById('range-value-label');
+const rangeLabel = document.getElementById('mrms-range-value-label');
 const track = document.querySelector('.slider-track');
 
-// Set a minimum gap if you want (e.g., values can't be within 5 units)
 const minGap = 0;
 
 function handleMinInput() {

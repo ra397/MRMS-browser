@@ -88,9 +88,14 @@
                   </div>
 
                   <div class="control-group">
+                      <label for="mrms-color-count">Number of Colors</label>
+                      <input type="number" id="mrms-color-count" value="15" min="2" max="256" class="text-input">
+                  </div>
+
+                  <div class="control-group">
                       <div style="display:flex; justify-content: space-between;">
                           <label>Value Range</label>
-                          <span id="range-value-label" class="value-display">0 - 100</span>
+                          <span id="mrms-range-value-label" class="value-display">0 - 100</span>
                       </div>
                       <div class="range-slider-container">
                           <input type="range" id="mrms-min" min="0" max="100" value="0" class="dual-range">
@@ -100,8 +105,13 @@
                   </div>
 
                   <div class="control-group">
-                      <label for="color-count">Number of Colors</label>
-                      <input type="number" id="color-count" value="15" min="2" max="256" class="text-input">
+                      <div style="display:flex; justify-content: space-between;">
+                          <label>Opacity</label>
+                          <span id="mrms-opacity-value-label" class="value-display">0 - 100%</span>
+                      </div>
+                      <div class="range-slider-container">
+                          <input type="range" id="mrms-opacity" min="0" max="100" value="0" class="range-slider">
+                      </div>
                   </div>
               </div>
           </div>
