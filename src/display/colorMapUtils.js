@@ -40,15 +40,37 @@ export function generateColorMap(thresholds, colors) {
     return colorMap;
 }
 
-export function getActiveColorMap(product, paletteName = 'default') {
-    const { thresholds, defaultColors } = product;
+export function generateEvenThresholds(min, max, numColors) {
+    const thresholds = [];
+    const step = (max - min) / numColors;
+    for (let i = 0; i <= numColors; i++) {
+        thresholds.push(min + i * step);
+    }
+    return thresholds;
+}
 
+
+export function getActiveColorMap(product, paletteName = 'default', numColors = null) {
+    const { thresholds: productThresholds, defaultColors } = product;
+
+    // Determine number of color bins
+    const colorCount = numColors !== null ? numColors : productThresholds.length - 1;
+
+    // Use custom evenly-spaced thresholds if numColors differs from default
+    const useCustomThresholds = numColors !== null && numColors !== productThresholds.length - 1;
+    const minValue = productThresholds[0];
+    const maxValue = productThresholds[productThresholds.length - 1];
+    const thresholds = useCustomThresholds
+        ? generateEvenThresholds(minValue, maxValue, colorCount)
+        : productThresholds;
+
+    // Get colors
     let colors;
-    if (paletteName === 'default') {
+    if (paletteName === 'default' && !useCustomThresholds) {
         colors = defaultColors;
     } else {
-        const palette = palettes[paletteName];
-        colors = samplePalette(palette, thresholds.length - 1);
+        const palette = palettes[paletteName] || palettes['viridis'];
+        colors = samplePalette(palette, colorCount);
     }
     return generateColorMap(thresholds, colors);
 }

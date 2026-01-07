@@ -14,8 +14,9 @@ let currentIndex = 0;
 let isPlaying = false;
 let playInterval = null;
 
-let palette;
 let overlay;
+let palette;
+let colorCount = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     overlay = customOverlay(overlayInfo.transparentImgSrc, overlayInfo.bbox, map, 'OverlayView', false);
@@ -77,9 +78,34 @@ document.addEventListener("palette-set", async event => {
     }
 });
 
+document.addEventListener("colorcount-set", async event => {
+    colorCount = event.detail.colorCount;
+
+    // Regenerate all cached frames with the new color count
+    for (const [file_name, entry] of fileImgMap) {
+        entry.img = await generateImage(
+            entry.file_data,
+            entry.product_name,
+            entry.referenceValue,
+            entry.binaryScale,
+            entry.decimalScale
+        );
+    }
+
+    // Redisplay current frame
+    if (fileImgMap.size > 0) {
+        displayFrame(currentIndex);
+    }
+});
+
+const colorCountInput = document.getElementById("mrms-color-count");
+
 async function generateImage(file_data, product_name, referenceValue, binaryScale, decimalScale) {
     const selectedProduct = products.find(p => p.s3_name === product_name);
-    const colorMap = getActiveColorMap(selectedProduct, palette);
+    const colorMap = getActiveColorMap(selectedProduct, palette, colorCount);
+
+    colorCountInput.value = colorMap.length - 2;
+
     const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
     const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
     return await raster.generateUrl();

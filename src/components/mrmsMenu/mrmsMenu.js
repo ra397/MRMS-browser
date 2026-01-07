@@ -34,3 +34,19 @@ opacitySlider.addEventListener("change", (event) => {
     opacityLabel.textContent = `${value}%`;
     dispatchOpacity(value);
 });
+
+// Number of Colors Selection
+const colorCountInput = document.getElementById("mrms-color-count");
+
+const dispatchColorCount = (value) => {
+    document.dispatchEvent(new CustomEvent('colorcount-set', {
+        detail: { colorCount: parseInt(value, 10) },
+    }));
+};
+
+colorCountInput.addEventListener("change", (event) => {
+    const value = event.target.value;
+    if (value && !isNaN(value)) {
+        dispatchColorCount(value);
+    }
+});
