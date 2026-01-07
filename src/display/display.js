@@ -52,6 +52,11 @@ function scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale) {
     }));
 }
 
+document.addEventListener("opacity-set", (event) => {
+    const opacity = event.detail.opacity / 100;
+    overlay.setOpacity(opacity);
+})
+
 document.addEventListener("palette-set", async event => {
     palette = event.detail.palette;
 
