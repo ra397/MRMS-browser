@@ -3,6 +3,7 @@ import {customOverlay} from "./customOverlay.js";
 import {overlayInfo, products} from "./config.js";
 import {getActiveColorMap} from "./colorMapUtils.js";
 import {setSliderRange, setSliderValue} from "../components/player/player.js";
+import { updateLegend } from '../components/legend/legend.js';
 
 // Running map of filename -> generated overlay/img
 const fileImgMap = new Map();
@@ -172,7 +173,15 @@ async function generateImage(file_data, product_name, referenceValue, binaryScal
 
     const colorMap = getActiveColorMap(selectedProduct, palette, colorCount, rangeMin, rangeMax);
 
-    colorCountInput.value = colorMap.length - 2;
+    if (colorCount === null) {
+        colorCountInput.value = colorMap.length - 2;
+    }
+
+    // Update legend
+    const isDefault = palette === 'default' && colorCount === null && rangeMin === null && rangeMax === null;
+    const thresholds = colorMap.slice(1, -1).map(entry => entry.min);
+    thresholds.push(colorMap[colorMap.length - 2].max); // Add final threshold
+    updateLegend(colorMap, thresholds, selectedProduct.units, isDefault);
 
     const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
     const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);

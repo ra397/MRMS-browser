@@ -10,9 +10,6 @@ const echoTopColors = [[0,236,236,255],[0,200,240,255],[0,160,255,255],[0,60,255
 const gaugeInfluenceIndexThresholds = [0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95];
 const gaugeInfluenceIndexColors = [[0,236,236,255],[0,200,240,255],[0,160,255,255],[0,60,255,255],[0,255,0,255],[0,210,0,255],[0,180,0,255],[0,144,0,255],[255,255,0,255],[240,210,0,255],[240,180,0,255],[240,110,0,255],[255,160,160,255],[255,20,20,255],[220,0,0,255],[180,0,0,255],[255,0,255,255],[200,0,200,255],[130,0,130,255]];
 
-const freezingHeightMetersThresholds = [3.01,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000];
-const freezingHeightMetersColors = [[0,236,236,255],[0,200,240,255],[0,160,255,255],[0,60,255,255],[0,255,0,255],[0,220,0,255],[0,190,0,255],[0,141,0,255],[255,255,0,255],[240,210,0,255],[231,180,0,255],[200,120,0,255],[255,160,160,255],[255,60,60,255],[230,0,0,255],[180,0,0,255],[255,0,255,255],[217,0,217,255],[164,0,164,255],[120,0,120,255]];
-
 const warmRainProbabilityPercentageThresholds = [3.01,10,20,30,40,50,60,70,80,90,100];
 const warmRainProbabilityPercentageColors = [[0,236,236,255],[0,160,246,255],[0,0,246,255],[0,255,0,255],[0,200,0,255],[0,144,0,255],[255,255,0,255],[231,192,0,255],[255,144,0,255],[254,0,0,255]];
 
@@ -40,6 +37,7 @@ export const productGroups = [
     {
         name: "QPE",
         type: "category",
+        units: "mm",
         items: [
             {
                 name: "Q3 Multi-Sensor",
@@ -80,6 +78,7 @@ export const productGroups = [
     {
         name: "Reflectivity",
         type: "category",
+        units: "dBZ",
         items: [
             {
                 name: "Base Reflectivity",
@@ -112,6 +111,7 @@ export const productGroups = [
     {
         name: "Echo Top",
         type: "category",
+        units: "dBZ",
         items: [
             { display_name: "Echo Top 18 dBZ", s3_name: "EchoTop_18_00.50", thresholds: echoTopThresholds, defaultColors: echoTopColors },
             { display_name: "Echo Top 30 dBZ", s3_name: "EchoTop_30_00.50", thresholds: echoTopThresholds, defaultColors: echoTopColors },
@@ -122,6 +122,7 @@ export const productGroups = [
     {
         name: "Radar Accumulation Quality Index",
         type: "category",
+        units: "Fraction",
         items: [
             { display_name: "QPE RQI 1 hr", s3_name: "RadarAccumulationQualityIndex_01H_00.00", thresholds: qualityIndexThresholds, defaultColors: qualityIndexColors },
             { display_name: "QPE RQI 3 hr", s3_name: "RadarAccumulationQualityIndex_03H_00.00", thresholds: qualityIndexThresholds, defaultColors: qualityIndexColors },
@@ -135,6 +136,7 @@ export const productGroups = [
     {
         name: "Gauge Influence Index",
         type: "category",
+        units: "Fraction",
         items: [
             { display_name: "Gauge Influence Index 1 hr (Pass 1)", s3_name: "GaugeInflIndex_01H_Pass1_00.00", thresholds: gaugeInfluenceIndexThresholds, defaultColors: gaugeInfluenceIndexColors },
             { display_name: "Gauge Influence Index 3 hr (Pass 1)", s3_name: "GaugeInflIndex_03H_Pass1_00.00", thresholds: gaugeInfluenceIndexThresholds, defaultColors: gaugeInfluenceIndexColors },
@@ -153,8 +155,8 @@ export const productGroups = [
     {
         name: "Models",
         type: "category",
+        units: "%",
         items: [
-            { display_name: "Model Freezing Height", s3_name: "Model_0degC_Height_00.50", thresholds: freezingHeightMetersThresholds, defaultColors: freezingHeightMetersColors },
             { display_name: "Warm Rain Probability", s3_name: "WarmRainProbability_00.50", thresholds: warmRainProbabilityPercentageThresholds, defaultColors: warmRainProbabilityPercentageColors },
         ]
     }
@@ -163,21 +165,26 @@ export const productGroups = [
 export const products = (function flatten(groups) {
     let flat = [];
     groups.forEach(g => {
+        const units = g.units; // Capture units from the category level
         if (g.items) {
             // Check if children are subcategories or direct items
             const hasSub = g.items.some(i => i.type === 'subcategory');
             if (hasSub) {
                 // Dig deeper into subcategories
                 g.items.forEach(sub => {
-                    if (sub.items) flat = flat.concat(sub.items);
+                    if (sub.items) {
+                        // Add units to each item
+                        flat = flat.concat(sub.items.map(item => ({ ...item, units })));
+                    }
                 });
             } else {
-                // Direct items
-                flat = flat.concat(g.items);
+                // Direct items - add units to each
+                flat = flat.concat(g.items.map(item => ({ ...item, units })));
             }
         }
     });
     return flat;
 })(productGroups);
 
+console.log(products)
 globalThis.products = products;
