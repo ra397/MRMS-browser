@@ -50,7 +50,7 @@ export function generateEvenThresholds(min, max, numColors) {
 }
 
 
-export function getActiveColorMap(product, paletteName = 'default', numColors = null, rangeMin = null, rangeMax = null) {
+export function getActiveColorMap(product, paletteName = 'default', numColors = null, rangeMin = null, rangeMax = null, customColors = null) {
     const { thresholds: productThresholds, defaultColors } = product;
 
     // Determine the value range
@@ -69,10 +69,20 @@ export function getActiveColorMap(product, paletteName = 'default', numColors = 
     // Get colors
     let colors;
     if (paletteName === 'default' && !useCustomThresholds) {
-        colors = defaultColors;
+        colors = [...defaultColors]; // Clone to avoid mutation
     } else {
         const palette = palettes[paletteName] || palettes['viridis'];
         colors = samplePalette(palette, colorCount);
     }
+
+    // Apply custom color overrides
+    if (customColors && customColors.size > 0) {
+        customColors.forEach((color, index) => {
+            if (index >= 0 && index < colors.length) {
+                colors[index] = color;
+            }
+        });
+    }
+
     return generateColorMap(thresholds, colors);
 }

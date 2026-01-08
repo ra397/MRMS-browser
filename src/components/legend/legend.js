@@ -5,24 +5,24 @@ const legendTitle = legendContainer.querySelector('.legend-title');
 const legendBar = legendContainer.querySelector('.legend-bar');
 const legendLabels = legendContainer.querySelector('.legend-labels');
 
-function getLabelIndices(thresholdCount, isDefault) {
-    // Returns array of indices into thresholds array to display as labels
+const colorPickerPopup = document.getElementById('color-picker-popup');
+const colorPickerInput = document.getElementById('color-picker-input');
+const colorPickerClose = colorPickerPopup.querySelector('.color-picker-close');
 
+let selectedSegmentIndex = null;
+
+function getLabelIndices(thresholdCount, isDefault) {
     if (isDefault) {
-        // Show all thresholds
         return Array.from({ length: thresholdCount }, (_, i) => i);
     }
 
-    // For custom: pick max that fits nicely
     const maxTicks = 9;
 
     if (thresholdCount <= maxTicks) {
-        // Show all if few enough
         return Array.from({ length: thresholdCount }, (_, i) => i);
     }
 
-    // Pick 5, 7, or 9 - whichever divides most evenly
-    let numLabels = 7; // Default fallback
+    let numLabels = 7;
     for (const n of [9, 7, 5]) {
         if ((thresholdCount - 1) % (n - 1) === 0) {
             numLabels = n;
@@ -30,7 +30,6 @@ function getLabelIndices(thresholdCount, isDefault) {
         }
     }
 
-    // Generate evenly spaced indices
     const indices = [];
     for (let i = 0; i < numLabels; i++) {
         const index = Math.round(i * (thresholdCount - 1) / (numLabels - 1));
@@ -40,19 +39,80 @@ function getLabelIndices(thresholdCount, isDefault) {
 }
 
 function formatValue(value) {
-    // Format threshold value for display
     if (Number.isInteger(value)) {
         return value.toString();
     }
-    // Show up to 2 decimal places, trim trailing zeros
     return parseFloat(value.toFixed(2)).toString();
 }
 
+function rgbaToHex(rgba) {
+    const [r, g, b] = rgba;
+    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+function hexToRgba(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16),
+        255
+    ] : [0, 0, 0, 255];
+}
+
+function clearSelection() {
+    const selected = legendBar.querySelector('.legend-segment.selected');
+    if (selected) {
+        selected.classList.remove('selected');
+    }
+    selectedSegmentIndex = null;
+}
+
+function closeColorPicker() {
+    colorPickerPopup.classList.add('hidden');
+    clearSelection();
+}
+
+function openColorPicker(segment, index, rgba) {
+    clearSelection();
+
+    segment.classList.add('selected');
+    selectedSegmentIndex = index;
+
+    // Set picker value
+    colorPickerInput.value = rgbaToHex(rgba);
+
+    // Position picker next to segment
+    const segmentRect = segment.getBoundingClientRect();
+    const legendRect = legendContainer.getBoundingClientRect();
+
+    colorPickerPopup.classList.remove('hidden');
+
+    // Position to the right of the legend
+    colorPickerPopup.style.left = `${legendRect.right + 10}px`;
+    colorPickerPopup.style.top = `${segmentRect.top}px`;
+}
+
+// Close button handler
+colorPickerClose.addEventListener('click', closeColorPicker);
+
+// Color change handler
+colorPickerInput.addEventListener('change', (event) => {
+    if (selectedSegmentIndex === null) return;
+
+    const newColor = hexToRgba(event.target.value);
+
+    // Dispatch event with index and new color
+    document.dispatchEvent(new CustomEvent('color-edit', {
+        detail: { index: selectedSegmentIndex, color: newColor }
+    }));
+
+    closeColorPicker();
+});
+
 export function updateLegend(colorMap, thresholds, units, isDefault) {
-    // colorMap: array of {min, max, rgba} - includes -Infinity/+Infinity entries
-    // thresholds: array of threshold values (without infinities)
-    // units: string like 'mm', 'dBZ', or undefined
-    // isDefault: boolean - true if using product's original thresholds
+    // Close picker if open (colors are changing)
+    closeColorPicker();
 
     // Update title (units)
     legendTitle.textContent = units || '';
@@ -65,12 +125,19 @@ export function updateLegend(colorMap, thresholds, units, isDefault) {
         return `<div class="legend-segment" data-index="${index}" style="background-color: rgba(${r},${g},${b},${a / 255});"></div>`;
     }).join('');
 
+    // Add click handlers to segments
+    legendBar.querySelectorAll('.legend-segment').forEach(segment => {
+        segment.addEventListener('click', () => {
+            const index = parseInt(segment.dataset.index, 10);
+            const rgba = colorSegments[index].rgba;
+            openColorPicker(segment, index, rgba);
+        });
+    });
+
     // Determine which threshold labels to show
     const labelIndices = getLabelIndices(thresholds.length, isDefault);
 
     // Build labels
-    // They are positioned using flexbox space-between
-    // We need to include empty spacers for skipped labels
     legendLabels.innerHTML = labelIndices.map(index => {
         const value = thresholds[index];
         return `<span class="legend-label" data-index="${index}">${formatValue(value)}</span>`;

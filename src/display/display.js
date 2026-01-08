@@ -20,6 +20,7 @@ let palette = 'default';
 let colorCount = null;
 let rangeMin = null;
 let rangeMax = null;
+let customColors = new Map(); // Map<index, [r,g,b,a]>
 
 document.addEventListener("DOMContentLoaded", () => {
     overlay = customOverlay(overlayInfo.transparentImgSrc, overlayInfo.bbox, map, 'OverlayView', false);
@@ -63,6 +64,7 @@ document.addEventListener("opacity-set", (event) => {
 
 document.addEventListener("palette-set", async event => {
     palette = event.detail.palette;
+    customColors.clear(); // Clear custom color overrides
 
     // Regenerate all cached frames with the new palette
     for (const [file_name, entry] of fileImgMap) {
@@ -106,6 +108,27 @@ document.addEventListener("range-set", async event => {
     rangeMax = event.detail.max;
 
     // Regenerate all cached frames with the new range
+    for (const [file_name, entry] of fileImgMap) {
+        entry.img = await generateImage(
+            entry.file_data,
+            entry.product_name,
+            entry.referenceValue,
+            entry.binaryScale,
+            entry.decimalScale
+        );
+    }
+
+    // Redisplay current frame
+    if (fileImgMap.size > 0) {
+        displayFrame(currentIndex);
+    }
+});
+
+document.addEventListener("color-edit", async event => {
+    const { index, color } = event.detail;
+    customColors.set(index, color);
+
+    // Regenerate all cached frames with the new color
     for (const [file_name, entry] of fileImgMap) {
         entry.img = await generateImage(
             entry.file_data,
@@ -171,7 +194,7 @@ async function generateImage(file_data, product_name, referenceValue, binaryScal
         setSelectedPalette('viridis');
     }
 
-    const colorMap = getActiveColorMap(selectedProduct, palette, colorCount, rangeMin, rangeMax);
+    const colorMap = getActiveColorMap(selectedProduct, palette, colorCount, rangeMin, rangeMax, customColors);
 
     if (colorCount === null) {
         colorCountInput.value = colorMap.length - 2;
