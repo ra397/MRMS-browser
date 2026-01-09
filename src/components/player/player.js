@@ -3,8 +3,8 @@ import './player.css';
 let isPlaying = false;
 
 const playPause = document.getElementById("play-pause-btn");
-const prevBtn = document.getElementById("step-backward");
-const nextBtn = document.getElementById("step-forward");
+// const prevBtn = document.getElementById("step-backward");
+// const nextBtn = document.getElementById("step-forward");
 
 const playSVG = `
     <svg height="100%" width="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -23,17 +23,17 @@ playPause.addEventListener("click", () => {
     togglePlayPause();
 });
 
-nextBtn.addEventListener("click", () => {
-    document.dispatchEvent(new CustomEvent("player-step", {
-        detail: { direction: 1 },
-    }));
-});
-
-prevBtn.addEventListener("click", () => {
-    document.dispatchEvent(new CustomEvent("player-step", {
-        detail: { direction: -1 },
-    }));
-});
+// nextBtn.addEventListener("click", () => {
+//     document.dispatchEvent(new CustomEvent("player-step", {
+//         detail: { direction: 1 },
+//     }));
+// });
+//
+// prevBtn.addEventListener("click", () => {
+//     document.dispatchEvent(new CustomEvent("player-step", {
+//         detail: { direction: -1 },
+//     }));
+// });
 
 function togglePlayPause() {
     isPlaying = !isPlaying; // update state
