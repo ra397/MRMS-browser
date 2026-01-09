@@ -11,6 +11,8 @@ class TimelineController {
         this._rangeSelectedCallback = null; // callback when a user has selected date range
 
         this._bindEvents();
+
+        this.activePointerId = null;
     }
 
     onRangeSelected(callback) {
@@ -136,38 +138,56 @@ class TimelineController {
 
 
     _panEvent() {
-        // Drag to pan
-        this.timelineElement.addEventListener('mousedown', this._onMouseDown.bind(this));
-        document.addEventListener('mousemove', this._onMouseMove.bind(this));
-        document.addEventListener('mouseup', this._onMouseUp.bind(this));
+        this.timelineElement.style.touchAction = 'none';
+
+        this.timelineElement.addEventListener('pointerdown', this._onPointerDown.bind(this));
+        this.timelineElement.addEventListener('pointermove', this._onPointerMove.bind(this));
+        this.timelineElement.addEventListener('pointerup', this._onPointerUp.bind(this));
+        this.timelineElement.addEventListener('pointercancel', this._onPointerUp.bind(this));
+        this.timelineElement.addEventListener('lostpointercapture', this._onPointerUp.bind(this));
     }
 
-    _onMouseDown(e) {
-        this.isDragging = true;
+    _onPointerDown(e) {
+        if (this.activePointerId !== null) return;
+
+        this.activePointerId = e.pointerId;
         this.lastX = e.clientX;
         this.accumulatedDelta = 0;
-        this.timelineElement.classList.add('dragging');
     }
 
-    _onMouseMove(e) {
-        if (!this.isDragging) return;
+    _onPointerMove(e) {
+        if (this.activePointerId === null || e.pointerId !== this.activePointerId) return;
 
         const deltaX = e.clientX - this.lastX;
         this.accumulatedDelta += deltaX;
         this.lastX = e.clientX;
 
-        if (Math.abs(this.accumulatedDelta) >= this.dragThreshold) {
+        // Start dragging only after threshold is reached
+        if (!this.isDragging && Math.abs(this.accumulatedDelta) >= this.dragThreshold) {
+            this.isDragging = true;
+            this.timelineElement.classList.add('dragging');
+            this.timelineElement.setPointerCapture(e.pointerId);
+        }
+
+        if (this.isDragging && Math.abs(this.accumulatedDelta) >= this.dragThreshold) {
             const direction = this.accumulatedDelta > 0 ? 'left' : 'right';
             this.timeline.pan(direction);
             this.accumulatedDelta = 0;
         }
     }
 
-    _onMouseUp() {
+    _onPointerUp(e) {
+        if (e && e.pointerId !== this.activePointerId) return;
+
         if (this.isDragging) {
             this.isDragging = false;
             this.timelineElement.classList.remove('dragging');
+
+            try {
+                this.timelineElement.releasePointerCapture(this.activePointerId);
+            } catch (err) {}
         }
+        this.activePointerId = null;
     }
 
     _getZoomDate(event) {
