@@ -1,4 +1,5 @@
-import { db, emitDBChange } from "../database/db.js";
+import {db, emitDBChange} from "../database/db.js";
+import {dataStore} from "../store/dataStore.js";
 
 // State tracking
 const state = {
@@ -62,6 +63,8 @@ async function fetchData() {
         return timestampA.localeCompare(timestampB);
     });
 
+    const filesToActuallyFetch = files_to_fetch.filter(file => !dataStore.has(file));
+
     // Dispatch total files count BEFORE streaming files
     document.dispatchEvent(new CustomEvent('files-total', {
         detail: {
@@ -70,7 +73,23 @@ async function fetchData() {
         },
     }));
 
-    const cacheStatus = await db.hasFiles(files_to_fetch);
+    // For files already in memory, dispatch display-file with cached data
+    for (const fileName of files_to_fetch) {
+        if (dataStore.has(fileName)) {
+            const cached = dataStore.get(fileName);
+            dispatchDisplayFile(
+                cached.productName,
+                fileName,
+                cached.data,
+                cached.referenceValue,
+                cached.binaryScale,
+                cached.decimalScale
+            );
+        }
+    }
+
+    // Fetch only what's missing
+    const cacheStatus = await db.hasFiles(filesToActuallyFetch);
     for (const { fileName, isCached } of cacheStatus) {
         if (isCached) {
             const result = await db.getDecodedData(fileName);

@@ -1,52 +1,58 @@
-import {RasterGenerator} from "./rasterGenerator.js";
-import {customOverlay} from "./customOverlay.js";
-import {overlayInfo, products} from "./config.js";
-import {getActiveColorMap} from "./colorMapUtils.js";
-import {setSliderRange, setSliderValue} from "../components/player/player.js";
+import { RasterGenerator } from "./rasterGenerator.js";
+import { customOverlay } from "./customOverlay.js";
+import { overlayInfo, products } from "./config.js";
+import { getActiveColorMap } from "./colorMapUtils.js";
+import { setSliderRange, setSliderValue } from "../components/player/player.js";
 import { updateLegend } from '../components/legend/legend.js';
+import { dataStore } from '../store/dataStore.js';
+import { visualizationState } from '../store/visualizationState.js';
+import { imageCache } from '../store/imageCache.js';
 
-// Running map of filename -> generated overlay/img
-const fileImgMap = new Map();
-
-// Ordered list of filenames for playback
-let orderedFileNames = [];
-let totalExpectedFiles = 0;
+let overlay;
 let currentIndex = 0;
 let isPlaying = false;
 let playInterval = null;
 
-let overlay;
-let palette = 'default';
-let colorCount = null;
-let rangeMin = null;
-let rangeMax = null;
-let customColors = new Map(); // Map<index, [r,g,b,a]>
+// UI Elements
+const colorCountInput = document.getElementById("mrms-color-count");
+const rangeMinSlider = document.getElementById("mrms-min");
+const rangeMaxSlider = document.getElementById("mrms-max");
+const rangeValueLabel = document.getElementById("mrms-range-value-label");
+const paletteRadioButtons = document.querySelectorAll('input[name="palette"]');
 
+// Initialize overlay
 document.addEventListener("DOMContentLoaded", () => {
     overlay = customOverlay(overlayInfo.transparentImgSrc, overlayInfo.bbox, map, 'OverlayView', false);
 });
 
-document.addEventListener("display-reset", () => {
-    fileImgMap.clear();
-    orderedFileNames = [];
-    totalExpectedFiles = 0;
-    currentIndex = 0;
-    pause();
-    overlay.setSource(overlayInfo.transparentImgSrc);
-});
+// --- Helper Functions ---
 
-// Listen for total files count (dispatch this from your fetcher when you know the total)
-document.addEventListener('files-total', event => {
-    totalExpectedFiles = event.detail.total;
-    orderedFileNames = event.detail.fileNames; // sorted list of filenames
+function setSelectedPalette(paletteName) {
+    paletteRadioButtons.forEach(radio => {
+        radio.checked = radio.value === paletteName;
+    });
+}
 
-    // Update slider range
-    setSliderRange(0, totalExpectedFiles - 1);
-});
+function initializeRangeSliders(product) {
+    const productMin = product.thresholds[0];
+    const productMax = product.thresholds[product.thresholds.length - 1];
+    const range = productMax - productMin;
+    const step = range / 100;
+
+    rangeMinSlider.min = productMin;
+    rangeMinSlider.max = productMax;
+    rangeMinSlider.step = step;
+    rangeMinSlider.value = productMin;
+
+    rangeMaxSlider.min = productMin;
+    rangeMaxSlider.max = productMax;
+    rangeMaxSlider.step = step;
+    rangeMaxSlider.value = productMax;
+
+    rangeValueLabel.textContent = `${productMin} - ${productMax}`;
+}
 
 function scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale) {
-    // Formula: real_value = (reference_value + scaled_value * 2^binary_scale) / 10^decimal_scale
-    // Inverse:  scaled_value = (real_value * 10^decimal_scale - reference_value) / 2^binary_scale
     const decimalFactor = Math.pow(10, decimalScale);
     const binaryFactor = Math.pow(2, binaryScale);
 
@@ -57,212 +63,228 @@ function scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale) {
     }));
 }
 
-document.addEventListener("opacity-set", (event) => {
-    const opacity = event.detail.opacity / 100;
-    overlay.setOpacity(opacity);
-})
+async function generateImageUrl(fileData) {
+    const { data, productName, referenceValue, binaryScale, decimalScale } = fileData;
+    const product = products.find(p => p.s3_name === productName);
 
-document.addEventListener("palette-set", async event => {
-    palette = event.detail.palette;
-    customColors.clear(); // Clear custom color overrides
+    const colorMap = getActiveColorMap(
+        product,
+        visualizationState.getPalette(),
+        visualizationState.getColorCount(),
+        visualizationState.getRangeMin(),
+        visualizationState.getRangeMax(),
+        visualizationState.getCustomColors()
+    );
 
-    // Regenerate all cached frames with the new palette
-    for (const [file_name, entry] of fileImgMap) {
-        entry.img = await generateImage(
-            entry.file_data,
-            entry.product_name,
-            entry.referenceValue,
-            entry.binaryScale,
-            entry.decimalScale
-        );
-    }
-
-    // Redisplay current frame with new palette
-    if (fileImgMap.size > 0) {
-        displayFrame(currentIndex);
-    }
-});
-
-document.addEventListener("colorcount-set", async event => {
-    colorCount = event.detail.colorCount;
-
-    // Regenerate all cached frames with the new color count
-    for (const [file_name, entry] of fileImgMap) {
-        entry.img = await generateImage(
-            entry.file_data,
-            entry.product_name,
-            entry.referenceValue,
-            entry.binaryScale,
-            entry.decimalScale
-        );
-    }
-
-    // Redisplay current frame
-    if (fileImgMap.size > 0) {
-        displayFrame(currentIndex);
-    }
-});
-
-document.addEventListener("range-set", async event => {
-    rangeMin = event.detail.min;
-    rangeMax = event.detail.max;
-
-    // Regenerate all cached frames with the new range
-    for (const [file_name, entry] of fileImgMap) {
-        entry.img = await generateImage(
-            entry.file_data,
-            entry.product_name,
-            entry.referenceValue,
-            entry.binaryScale,
-            entry.decimalScale
-        );
-    }
-
-    // Redisplay current frame
-    if (fileImgMap.size > 0) {
-        displayFrame(currentIndex);
-    }
-});
-
-document.addEventListener("color-edit", async event => {
-    const { index, color } = event.detail;
-    customColors.set(index, color);
-
-    // Regenerate all cached frames with the new color
-    for (const [file_name, entry] of fileImgMap) {
-        entry.img = await generateImage(
-            entry.file_data,
-            entry.product_name,
-            entry.referenceValue,
-            entry.binaryScale,
-            entry.decimalScale
-        );
-    }
-
-    // Redisplay current frame
-    if (fileImgMap.size > 0) {
-        displayFrame(currentIndex);
-    }
-});
-
-const paletteRadioButtons = document.querySelectorAll('input[name="palette"]');
-
-function setSelectedPalette(paletteName) {
-    paletteRadioButtons.forEach(radio => {
-        radio.checked = radio.value === paletteName;
-    });
+    const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
+    const raster = new RasterGenerator(data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
+    return await raster.generateUrl();
 }
 
-document.addEventListener("visualization-reset", () => {
-    colorCount = null;
-    rangeMin = null;
-    rangeMax = null;
-});
+function updateLegendFromProduct(product) {
+    const colorMap = getActiveColorMap(
+        product,
+        visualizationState.getPalette(),
+        visualizationState.getColorCount(),
+        visualizationState.getRangeMin(),
+        visualizationState.getRangeMax(),
+        visualizationState.getCustomColors()
+    );
 
-const colorCountInput = document.getElementById("mrms-color-count");
-const rangeMinSlider = document.getElementById("mrms-min");
-const rangeMaxSlider = document.getElementById("mrms-max");
-const rangeValueLabel = document.getElementById("mrms-range-value-label");
-
-async function generateImage(file_data, product_name, referenceValue, binaryScale, decimalScale) {
-    const selectedProduct = products.find(p => p.s3_name === product_name);
-
-    // Initialize range sliders from product thresholds if not set
-    if (rangeMin === null || rangeMax === null) {
-        const productMin = selectedProduct.thresholds[0];
-        const productMax = selectedProduct.thresholds[selectedProduct.thresholds.length - 1];
-
-        const range = productMax - productMin;
-        const step = range / 100;
-
-        rangeMinSlider.min = productMin;
-        rangeMinSlider.max = productMax;
-        rangeMinSlider.step = step;
-        rangeMinSlider.value = productMin;
-
-        rangeMaxSlider.min = productMin;
-        rangeMaxSlider.max = productMax;
-        rangeMaxSlider.step = step;
-        rangeMaxSlider.value = productMax;
-
-        rangeValueLabel.textContent = `${productMin} - ${productMax}`;
-    }
-
-    // If palette is 'default' but we have custom settings, switch to viridis
-    if (palette === 'default' && (colorCount !== null || rangeMin !== null || rangeMax !== null)) {
-        palette = 'viridis';
-        setSelectedPalette('viridis');
-    }
-
-    const colorMap = getActiveColorMap(selectedProduct, palette, colorCount, rangeMin, rangeMax, customColors);
-
-    if (colorCount === null) {
+    if (visualizationState.getColorCount() === null) {
         colorCountInput.value = colorMap.length - 2;
     }
 
-    // Update legend
-    const isDefault = palette === 'default' && colorCount === null && rangeMin === null && rangeMax === null;
     const thresholds = colorMap.slice(1, -1).map(entry => entry.min);
-    thresholds.push(colorMap[colorMap.length - 2].max); // Add final threshold
-    updateLegend(colorMap, thresholds, selectedProduct.units, isDefault);
-
-    const scaledColorMap = scaleColorMap(colorMap, referenceValue, binaryScale, decimalScale);
-    const raster = new RasterGenerator(file_data, overlayInfo.numCols, overlayInfo.numRows, scaledColorMap);
-    return await raster.generateUrl();
+    thresholds.push(colorMap[colorMap.length - 2].max);
+    updateLegend(colorMap, thresholds, product.units, visualizationState.isDefault());
 }
+
+async function getOrGenerateImage(fileName) {
+    const vizKey = visualizationState.getCacheKey();
+
+    if (imageCache.has(fileName, vizKey)) {
+        return imageCache.get(fileName, vizKey);
+    }
+
+    const fileData = dataStore.get(fileName);
+    if (!fileData) return null;
+
+    const imageUrl = await generateImageUrl(fileData);
+    imageCache.set(fileName, vizKey, imageUrl);
+    return imageUrl;
+}
+
+function displayFrame(index) {
+    const activeFiles = dataStore.getActiveFiles();
+    if (index < 0 || index >= activeFiles.length) return;
+
+    const fileName = activeFiles[index];
+    const vizKey = visualizationState.getCacheKey();
+
+    if (imageCache.has(fileName, vizKey)) {
+        overlay.setSource(imageCache.get(fileName, vizKey));
+        currentIndex = index;
+        setSliderValue(index);
+    }
+}
+
+async function regenerateAndDisplayAll() {
+    const activeFiles = dataStore.getActiveFiles();
+    if (activeFiles.length === 0) return;
+
+    // Update legend from first file's product
+    const firstFileData = dataStore.get(activeFiles[0]);
+    if (firstFileData) {
+        const product = products.find(p => p.s3_name === firstFileData.productName);
+        if (product) {
+            updateLegendFromProduct(product);
+        }
+    }
+
+    // Generate current frame first for immediate feedback
+    const currentFileName = activeFiles[currentIndex];
+    if (currentFileName) {
+        await getOrGenerateImage(currentFileName);
+        displayFrame(currentIndex);
+    }
+
+    // Generate remaining frames
+    for (let i = 0; i < activeFiles.length; i++) {
+        if (i === currentIndex) continue; // Already done
+        const fileName = activeFiles[i];
+        await getOrGenerateImage(fileName);
+    }
+}
+
+// --- Event Handlers ---
+
+document.addEventListener("display-reset", () => {
+    dataStore.clearActiveFiles();
+    currentIndex = 0;
+    pause();
+    overlay.setSource(overlayInfo.transparentImgSrc);
+});
+
+document.addEventListener('files-total', event => {
+    const { total, fileNames } = event.detail;
+    dataStore.setActiveFiles(fileNames);
+    setSliderRange(0, total - 1);
+});
 
 document.addEventListener('display-file', async event => {
     const { file_name, file_data, product_name, referenceValue, binaryScale, decimalScale } = event.detail;
 
-    const img = await generateImage(file_data, product_name, referenceValue, binaryScale, decimalScale);
+    // Track current product (resets viz settings if product changed)
+    const productChanged = visualizationState.getCurrentProduct() !== product_name;
+    visualizationState.setCurrentProduct(product_name);
 
-    // Store both the image and raw data for regeneration
-    fileImgMap.set(file_name, {
-        img,
-        file_data,
-        product_name,
-        referenceValue,
-        binaryScale,
-        decimalScale,
-    });
+    // If product changed, update UI to reflect reset state
+    if (productChanged) {
+        setSelectedPalette('default');
+    }
 
-    // If this is the first file, and we're not playing, display it
-    if (fileImgMap.size === 1 && !isPlaying) {
-        displayFrame(0);
+    // Store raw data if not already present
+    if (!dataStore.has(file_name)) {
+        dataStore.set(file_name, {
+            data: file_data,
+            productName: product_name,
+            referenceValue,
+            binaryScale,
+            decimalScale,
+        });
+    }
+
+    // Initialize UI from first file
+    const activeFiles = dataStore.getActiveFiles();
+    if (activeFiles.length > 0 && file_name === activeFiles[0]) {
+        const product = products.find(p => p.s3_name === product_name);
+        if (product) {
+            if (visualizationState.getRangeMin() === null || visualizationState.getRangeMax() === null) {
+                initializeRangeSliders(product);
+            }
+            updateLegendFromProduct(product);
+        }
+    }
+
+    // Handle palette fallback
+    if (visualizationState.needsPaletteFallback()) {
+        visualizationState.setPalette('viridis');
+        setSelectedPalette('viridis');
+    }
+
+    // Generate image and display
+    const imageUrl = await getOrGenerateImage(file_name);
+
+    // Display if this is the first file or current frame
+    const fileIndex = activeFiles.indexOf(file_name);
+    if (fileIndex === 0 || fileIndex === currentIndex) {
+        if (!isPlaying) {
+            overlay.setSource(imageUrl);
+            currentIndex = fileIndex;
+            setSliderValue(fileIndex);
+        }
     }
 });
 
-function displayFrame(index) {
-    if (index < 0 || index >= orderedFileNames.length) return;
+document.addEventListener("opacity-set", (event) => {
+    const opacity = event.detail.opacity / 100;
+    overlay.setOpacity(opacity);
+});
 
-    const fileName = orderedFileNames[index];
-    const entry = fileImgMap.get(fileName);
+document.addEventListener("palette-set", async event => {
+    visualizationState.setPalette(event.detail.palette);
+    await regenerateAndDisplayAll();
+});
 
-    if (entry) {
-        overlay.setSource(entry.img);
-        currentIndex = index;
+document.addEventListener("colorcount-set", async event => {
+    visualizationState.setColorCount(event.detail.colorCount);
 
-        // Update slider position
-        setSliderValue(index);
+    if (visualizationState.needsPaletteFallback()) {
+        visualizationState.setPalette('viridis');
+        setSelectedPalette('viridis');
     }
-}
+
+    await regenerateAndDisplayAll();
+});
+
+document.addEventListener("range-set", async event => {
+    visualizationState.setRange(event.detail.min, event.detail.max);
+
+    if (visualizationState.needsPaletteFallback()) {
+        visualizationState.setPalette('viridis');
+        setSelectedPalette('viridis');
+    }
+
+    await regenerateAndDisplayAll();
+});
+
+document.addEventListener("color-edit", async event => {
+    const { index, color } = event.detail;
+    visualizationState.setCustomColor(index, color);
+    await regenerateAndDisplayAll();
+});
+
+document.addEventListener("visualization-reset", () => {
+    visualizationState.resetToDefaults();
+});
+
+// --- Playback Controls ---
 
 function play() {
     if (isPlaying) return;
     isPlaying = true;
 
     playInterval = setInterval(() => {
-        // Move to next frame
         let nextIndex = currentIndex + 1;
-
-        // Loop back to start if at end
-        if (nextIndex >= orderedFileNames.length) {
+        if (nextIndex >= dataStore.getActiveFileCount()) {
             nextIndex = 0;
         }
 
-        // Only advance if the frame is ready
-        const fileName = orderedFileNames[nextIndex];
-        if (fileImgMap.has(fileName)) {
+        const fileName = dataStore.getActiveFile(nextIndex);
+        const vizKey = visualizationState.getCacheKey();
+
+        if (imageCache.has(fileName, vizKey)) {
             displayFrame(nextIndex);
         }
     }, 1000);
@@ -276,22 +298,16 @@ function pause() {
     }
 }
 
-// Listen for player events
-document.addEventListener('player-play', () => {
-    play();
-});
-
-document.addEventListener('player-pause', () => {
-    pause();
-});
+document.addEventListener('player-play', () => play());
+document.addEventListener('player-pause', () => pause());
 
 document.addEventListener('player-seek', event => {
-    const index = event.detail.index;
-    displayFrame(index);
+    displayFrame(event.detail.index);
 });
 
 document.addEventListener('player-step', event => {
     const newIndex = currentIndex + event.detail.direction;
-    displayFrame(newIndex); // this already calls setSliderValue on success
+    displayFrame(newIndex);
 });
-export { play, pause, displayFrame, fileImgMap };
+
+export { play, pause, displayFrame };
