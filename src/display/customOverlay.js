@@ -118,8 +118,10 @@ export class MercatorOverlay extends google.maps.OverlayView {
     #img;
     #pane;
     #map;
+    #numCols;
+    #numRows;
 
-    constructor(image, bounds, map, smooth = false, pane = 'overlayLayer') {
+    constructor(image, bounds, map, smooth = false, pane = 'overlayMouseTarget', numCols = 1924, numRows = 1128) {
         super();
 
         if (!MercatorOverlay.cssInjected && cssMercatorOverlay) {
@@ -133,6 +135,8 @@ export class MercatorOverlay extends google.maps.OverlayView {
         this.#bounds = bounds;
         this.#pane = pane;
         this.#map = map;
+        this.#numCols = numCols;
+        this.#numRows = numRows;
 
         this.#div = document.createElement('div');
         this.#div.className = 'overlayDiv';
@@ -143,7 +147,48 @@ export class MercatorOverlay extends google.maps.OverlayView {
         this.#img.src = image;
 
         this.#div.appendChild(this.#img);
+        this.#div.addEventListener('mousedown', this.#handleMouseDown.bind(this));
+        this.#div.addEventListener('mouseup', this.#handleMouseUp.bind(this));
         this.setMap(map);
+    }
+
+    #mouseDownPos = null;
+
+    #handleMouseDown(event) {
+        this.#mouseDownPos = { x: event.clientX, y: event.clientY };
+    }
+
+    #handleMouseUp(event) {
+        // Ignore if this was a drag (mouse moved more than 5 pixels)
+        if (this.#mouseDownPos) {
+            const dx = event.clientX - this.#mouseDownPos.x;
+            const dy = event.clientY - this.#mouseDownPos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 5) {
+                this.#mouseDownPos = null;
+                return;
+            }
+        }
+        this.#mouseDownPos = null;
+
+        const rect = this.#div.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        const gridX = Math.floor(x / rect.width * this.#numCols);
+        const gridY = Math.floor(y / rect.height * this.#numRows);
+
+        // Get exact lat/lng from Google Maps projection
+        const projection = this.getProjection();
+        const mapDiv = this.#map.getDiv().getBoundingClientRect();
+        const pixelX = event.clientX - mapDiv.left;
+        const pixelY = event.clientY - mapDiv.top;
+        const latLng = projection.fromContainerPixelToLatLng(new google.maps.Point(pixelX, pixelY));
+
+        document.dispatchEvent(new CustomEvent('overlay-click', {
+            detail: { gridX, gridY, lat: latLng.lat(), lng: latLng.lng() }
+        }));
     }
 
     #injectCSS(selector, rules) {
@@ -214,7 +259,7 @@ export class MercatorOverlay extends google.maps.OverlayView {
 
 }
 
-export function customOverlay(image_url, bounds, map, type = 'OverlayView', smooth = false, pane='overlayLayer') {
+export function customOverlay(image_url, bounds, map, type = 'OverlayView', smooth = false, pane='overlayMouseTarget') {
     if (typeof bounds.extend !== 'function' && bounds.sw && bounds.ne) {
         bounds = new google.maps.LatLngBounds(bounds.sw, bounds.ne);
     }
