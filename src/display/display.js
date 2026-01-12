@@ -126,6 +126,10 @@ function displayFrame(index) {
         overlay.setSource(imageCache.get(fileName, vizKey));
         currentIndex = index;
         setSliderValue(index);
+
+        document.dispatchEvent(new CustomEvent('frame-changed', {
+            detail: { filename: fileName }
+        }));
     }
 }
 
@@ -308,6 +312,18 @@ document.addEventListener('player-seek', event => {
 document.addEventListener('player-step', event => {
     const newIndex = currentIndex + event.detail.direction;
     displayFrame(newIndex);
+});
+
+document.addEventListener('overlay-click', event => {
+    const { gridX, gridY, lat, lng } = event.detail;
+    const activeFiles = dataStore.getActiveFiles();
+    const filename = activeFiles[currentIndex];
+
+    if (filename) {
+        document.dispatchEvent(new CustomEvent('product-readout-request', {
+            detail: { gridX, gridY, lat, lng, filename }
+        }));
+    }
 });
 
 export { play, pause, displayFrame };
