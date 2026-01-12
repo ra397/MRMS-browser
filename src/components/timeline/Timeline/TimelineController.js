@@ -13,6 +13,9 @@ class TimelineController {
         this._bindEvents();
 
         this.activePointerId = null;
+
+        this.lastValidZoomTime = 0;
+        this.wheelZoomDebounceMs = 200;
     }
 
     onRangeSelected(callback) {
@@ -112,6 +115,12 @@ class TimelineController {
         // Scroll to zoom in
         this.timelineElement.addEventListener('wheel', (e) => {
             if (e.deltaY < 0) {
+                const now = Date.now();
+                if (now - this.lastWheelZoomTime < this.wheelZoomDebounceMs) {
+                    return;
+                }
+                this.lastWheelZoomTime = now;
+
                 e.preventDefault();
 
                 // find center
@@ -129,8 +138,14 @@ class TimelineController {
 
     _zoomOutEvent() {
         this.timelineElement.addEventListener('wheel', (e) => {
-            if (e.deltaY > 0) { // Only zoom out on scroll backward
-                e.preventDefault(); // prevent the browser from scrolling window
+            if (e.deltaY > 0) {
+                const now = Date.now();
+                if (now - this.lastWheelZoomTime < this.wheelZoomDebounceMs) {
+                    return;
+                }
+                this.lastWheelZoomTime = now;
+
+                e.preventDefault();
                 this.timeline.zoom('out');
             }
         }, { passive: false });
