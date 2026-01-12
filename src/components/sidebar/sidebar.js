@@ -4,6 +4,8 @@ const sidebarOptions = document.querySelectorAll('.sidebar-item');
 
 let activeMenu = null;
 let closeTimeout = null;
+let openTimeout = null;
+const OPEN_DELAY = 300;   // ms delay before opening menu
 const CLOSE_DELAY = 1300; // ms delay before closing menu
 
 function showMenu(menuId) {
@@ -19,6 +21,22 @@ function showMenu(menuId) {
     const menuElement = document.getElementById(menuId);
     menuElement.classList.remove('hidden');
     activeMenu = menuId;
+}
+
+function scheduleOpen(menuId) {
+    cancelOpen();
+
+    openTimeout = setTimeout(() => {
+        showMenu(menuId);
+        openTimeout = null;
+    }, OPEN_DELAY);
+}
+
+function cancelOpen() {
+    if (openTimeout) {
+        clearTimeout(openTimeout);
+        openTimeout = null;
+    }
 }
 
 function scheduleClose() {
@@ -45,10 +63,11 @@ function cancelClose() {
 sidebarOptions.forEach(item => {
     item.addEventListener('mouseenter', () => {
         const menuId = item.dataset.menu;
-        showMenu(menuId);
+        scheduleOpen(menuId);
     });
 
     item.addEventListener('mouseleave', () => {
+        cancelOpen();
         scheduleClose();
     });
 });
