@@ -1,0 +1,11 @@
+#frame-timestamp {
+    position: absolute;
+    top: 11.5ch;
+    right: 0;
+    width: 12ch;
+    text-align: center;
+    font-size: 0.85rem;
+    background: white;
+    padding: 0.5ch;
+    border: 1px solid #ccc;
+}

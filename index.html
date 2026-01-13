@@ -14,6 +14,7 @@
           <div id="timeline-container">
               <svg id="start-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='green'/></svg>
               <svg id="stop-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='red'/></svg>
+              <svg id="current-frame-marker" viewBox='0 0 1 1'><polygon points='0,0 1,0 0.5,1' fill='#3b82f6'/></svg>
               <div id="line"></div>
               <div id="timeline"></div>
           </div>
@@ -44,6 +45,8 @@
 
           <input id="player-seek" type="range" value="0" min="0" max="0">
       </div>
+
+      <div id="frame-timestamp"></div>
 
       <div id="sidebar">
           <span class="sidebar-item" data-menu="product-selector">Select Product</span>

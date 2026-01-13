@@ -1,9 +1,9 @@
 class TimelineRenderer {
-    constructor(timelineEl, startMarkerEl, stopMarkerEl, initialState) {
+    constructor(timelineEl, startMarkerEl, stopMarkerEl, currentFrameMarkerEl, initialState) {
         this.timelineEl = timelineEl;
         this.startMarkerEl = startMarkerEl;
         this.stopMarkerEl = stopMarkerEl;
-
+        this.currentFrameMarkerEl = currentFrameMarkerEl;
         this.selectedStartDate = null;
         this.selectedEndDate = null;
         this.state = initialState;
@@ -245,6 +245,16 @@ class TimelineRenderer {
         this.render();
     }
 
+    setCurrentFrameDate(date) {
+        this.currentFrameDate = date;
+        this.render();
+    }
+
+    clearCurrentFrameDate() {
+        this.currentFrameDate = null;
+        this.render();
+    }
+
     // returns the number of ticks to show based on the width of the timeline
     getNumUnitsToShow() {
         const timeline = this.timelineEl;
@@ -322,6 +332,21 @@ class TimelineRenderer {
             }
         } else {
             stopMarkerEl.style.display = 'none';
+        }
+
+        // Position current frame marker
+        const currentFrameMarkerEl = this.currentFrameMarkerEl;
+        if (this.currentFrameDate) {
+            const elapsedDuration = this.currentFrameDate - rangeBeginning;
+            const percentage = (elapsedDuration / totalDuration) * 100;
+            if (percentage > 100 || percentage < 0) {
+                currentFrameMarkerEl.style.display = 'none';
+            } else {
+                currentFrameMarkerEl.style.left = `calc(${percentage}% - ${(elapsedDuration / totalDuration) * 15}px)`;
+                currentFrameMarkerEl.style.display = 'inline-block';
+            }
+        } else {
+            currentFrameMarkerEl.style.display = 'none';
         }
     }
 }

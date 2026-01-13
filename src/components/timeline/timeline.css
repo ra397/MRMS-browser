@@ -87,3 +87,11 @@
     top: 0;
     display: none;
 }
+
+#timeline-container #current-frame-marker {
+    width: var(--unit-width);
+    height: var(--unit-width);
+    position: absolute;
+    top: 0;
+    display: none;
+}

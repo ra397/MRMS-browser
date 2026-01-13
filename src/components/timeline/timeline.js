@@ -1,6 +1,7 @@
 import './Timeline/TimelineRenderer.js';
 import './Timeline/TimelineController.js';
 import './timeline.css';
+import { extractTimestampFromKey } from '../../api/api.js';
 
 const today = new Date();
 const startDate = new Date(today);
@@ -10,6 +11,7 @@ const timeline = new Timeline(
     document.getElementById('timeline'),
     document.getElementById('start-marker'),
     document.getElementById('stop-marker'),
+    document.getElementById('current-frame-marker'),
     {
         resolution: "hour",
         startDate: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours()),
@@ -25,4 +27,18 @@ timelineController.onRangeSelected(({ startDate, endDate }) => {
             endDate,
         },
     }))
+});
+
+document.addEventListener('frame-changed', (event) => {
+    const { filename } = event.detail;
+    try {
+        const timestamp = extractTimestampFromKey(filename);
+        timeline.setCurrentFrameDate(timestamp);
+    } catch (e) {
+        timeline.clearCurrentFrameDate();
+    }
+});
+
+document.addEventListener('display-reset', () => {
+    timeline.clearCurrentFrameDate();
 });
