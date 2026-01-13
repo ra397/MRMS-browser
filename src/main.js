@@ -26,3 +26,5 @@ import './layers/layers.js';
 import './display/palettes.js';
 
 import './style.css';
+
+document.body.style.visibility = 'visible';
