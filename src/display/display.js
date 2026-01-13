@@ -227,6 +227,10 @@ document.addEventListener('display-file', async event => {
             overlay.setSource(imageUrl);
             currentIndex = fileIndex;
             setSliderValue(fileIndex);
+
+            document.dispatchEvent(new CustomEvent('frame-changed', {
+                detail: { filename: file_name }
+            }));
         }
     }
 });

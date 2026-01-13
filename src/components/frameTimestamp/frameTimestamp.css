@@ -1,4 +1,6 @@
 #frame-timestamp {
+    display: none;
+
     position: absolute;
     top: 11.5ch;
     right: 0;

@@ -20,11 +20,14 @@ document.addEventListener('frame-changed', (event) => {
     try {
         const timestamp = extractTimestampFromKey(filename);
         timestampEl.textContent = formatTimestamp(timestamp);
+        timestampEl.style.display = 'block';
     } catch (e) {
         timestampEl.textContent = '';
+        timestampEl.style.display = 'none';
     }
 });
 
 document.addEventListener('display-reset', () => {
     timestampEl.textContent = '';
+    timestampEl.style.display = 'none';
 });
