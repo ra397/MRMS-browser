@@ -42,3 +42,11 @@ document.addEventListener('frame-changed', (event) => {
 document.addEventListener('display-reset', () => {
     timeline.clearCurrentFrameDate();
 });
+
+document.getElementById('zoom-in-btn').addEventListener('click', () => {
+    timeline.zoom('in');
+});
+
+document.getElementById('zoom-out-btn').addEventListener('click', () => {
+    timeline.zoom('out');
+});
