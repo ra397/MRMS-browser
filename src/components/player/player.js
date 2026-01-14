@@ -1,4 +1,5 @@
 import './player.css';
+import './settings.css';
 
 let isPlaying = false;
 
@@ -68,4 +69,44 @@ export function setSliderValue(value) {
 
 function getSliderValue() {
     return parseInt(slider.value, 10);
+}
+
+/* Settings Menu */
+
+const settingsBtn = document.getElementById('playback-settings-btn');
+const settingsMenu = document.getElementById('playback-settings-menu');
+const settingsOptions = document.querySelectorAll('.playback-settings-option');
+
+let currentSpeed = 1;
+
+settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsMenu.classList.toggle('hidden');
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+        settingsMenu.classList.add('hidden');
+    }
+});
+
+settingsOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const speed = parseFloat(option.dataset.speed);
+        currentSpeed = speed;
+
+        // Update selected state
+        settingsOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+
+        // Dispatch event for display.js to handle
+        document.dispatchEvent(new CustomEvent('playback-speed-change', {
+            detail: { speed }
+        }));
+    });
+});
+
+export function getPlaybackSpeed() {
+    return currentSpeed;
 }

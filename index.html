@@ -48,6 +48,23 @@
           </div>
 
           <input id="player-seek" type="range" value="0" min="0" max="0">
+
+          <div id="playback-settings-container">
+              <span class="player-btn" id="playback-settings-btn" aria-label="Settings">
+                  <img src="icons/settings-icon.svg" alt="Settings">
+              </span>
+              <div id="playback-settings-menu" class="hidden">
+                  <div class="playback-settings-section">
+                      <div class="playback-settings-section-title">Playback Speed</div>
+                      <div class="playback-settings-options">
+                          <button class="playback-settings-option" data-speed="0.5">0.5x</button>
+                          <button class="playback-settings-option selected" data-speed="1">1x</button>
+                          <button class="playback-settings-option" data-speed="2">2x</button>
+                          <button class="playback-settings-option" data-speed="3">3x</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
 
       <div id="frame-timestamp"></div>

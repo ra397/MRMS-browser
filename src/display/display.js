@@ -2,7 +2,7 @@ import { RasterGenerator } from "./rasterGenerator.js";
 import { customOverlay } from "./customOverlay.js";
 import { overlayInfo, products } from "./config.js";
 import { getActiveColorMap } from "./colorMapUtils.js";
-import { setSliderRange, setSliderValue } from "../components/player/player.js";
+import { setSliderRange, setSliderValue, getPlaybackSpeed } from "../components/player/player.js";
 import { updateLegend } from '../components/legend/legend.js';
 import { dataStore } from '../store/dataStore.js';
 import { visualizationState } from '../store/visualizationState.js';
@@ -12,6 +12,12 @@ let overlay;
 let currentIndex = 0;
 let isPlaying = false;
 let playInterval = null;
+const speedIntervals = {
+    0.5: 2000,
+    1: 1000,
+    2: 500,
+    3: 333
+};
 
 // UI Elements
 const colorCountInput = document.getElementById("mrms-color-count");
@@ -283,6 +289,9 @@ function play() {
     if (isPlaying) return;
     isPlaying = true;
 
+    const speed = getPlaybackSpeed();
+    const interval = speedIntervals[speed] || 1000;
+
     playInterval = setInterval(() => {
         let nextIndex = currentIndex + 1;
         if (nextIndex >= dataStore.getActiveFileCount()) {
@@ -295,7 +304,7 @@ function play() {
         if (imageCache.has(fileName, vizKey)) {
             displayFrame(nextIndex);
         }
-    }, 1000);
+    }, interval);
 }
 
 function pause() {
@@ -308,6 +317,14 @@ function pause() {
 
 document.addEventListener('player-play', () => play());
 document.addEventListener('player-pause', () => pause());
+
+document.addEventListener('playback-speed-change', event => {
+    const { speed } = event.detail;
+    if (isPlaying) {
+        pause();
+        play(); // Restart with new speed
+    }
+});
 
 document.addEventListener('player-seek', event => {
     displayFrame(event.detail.index);
