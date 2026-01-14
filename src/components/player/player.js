@@ -1,5 +1,5 @@
 import './player.css';
-import './settings.css';
+import './playback-settings.css';
 
 let isPlaying = false;
 
