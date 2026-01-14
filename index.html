@@ -77,6 +77,10 @@
           <span class="sidebar-item" data-menu="settings">Settings</span>
       </div>
 
+      <div id="left-sidebar">
+          <span class="left-sidebar-item" data-menu="map-controls">Map Controls</span>
+      </div>
+
       <div id="color-legend">
           <div class="legend-title"></div>
           <div class="legend-content">
@@ -295,7 +299,38 @@
           </div>
 
           <div id="settings" class="hidden">
-              This is the settings menu.
+              <div class="menu-header">
+                  <h2>Settings</h2>
+                  <p>Configure application settings.</p>
+              </div>
+          </div>
+      </div>
+
+      <div id="left-menus">
+          <div id="map-controls" class="hidden">
+              <div class="menu-header">
+                  <h2>Map Controls</h2>
+                  <p>Configure map appearance.</p>
+              </div>
+
+              <div class="map-controls-content">
+                  <div class="control-group">
+                      <label>Map Type</label>
+                      <div class="map-type-selector">
+                          <input type="radio" id="map-light" name="map-type" value="light" checked>
+                          <label for="map-light">Light</label>
+
+                          <input type="radio" id="map-dark" name="map-type" value="dark">
+                          <label for="map-dark">Dark</label>
+
+                          <input type="radio" id="map-standard" name="map-type" value="standard">
+                          <label for="map-standard">Standard</label>
+
+                          <input type="radio" id="map-satellite" name="map-type" value="satellite">
+                          <label for="map-satellite">Satellite</label>
+                      </div>
+                  </div>
+              </div>
           </div>
       </div>
 

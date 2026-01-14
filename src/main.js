@@ -19,6 +19,8 @@ import './components/datatable/datatable.js';
 
 import './components/layersMenu/layersMenu.js';
 
+import './components/mapType/mapType.js';
+
 import './components/settings/settings.js';
 
 import './layers/layers.js';

@@ -26,3 +26,45 @@
     user-select: none;
     background: #eee;
 }
+
+/* Left Sidebar */
+#left-sidebar {
+    position: absolute;
+    top: 11.5ch;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-sidebar-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 6ch;
+    width: 12ch;
+    outline: 1px solid #ccc;
+    background: white;
+    padding: 0.3ch;
+}
+
+.left-sidebar-item:hover {
+    cursor: default;
+    user-select: none;
+    background: #eee;
+}
+
+/* Left menus - opens to the right */
+#left-menus > * {
+    position: fixed;
+    top: 11.5ch;
+    left: calc(12ch + 2 * 0.3ch + 1 * 1px);
+    max-height: 80vh;
+    background: white;
+    overflow-y: auto;
+    outline: 1px solid #ccc;
+    --primary-color: green;
+    --text-color: #334155;
+    padding: 1.5ch;
+    box-sizing: border-box;
+}

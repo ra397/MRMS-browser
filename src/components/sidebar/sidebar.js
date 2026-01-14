@@ -1,6 +1,6 @@
 import './sidebar.css';
 
-const sidebarOptions = document.querySelectorAll('.sidebar-item');
+const sidebarOptions = document.querySelectorAll('.sidebar-item, .left-sidebar-item');
 
 let activeMenu = null;
 let closeTimeout = null;

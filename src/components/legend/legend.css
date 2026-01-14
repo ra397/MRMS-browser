@@ -6,9 +6,13 @@
 
     position: absolute;
     top: 20ch;
-    left: 1%;
+    left: 10px;
 
     backdrop-filter: blur(10px);
+    background: rgba(235, 232, 232, 0.6);
+
+    padding: 4px;
+    border-radius: 4px;
 }
 
 .legend-title {
@@ -67,8 +71,8 @@
 
 #color-picker-popup {
     position: absolute;
-    background: var(--bg-color, #fff);
-    border: 1px solid var(--border-color, #ccc);
+    background: #fff;
+    border: 1px solid #ccc;
     border-radius: 8px;
     padding: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -110,7 +114,7 @@
     width: 60px;
     height: 40px;
     padding: 0;
-    border: 1px solid var(--border-color, #ccc);
+    border: 1px solid #ccc;
     border-radius: 4px;
     cursor: pointer;
 }
