@@ -1,4 +1,4 @@
-const millimetersThresholds = [0.25,1.27,2.54,3.81,5.08,10.16,15.24,20.32,25.40,31.75,38.10,44.45,50.80,63.50,76.20,88.90,101.60,114.30,127.00,139.70,152.40,165.10,177.80,203.20];
+const millimetersThresholds = [0.25,1.25,2.5,3.75,5,10,15,20,25,32,38,45,50,65,75,90,100,115,125,140,150,165,180,200];
 const millimetersDefaultColors = [[0,236,236,255],[0,200,240,255],[0,160,255,255],[0,60,255,255],[0,255,0,255],[0,220,0,255],[0,190,0,255],[0,141,0,255],[255,255,0,255],[240,210,0,255],[231,180,0,255],[200,120,0,255],[255,160,160,255],[255,60,60,255],[230,0,0,255],[180,0,0,255],[255,0,255,255],[217,0,217,255],[164,0,164,255],[120,0,120,255],[255,255,255,255],[192,192,255,255],[192,255,255,255]];
 
 const qualityIndexThresholds = [0.01,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0];
@@ -111,7 +111,7 @@ export const productGroups = [
     {
         name: "Echo Top",
         type: "category",
-        units: "dBZ",
+        units: "km",
         items: [
             { display_name: "Echo Top 18 dBZ", s3_name: "EchoTop_18_00.50", thresholds: echoTopThresholds, defaultColors: echoTopColors },
             { display_name: "Echo Top 30 dBZ", s3_name: "EchoTop_30_00.50", thresholds: echoTopThresholds, defaultColors: echoTopColors },
@@ -185,6 +185,4 @@ export const products = (function flatten(groups) {
     });
     return flat;
 })(productGroups);
-
-console.log(products)
 globalThis.products = products;
