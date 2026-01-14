@@ -7,11 +7,13 @@ class TimelineRenderer {
         this.selectedStartDate = null;
         this.selectedEndDate = null;
         this.state = initialState;
+        this.timezone = "local"; // local or utc
     }
 
     getUnits(startDate, resolution, count) {
         let ticks = [];
         let date;
+        const isUTC = this.timezone === 'utc';
 
         for (let i = 0; i < count; i++) {
             switch (resolution) {
@@ -44,7 +46,9 @@ class TimelineRenderer {
 
                     if (date.getDate() === 1) {
                         label.smallText = date.getFullYear().toString();
-                        label.largeText = date.toLocaleString('default', { month: 'short' });
+                        label.largeText = isUTC
+                            ? date.toLocaleString('default', { month: 'short', timeZone: 'UTC' })
+                            : date.toLocaleString('default', { month: 'short' });
                     }
 
                     ticks.push({
@@ -64,10 +68,9 @@ class TimelineRenderer {
 
                     if (date.getHours() === 0) {
                         label.smallText = date.getFullYear().toString();
-                        label.largeText = date.toLocaleDateString('default', {
-                            month: 'short',
-                            day: '2-digit',
-                        });
+                        label.largeText = isUTC
+                            ? date.toLocaleDateString('default', { month: 'short', day: '2-digit', timeZone: 'UTC' })
+                            : date.toLocaleDateString('default', { month: 'short', day: '2-digit' });
                     }
 
                     ticks.push({
@@ -86,14 +89,13 @@ class TimelineRenderer {
                     };
 
                     if (date.getMinutes() === 0) {
-                        label.smallText = date.toLocaleDateString('default', {
-                            month: 'short',
-                            day: '2-digit',
-                        });
-                        label.largeText = date.toLocaleTimeString('default', {
-                            hour: 'numeric',
-                            hour12: true,
-                        });                    }
+                        label.smallText = isUTC
+                            ? date.toLocaleDateString('default', { month: 'short', day: '2-digit', timeZone: 'UTC' })
+                            : date.toLocaleDateString('default', { month: 'short', day: '2-digit' });
+                        label.largeText = isUTC
+                            ? date.toLocaleTimeString('default', { hour: 'numeric', hour12: true, timeZone: 'UTC' })
+                            : date.toLocaleTimeString('default', { hour: 'numeric', hour12: true });
+                    }
 
                     ticks.push({
                         date: date,
@@ -252,6 +254,11 @@ class TimelineRenderer {
 
     clearCurrentFrameDate() {
         this.currentFrameDate = null;
+        this.render();
+    }
+
+    setTimezone(timezone) {
+        this.timezone = timezone;
         this.render();
     }
 

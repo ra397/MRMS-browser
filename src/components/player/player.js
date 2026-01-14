@@ -115,9 +115,10 @@ export function getPlaybackSpeed() {
 /* Frame Timestamp */
 
 const timestampEl = document.getElementById('frame-timestamp');
+let currentTimezone = 'local';
 
 function formatTimestamp(date) {
-    return date.toLocaleString('en-US', {
+    const options = {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -125,11 +126,20 @@ function formatTimestamp(date) {
         minute: '2-digit',
         second: '2-digit',
         hour12: false,
-    });
+    };
+
+    if (currentTimezone === 'utc') {
+        options.timeZone = 'UTC';
+    }
+
+    return date.toLocaleString('en-US', options);
 }
+
+let lastFilename = null;
 
 document.addEventListener('frame-changed', (event) => {
     const { filename } = event.detail;
+    lastFilename = filename;
     try {
         const timestamp = extractTimestampFromKey(filename);
         timestampEl.textContent = formatTimestamp(timestamp);
@@ -140,4 +150,20 @@ document.addEventListener('frame-changed', (event) => {
 
 document.addEventListener('display-reset', () => {
     timestampEl.textContent = '';
+    lastFilename = null;
+});
+
+document.addEventListener('timezone-change', (event) => {
+    const { timezone } = event.detail;
+    currentTimezone = timezone;
+
+    // Re-format the current timestamp if one is displayed
+    if (lastFilename) {
+        try {
+            const timestamp = extractTimestampFromKey(lastFilename);
+            timestampEl.textContent = formatTimestamp(timestamp);
+        } catch (e) {
+            timestampEl.textContent = '';
+        }
+    }
 });

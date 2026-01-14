@@ -50,3 +50,8 @@ document.getElementById('zoom-in-btn').addEventListener('click', () => {
 document.getElementById('zoom-out-btn').addEventListener('click', () => {
     timeline.zoom('out');
 });
+
+document.addEventListener('timezone-change', (event) => {
+    const { timezone } = event.detail;
+    timeline.setTimezone(timezone);
+});
