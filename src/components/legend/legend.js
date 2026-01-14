@@ -11,6 +11,17 @@ const colorPickerClose = colorPickerPopup.querySelector('.color-picker-close');
 
 let selectedSegmentIndex = null;
 
+function showLegend() {
+    legendContainer.classList.remove('hidden');
+}
+
+function hideLegend() {
+    closeColorPicker();
+    legendContainer.classList.add('hidden');
+}
+
+document.addEventListener('display-reset', hideLegend);
+
 function getLabelIndices(thresholdCount, isDefault) {
     if (isDefault) {
         return Array.from({ length: thresholdCount }, (_, i) => i);
@@ -142,4 +153,6 @@ export function updateLegend(colorMap, thresholds, units, isDefault) {
         const value = thresholds[index];
         return `<span class="legend-label" data-index="${index}">${formatValue(value)}</span>`;
     }).join('');
+
+    showLegend();
 }
