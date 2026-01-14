@@ -16,7 +16,7 @@
 /* Settings Menu */
 #playback-settings-menu {
     position: absolute;
-    bottom: calc(100% + 12px);
+    bottom: calc(100% + 4ch);
     right: -2ch;
     background: white;
     border-radius: 8px;

@@ -7,8 +7,6 @@ import './components/productSelector/productSelector.js';
 
 import './components/timeline/timeline.js';
 
-import './components/frameTimestamp/frameTimestamp.js';
-
 import './components/player/player.js';
 
 import './components/sidebar/sidebar.js';
