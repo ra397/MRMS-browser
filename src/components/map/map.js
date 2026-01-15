@@ -110,6 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
         clickableIcons: false,
     });
 
+    // Initialize ZoomCtrl
+    const zoomCtrl = new ZoomCtrl(
+        document.getElementById('map_zoom_ctrl'),
+        { map: map }
+    );
+
     map.addListener('zoom_changed', () => {
         document.dispatchEvent(new CustomEvent('map-zoom-changed', {
             detail: {

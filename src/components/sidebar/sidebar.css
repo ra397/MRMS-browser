@@ -30,7 +30,7 @@
 /* Left Sidebar */
 #left-sidebar {
     position: absolute;
-    top: 11.5ch;
+    top: 20ch;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@
 /* Left menus - opens to the right */
 #left-menus > * {
     position: fixed;
-    top: 11.5ch;
+    top: 20ch;
     left: calc(12ch + 2 * 0.3ch + 1 * 1px);
     max-height: 80vh;
     background: white;
