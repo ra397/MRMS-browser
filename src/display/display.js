@@ -7,6 +7,7 @@ import { updateLegend } from '../components/legend/legend.js';
 import { dataStore } from '../store/dataStore.js';
 import { visualizationState } from '../store/visualizationState.js';
 import { imageCache } from '../store/imageCache.js';
+import { unitSystem } from '../utils/unitConversion.js';
 
 let overlay;
 let currentIndex = 0;
@@ -101,9 +102,14 @@ function updateLegendFromProduct(product) {
         colorCountInput.value = colorMap.length - 2;
     }
 
-    const thresholds = colorMap.slice(1, -1).map(entry => entry.min);
+    let thresholds = colorMap.slice(1, -1).map(entry => entry.min);
     thresholds.push(colorMap[colorMap.length - 2].max);
-    updateLegend(colorMap, thresholds, product.units, visualizationState.isDefault());
+
+    // Convert thresholds and units based on current unit system
+    const displayThresholds = unitSystem.convertThresholds(thresholds, product.units);
+    const displayUnits = unitSystem.getDisplayUnit(product.units);
+
+    updateLegend(colorMap, displayThresholds, displayUnits, visualizationState.isDefault());
 }
 
 async function getOrGenerateImage(fileName) {
@@ -281,6 +287,20 @@ document.addEventListener("color-edit", async event => {
 
 document.addEventListener("visualization-reset", () => {
     visualizationState.resetToDefaults();
+});
+
+document.addEventListener("unit-system-changed", () => {
+    // Refresh legend with new units (no need to regenerate images)
+    const activeFiles = dataStore.getActiveFiles();
+    if (activeFiles.length > 0) {
+        const firstFileData = dataStore.get(activeFiles[0]);
+        if (firstFileData) {
+            const product = products.find(p => p.s3_name === firstFileData.productName);
+            if (product) {
+                updateLegendFromProduct(product);
+            }
+        }
+    }
 });
 
 // --- Playback Controls ---

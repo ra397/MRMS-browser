@@ -3,9 +3,11 @@
 
 import { products, overlayInfo } from '../display/config.js';
 import { tooltipManager } from '../display/tooltipManager.js';
+import { unitSystem } from '../utils/unitConversion.js';
 
 const files = new Map(); // Map<fileName, { data, productName, referenceValue, binaryScale, decimalScale }>
 let activeFiles = [];    // Currently active file list for playback (ordered)
+let currentFilename = null; // Track current frame for unit system changes
 
 const NUM_COLS = overlayInfo.numCols;
 const NUM_ROWS = overlayInfo.numRows;
@@ -83,17 +85,20 @@ document.addEventListener('product-readout-request', event => {
 
     const { data, productName, referenceValue, binaryScale, decimalScale } = fileData;
     const scaledValue = data[gridIndex];
-    const value = convertScaledToReal(scaledValue, referenceValue, binaryScale, decimalScale);
-    const units = getUnitsForProduct(productName);
+    const metricValue = convertScaledToReal(scaledValue, referenceValue, binaryScale, decimalScale);
+    const metricUnits = getUnitsForProduct(productName);
+
+    // Convert value and units based on current unit system
+    const value = unitSystem.convertValue(metricValue, metricUnits);
+    const units = unitSystem.getDisplayUnit(metricUnits);
 
     document.dispatchEvent(new CustomEvent('product-readout-result', {
         detail: { gridIndex, lat, lng, value, units }
     }));
 });
 
-// Handle frame change - update all open tooltips
-document.addEventListener('frame-changed', event => {
-    const { filename } = event.detail;
+// Helper to update all open tooltips with current data
+function updateOpenTooltips(filename) {
     const openIndices = tooltipManager.getOpenIndices();
 
     if (openIndices.length === 0) {
@@ -106,15 +111,34 @@ document.addEventListener('frame-changed', event => {
     }
 
     const { data, productName, referenceValue, binaryScale, decimalScale } = fileData;
-    const units = getUnitsForProduct(productName);
+    const metricUnits = getUnitsForProduct(productName);
+
+    // Convert units based on current unit system
+    const units = unitSystem.getDisplayUnit(metricUnits);
 
     const updates = openIndices.map(gridIndex => {
         const scaledValue = data[gridIndex];
-        const value = convertScaledToReal(scaledValue, referenceValue, binaryScale, decimalScale);
+        const metricValue = convertScaledToReal(scaledValue, referenceValue, binaryScale, decimalScale);
+        // Convert value based on current unit system
+        const value = unitSystem.convertValue(metricValue, metricUnits);
         return { gridIndex, value };
     });
 
     document.dispatchEvent(new CustomEvent('product-readout-update', {
         detail: { updates, units }
     }));
+}
+
+// Handle frame change - update all open tooltips
+document.addEventListener('frame-changed', event => {
+    const { filename } = event.detail;
+    currentFilename = filename;
+    updateOpenTooltips(filename);
+});
+
+// Handle unit system change - update all open tooltips with new units
+document.addEventListener('unit-system-changed', () => {
+    if (currentFilename) {
+        updateOpenTooltips(currentFilename);
+    }
 });
