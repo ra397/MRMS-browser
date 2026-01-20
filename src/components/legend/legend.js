@@ -15,7 +15,7 @@ function showLegend() {
     legendContainer.classList.remove('hidden');
 }
 
-function hideLegend() {
+export function hideLegend() {
     closeColorPicker();
     legendContainer.classList.add('hidden');
 }
