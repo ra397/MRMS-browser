@@ -208,7 +208,7 @@ export class MercatorOverlay extends google.maps.OverlayView {
 
     draw() {
         const projection = this.getProjection();
-        if (!projection) return;
+        if (!projection || !this.#div) return;
 
         const sw = projection.fromLatLngToDivPixel(this.#bounds.getSouthWest());
         const ne = projection.fromLatLngToDivPixel(this.#bounds.getNorthEast());
@@ -222,8 +222,9 @@ export class MercatorOverlay extends google.maps.OverlayView {
     }
 
     onRemove() {
-        if (this.#div.parentNode) this.#div.parentNode.removeChild(this.#div);
-        this.#div = null;
+        if (this.#div?.parentNode) {
+            this.#div.parentNode.removeChild(this.#div);
+        }
     }
 
     remove() {
