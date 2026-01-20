@@ -13,6 +13,13 @@ const gaugeInfluenceIndexColors = [[0,236,236,255],[0,200,240,255],[0,160,255,25
 const warmRainProbabilityPercentageThresholds = [3.01,10,20,30,40,50,60,70,80,90,100];
 const warmRainProbabilityPercentageColors = [[0,236,236,255],[0,160,246,255],[0,0,246,255],[0,255,0,255],[0,200,0,255],[0,144,0,255],[255,255,0,255],[231,192,0,255],[255,144,0,255],[254,0,0,255]];
 
+const freezingHeightThresholds = [
+    0.01, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500,
+    5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000,
+    9500, 10000
+];
+const freezingHeightKmColors = [[0,236,236,255],[0,200,240,255],[0,160,255,255],[0,60,255,255],[0,255,0,255],[0,220,0,255],[0,190,0,255],[0,141,0,255],[255,255,0,255],[240,210,0,255],[231,180,0,255],[200,120,0,255],[255,160,160,255],[255,60,60,255],[230,0,0,255],[180,0,0,255],[255,0,255,255],[217,0,217,255],[164,0,164,255],[120,0,120,255]];
+
 const decibelThresholds = [-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75];
 const decibelColors = [[221,254,255,255],[216,210,233,255],[208,175,212,255],[163,127,167,255],[115,74,119,255],[214,212,173,255],[169,168,125,255],[119,119,119,255],[0,236,236,255],[1,160,246,255],[0,0,246,255],[0,255,0,255],[0,200,0,255],[0,144,0,255],[255,255,0,255],[231,192,0,255],[255,144,0,255],[255,0,0,255],[220,0,0,255],[192,0,0,255],[255,0,255,255],[153,85,201,255]];
 
@@ -158,6 +165,7 @@ export const productGroups = [
         units: "%",
         items: [
             { display_name: "Warm Rain Probability", s3_name: "WarmRainProbability_00.50", thresholds: warmRainProbabilityPercentageThresholds, defaultColors: warmRainProbabilityPercentageColors },
+            { display_name: "Freezing Height", s3_name: "Model_0degC_Height_00.50", thresholds: freezingHeightThresholds, defaultColors: freezingHeightKmColors, units: "m" },
         ]
     }
 ];
@@ -174,12 +182,12 @@ export const products = (function flatten(groups) {
                 g.items.forEach(sub => {
                     if (sub.items) {
                         // Add units to each item
-                        flat = flat.concat(sub.items.map(item => ({ ...item, units })));
+                        flat = flat.concat(sub.items.map(item => ({ units, ...item })));
                     }
                 });
             } else {
                 // Direct items - add units to each
-                flat = flat.concat(g.items.map(item => ({ ...item, units })));
+                flat = flat.concat(g.items.map(item => ({ units, ...item })));
             }
         }
     });
