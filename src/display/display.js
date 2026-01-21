@@ -182,6 +182,13 @@ document.addEventListener("display-reset", () => {
     overlay.setSource(overlayInfo.transparentImgSrc);
 });
 
+document.addEventListener("mrms-clear", () => {
+    dataStore.clearActiveFiles();
+    currentIndex = 0;
+    pause();
+    overlay.hide();
+});
+
 document.addEventListener('files-total', event => {
     const { total, fileNames } = event.detail;
     dataStore.setActiveFiles(fileNames);
@@ -236,6 +243,7 @@ document.addEventListener('display-file', async event => {
     const fileIndex = activeFiles.indexOf(file_name);
     if (fileIndex === 0 || fileIndex === currentIndex) {
         if (!isPlaying) {
+            overlay.show();
             overlay.setSource(imageUrl);
             currentIndex = fileIndex;
             setSliderValue(fileIndex);

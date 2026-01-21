@@ -93,3 +93,9 @@ rangeMinSlider.addEventListener("change", () => {
 rangeMaxSlider.addEventListener("change", () => {
     dispatchRange(rangeMinSlider.value, rangeMaxSlider.value);
 });
+
+// Clear Button
+const clearButton = document.getElementById("mrms-clear-btn");
+clearButton.addEventListener("click", () => {
+    document.dispatchEvent(new CustomEvent('mrms-clear'));
+});

@@ -21,6 +21,7 @@ export function hideLegend() {
 }
 
 document.addEventListener('display-reset', hideLegend);
+document.addEventListener('mrms-clear', hideLegend);
 
 function getLabelIndices(thresholdCount, isDefault) {
     if (isDefault) {

@@ -110,7 +110,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-const openTooltips = new Map(); // Map<gridIndex, { overlay, lat, lng }>
+const openTooltips = new Map(); // Map<"layerId:gridIndex", { overlay, lat, lng, layerId }>
 
 function formatValue(value, units) {
     if (value === null) {
@@ -120,35 +120,59 @@ function formatValue(value, units) {
     return `${rounded} ${units}`;
 }
 
+function makeKey(layerId, gridIndex) {
+    return `${layerId}:${gridIndex}`;
+}
+
 export const tooltipManager = {
-    getOpenIndices() {
-        return Array.from(openTooltips.keys());
+    getOpenIndices(layerId) {
+        const indices = [];
+        openTooltips.forEach((tooltip, key) => {
+            if (tooltip.layerId === layerId) {
+                indices.push(parseInt(key.split(':')[1], 10));
+            }
+        });
+        return indices;
     },
 
-    hasTooltip(gridIndex) {
-        return openTooltips.has(gridIndex);
+    hasTooltip(layerId, gridIndex) {
+        return openTooltips.has(makeKey(layerId, gridIndex));
     },
 
-    createTooltip(gridIndex, lat, lng, value, units) {
+    createTooltip(layerId, gridIndex, lat, lng, value, units) {
+        const key = makeKey(layerId, gridIndex);
         const position = new google.maps.LatLng(lat, lng);
-        const onClose = () => this.destroyTooltip(gridIndex);
+        const onClose = () => this.destroyTooltip(layerId, gridIndex);
         const overlay = new TooltipOverlay(position, formatValue(value, units), globalThis.map, onClose);
-        openTooltips.set(gridIndex, { overlay, lat, lng });
+        openTooltips.set(key, { overlay, lat, lng, layerId });
     },
 
-    destroyTooltip(gridIndex) {
-        const tooltip = openTooltips.get(gridIndex);
+    destroyTooltip(layerId, gridIndex) {
+        const key = makeKey(layerId, gridIndex);
+        const tooltip = openTooltips.get(key);
         if (tooltip) {
             tooltip.overlay.destroy();
-            openTooltips.delete(gridIndex);
+            openTooltips.delete(key);
         }
     },
 
-    updateTooltip(gridIndex, value, units) {
-        const tooltip = openTooltips.get(gridIndex);
+    updateTooltip(layerId, gridIndex, value, units) {
+        const key = makeKey(layerId, gridIndex);
+        const tooltip = openTooltips.get(key);
         if (tooltip) {
             tooltip.overlay.setContent(formatValue(value, units));
         }
+    },
+
+    clearLayer(layerId) {
+        const keysToDelete = [];
+        openTooltips.forEach((tooltip, key) => {
+            if (tooltip.layerId === layerId) {
+                tooltip.overlay.destroy();
+                keysToDelete.push(key);
+            }
+        });
+        keysToDelete.forEach(key => openTooltips.delete(key));
     },
 
     clearAll() {
@@ -159,20 +183,20 @@ export const tooltipManager = {
 
 // Handle product readout result - create or destroy tooltip
 document.addEventListener('product-readout-result', event => {
-    const { gridIndex, lat, lng, value, units } = event.detail;
+    const { layerId, gridIndex, lat, lng, value, units } = event.detail;
 
-    if (tooltipManager.hasTooltip(gridIndex)) {
-        tooltipManager.destroyTooltip(gridIndex);
+    if (tooltipManager.hasTooltip(layerId, gridIndex)) {
+        tooltipManager.destroyTooltip(layerId, gridIndex);
     } else {
-        tooltipManager.createTooltip(gridIndex, lat, lng, value, units);
+        tooltipManager.createTooltip(layerId, gridIndex, lat, lng, value, units);
     }
 });
 
 // Handle frame change updates - update all open tooltips
 document.addEventListener('product-readout-update', event => {
-    const { updates, units } = event.detail;
+    const { layerId, updates, units } = event.detail;
 
     updates.forEach(({ gridIndex, value }) => {
-        tooltipManager.updateTooltip(gridIndex, value, units);
+        tooltipManager.updateTooltip(layerId, gridIndex, value, units);
     });
 });

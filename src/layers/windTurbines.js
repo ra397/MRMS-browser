@@ -1,6 +1,7 @@
 import { MercatorOverlay } from '../display/customOverlay.js';
 import { RasterGenerator } from '../display/rasterGenerator.js';
 import { updateLegend, hideLegend } from '../components/legend/legend.js';
+import { tooltipManager } from '../display/tooltipManager.js';
 
 // Non-linear colorMap for wind turbine density
 // Max pixel value is 480, with small steps at the start
@@ -82,6 +83,7 @@ class WindTurbinesLayer {
             this.isVisible = false;
             this.map = null;
             hideLegend();
+            tooltipManager.clearLayer('wind-turbines');
             return;
         }
 
@@ -142,7 +144,7 @@ document.addEventListener('overlay-click', (event) => {
 
     // Use the existing tooltip system via product-readout-result event
     document.dispatchEvent(new CustomEvent('product-readout-result', {
-        detail: { gridIndex, lat, lng, value, units: 'turbines' }
+        detail: { layerId: 'wind-turbines', gridIndex, lat, lng, value, units: 'turbines' }
     }));
 });
 

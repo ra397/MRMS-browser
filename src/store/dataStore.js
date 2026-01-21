@@ -93,13 +93,13 @@ document.addEventListener('product-readout-request', event => {
     const units = unitSystem.getDisplayUnit(metricUnits);
 
     document.dispatchEvent(new CustomEvent('product-readout-result', {
-        detail: { gridIndex, lat, lng, value, units }
+        detail: { layerId: 'mrms', gridIndex, lat, lng, value, units }
     }));
 });
 
 // Helper to update all open tooltips with current data
 function updateOpenTooltips(filename) {
-    const openIndices = tooltipManager.getOpenIndices();
+    const openIndices = tooltipManager.getOpenIndices('mrms');
 
     if (openIndices.length === 0) {
         return;
@@ -125,7 +125,7 @@ function updateOpenTooltips(filename) {
     });
 
     document.dispatchEvent(new CustomEvent('product-readout-update', {
-        detail: { updates, units }
+        detail: { layerId: 'mrms', updates, units }
     }));
 }
 
@@ -141,4 +141,9 @@ document.addEventListener('unit-system-changed', () => {
     if (currentFilename) {
         updateOpenTooltips(currentFilename);
     }
+});
+
+// Clear MRMS tooltips when layer is cleared
+document.addEventListener('mrms-clear', () => {
+    tooltipManager.clearLayer('mrms');
 });
