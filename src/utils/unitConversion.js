@@ -66,7 +66,8 @@ export const unitSystem = {
         if (currentSystem === 'metric' || !unitConversions[metricUnit]) {
             return value;
         }
-        return unitConversions[metricUnit].toImperial(value);
+        const converted = unitConversions[metricUnit].toImperial(value);
+        return Math.round(converted);
     },
 
     // Convert an array of thresholds from metric to the current display system
@@ -75,6 +76,6 @@ export const unitSystem = {
             return thresholds;
         }
         const converter = unitConversions[metricUnit].toImperial;
-        return thresholds.map(v => converter(v));
+        return thresholds.map(v => Math.round(converter(v)));
     },
 };

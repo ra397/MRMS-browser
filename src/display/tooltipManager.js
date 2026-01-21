@@ -116,7 +116,7 @@ function formatValue(value, units) {
     if (value === null) {
         return 'No Data';
     }
-    const rounded = Math.round(value * 100) / 100;
+    const rounded = Math.round(value);
     return `${rounded} ${units}`;
 }
 
