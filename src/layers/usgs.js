@@ -11,7 +11,7 @@ document.addEventListener("map-ready", async () => {
     markers.setColor("#008000");
     markers.setSize(getMarkerSizeForZoom(map.getZoom()));
 
-    const response = await fetch("usgs_markers.pbf");
+    const response = await fetch("data/usgs_markers.pbf");
     const arrayBuffer = await response.arrayBuffer();
     const pbf = new Pbf(arrayBuffer);
     const geojson = geobuf.decode(pbf);
@@ -22,9 +22,11 @@ document.addEventListener("map-ready", async () => {
         const lat = feature.geometry.coordinates[1];
         const lng = feature.geometry.coordinates[0];
         const id = feature.properties['usgs_id'];
+        const name = feature.properties['name'];
 
         const markerObj = markers.add(lat, lng, {
             id: id,
+            name: name,
         });
 
         markerObj.marker.addListener('click', () => {
@@ -59,6 +61,14 @@ document.addEventListener("map-ready", async () => {
     toggle.addEventListener('change', (e) => {
         e.target.checked ? markers.show() : markers.hide();
     });
+
+    // Dispatch event for search component
+    document.dispatchEvent(new CustomEvent('usgs-markers-ready', {
+        detail: {
+            markers: markers,
+            toggle: toggle,
+        }
+    }));
 
     colorInput.addEventListener('change', (e) => {
         markers.setColor(e.target.value);
@@ -97,4 +107,13 @@ async function showBasin(usgs_id) {
         clickable: false,
     });
     currentBasin.id = usgs_id;
+
+    // Calculate bounds and fit the map to the basin
+    const bounds = new google.maps.LatLngBounds();
+    currentBasin.layer.forEach((feature) => {
+        feature.getGeometry().forEachLatLng((latLng) => {
+            bounds.extend(latLng);
+        });
+    });
+    map.fitBounds(bounds);
 }

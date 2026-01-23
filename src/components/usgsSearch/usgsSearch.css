@@ -1,0 +1,88 @@
+#usgs-search-container {
+    position: absolute;
+    left: 75px;
+    top: 95px;
+}
+
+#usgs-search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#usgs-search-input {
+    width: 100%;
+    padding: 8px 32px 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#usgs-search-input:focus {
+    border-color: #4a90e2;
+}
+
+#usgs-search-clear {
+    position: absolute;
+    right: 8px;
+    display: none;
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+#usgs-search-clear:hover {
+    color: #333;
+}
+
+#usgs-search-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.usgs-search-result-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.usgs-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.usgs-search-result-item:hover {
+    background-color: #f5f5f5;
+}
+
+.result-id {
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.result-name {
+    font-size: 12px;
+    color: #666;
+}

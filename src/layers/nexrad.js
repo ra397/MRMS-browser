@@ -7,7 +7,7 @@ document.addEventListener("map-ready", async () => {
     markers.setColor('#EF4444');
     markers.setSize(3.5);
 
-    const response = await fetch("nexrad.json");
+    const response = await fetch("data/nexrad.json");
     const json = await response.json();
 
     for (const entry of json) {

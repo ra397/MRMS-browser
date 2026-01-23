@@ -1,11 +1,14 @@
 import './components/map/map.js';
 
 import './api/api.js';
+
 import './display/display.js';
 
 import './components/productSelector/productSelector.js';
 
 import './components/timeline/timeline.js';
+
+import './components/usgsSearch/usgsSearch.js';
 
 import './components/player/player.js';
 

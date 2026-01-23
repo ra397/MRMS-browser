@@ -39,7 +39,7 @@ class WindTurbinesLayer {
     async loadData() {
         if (this.data) return; // Already loaded
 
-        const response = await fetch('wind_turbines.json');
+        const response = await fetch('data/wind_turbines.json');
         const json = await response.json();
 
         // Decode base64 and decompress gzip
