@@ -11,7 +11,7 @@ document.addEventListener("map-ready", async () => {
     markers.setColor("#008000");
     markers.setSize(getMarkerSizeForZoom(map.getZoom()));
 
-    const response = await fetch("data/usgs_markers.pbf");
+    const response = await fetch(`${import.meta.env.BASE_URL}data/usgs_markers.pbf`);
     const arrayBuffer = await response.arrayBuffer();
     const pbf = new Pbf(arrayBuffer);
     const geojson = geobuf.decode(pbf);
