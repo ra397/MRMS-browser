@@ -59,7 +59,17 @@ document.addEventListener("map-ready", async () => {
     sizeInput.value = markers.getSize();
 
     toggle.addEventListener('change', (e) => {
-        e.target.checked ? markers.show() : markers.hide();
+        if (e.target.checked) {
+            markers.show();
+        } else {
+            markers.hide();
+            // Close basin if one is open
+            if (currentBasin.id) {
+                currentBasin.layer.setMap(null);
+                currentBasin.layer = null;
+                currentBasin.id = null;
+            }
+        }
     });
 
     // Dispatch event for search component
