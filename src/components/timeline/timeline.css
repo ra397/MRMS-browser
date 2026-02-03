@@ -44,8 +44,12 @@
     transform: translateX(-50%);
     outline: 1px solid black;
     width: 0;
-    height: 0.35rem;
+    height: 0.25rem;
     background-color: #000;
+}
+
+#timeline-container .timeline-unit.medium-tick::before {
+    height: 0.55rem;
 }
 
 #timeline-container .timeline-unit.long-tick::before {

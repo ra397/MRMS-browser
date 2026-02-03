@@ -44,7 +44,15 @@ document.addEventListener('display-reset', () => {
 });
 
 document.getElementById('zoom-in-btn').addEventListener('click', () => {
-    timeline.zoom('in');
+    const timelineEl = document.getElementById('timeline');
+    const timelineSpans = timelineEl.children;
+    if (timelineSpans.length === 0) return;
+
+    const middleTimeSpan = timelineSpans[Math.floor((timelineSpans.length - 1) / 2)];
+    const isoDate = middleTimeSpan.getAttribute('date');
+    const zoomToDate = new Date(isoDate);
+
+    timeline.zoom('in', zoomToDate);
 });
 
 document.getElementById('zoom-out-btn').addEventListener('click', () => {

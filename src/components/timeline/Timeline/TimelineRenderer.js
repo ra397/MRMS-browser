@@ -25,13 +25,18 @@ class TimelineRenderer {
                         largeText: ''
                     };
 
+                    let isMediumTick = false;
+
                     if (date.getMonth() === 0) {
                         label.largeText = date.getFullYear().toString();
+                    } else if ([3, 6, 9].includes(date.getMonth())) {
+                        isMediumTick = true;
                     }
 
                     ticks.push({
                         date: date,
                         label: label,
+                        isMediumTick: isMediumTick,
                     });
                     break;
                 }
@@ -44,16 +49,21 @@ class TimelineRenderer {
                         largeText: ''
                     };
 
+                    let isMediumTick = false;
+
                     if (date.getDate() === 1) {
                         label.smallText = date.getFullYear().toString();
                         label.largeText = isUTC
                             ? date.toLocaleString('default', { month: 'short', timeZone: 'UTC' })
                             : date.toLocaleString('default', { month: 'short' });
+                    } else if (date.getDate() % 7 === 1 && date.getDate() !== 1) {
+                        isMediumTick = true;
                     }
 
                     ticks.push({
                         date: date,
                         label: label,
+                        isMediumTick: isMediumTick,
                     });
                     break;
                 }
@@ -66,16 +76,21 @@ class TimelineRenderer {
                         largeText: ''
                     };
 
+                    let isMediumTick = false;
+
                     if (date.getHours() === 0) {
                         label.smallText = date.getFullYear().toString();
                         label.largeText = isUTC
                             ? date.toLocaleDateString('default', { month: 'short', day: '2-digit', timeZone: 'UTC' })
                             : date.toLocaleDateString('default', { month: 'short', day: '2-digit' });
+                    } else if (date.getHours() % 6 === 0) {
+                        isMediumTick = true;
                     }
 
                     ticks.push({
                         date: date,
                         label: label,
+                        isMediumTick: isMediumTick,
                     });
                     break;
                 }
@@ -88,6 +103,8 @@ class TimelineRenderer {
                         largeText: ''
                     };
 
+                    let isMediumTick = false;
+
                     if (date.getMinutes() === 0) {
                         label.smallText = isUTC
                             ? date.toLocaleDateString('default', { month: 'short', day: '2-digit', timeZone: 'UTC' })
@@ -95,11 +112,14 @@ class TimelineRenderer {
                         label.largeText = isUTC
                             ? date.toLocaleTimeString('default', { hour: 'numeric', hour12: true, timeZone: 'UTC' })
                             : date.toLocaleTimeString('default', { hour: 'numeric', hour12: true });
+                    } else if (date.getMinutes() === 30) {
+                        isMediumTick = true;
                     }
 
                     ticks.push({
                         date: date,
                         label: label,
+                        isMediumTick: isMediumTick,
                     });
                     break;
                 }
@@ -290,6 +310,8 @@ class TimelineRenderer {
 
             if (unit.label.smallText !== '' || unit.label.largeText !== '') {
                 unitElem.classList.add('long-tick');
+            } else if (unit.isMediumTick) {
+                unitElem.classList.add('medium-tick');
             }
 
             const smallTextElem = document.createElement('span');
