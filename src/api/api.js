@@ -153,6 +153,10 @@ async function fetchData() {
 
         const filesToActuallyFetch = files_to_fetch.filter(file => !dataStore.has(file));
 
+        if (files_to_fetch.length === 0) {
+            alert("No Data to Fetch for this Time Interval.");
+        }
+
         // Dispatch total files count BEFORE streaming files
         document.dispatchEvent(new CustomEvent('files-total', {
             detail: {
