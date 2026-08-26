@@ -124,9 +124,9 @@ body {
 
 #timeline-container {
     flex: 1;
-
     margin-left: 4ch;
     margin-right: 4ch;
+    margin-top: 1ch;
 }
 
 /* general styling for all menus */

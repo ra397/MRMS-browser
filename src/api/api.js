@@ -101,8 +101,8 @@ document.addEventListener('product-selected', event => {
 });
 
 document.addEventListener('time-selected', event => {
-    const newStartTime = event.detail.startDate;
-    const newEndTime = event.detail.endDate;
+    const newStartTime = event.detail.start;
+    const newEndTime = event.detail.end;
 
     if (state.product) {
         handleNewRequest(state.product, newStartTime, newEndTime);

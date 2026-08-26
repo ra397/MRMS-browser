@@ -1,62 +1,46 @@
-import './Timeline/TimelineRenderer.js';
-import './Timeline/TimelineController.js';
-import './timeline.css';
+import { ChronoSlider } from './Timeline/chronoslider.js';
 import { extractTimestampFromKey } from '../../api/api.js';
 
 const today = new Date();
 const startDate = new Date(today);
 startDate.setHours(today.getHours() - 6);
 
-const timeline = new Timeline(
-    document.getElementById('timeline'),
-    document.getElementById('start-marker'),
-    document.getElementById('stop-marker'),
-    document.getElementById('current-frame-marker'),
-    {
-        resolution: "hour",
-        startDate: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours()),
-    }
+const timeline = new ChronoSlider(
+    document.getElementById('timeline-container'),
+    new Date(),
+    'hour'
 );
 
-const timelineController = new TimelineController(timeline, document.getElementById('timeline'));
-
-timelineController.onRangeSelected(({ startDate, endDate }) => {
+timeline.onRangeSelected((start, end) => {
+    console.log('Range selected:', start, end);
     document.dispatchEvent(new CustomEvent('time-selected', {
         detail: {
-            startDate,
-            endDate,
+            start,
+            end,
         },
     }))
-});
+})
 
-document.addEventListener('frame-changed', (event) => {
-    const { filename } = event.detail;
-    try {
-        const timestamp = extractTimestampFromKey(filename);
-        timeline.setCurrentFrameDate(timestamp);
-    } catch (e) {
-        timeline.clearCurrentFrameDate();
-    }
-});
-
-document.addEventListener('display-reset', () => {
-    timeline.clearCurrentFrameDate();
-});
+// document.addEventListener('frame-changed', (event) => {
+//     const { filename } = event.detail;
+//     try {
+//         const timestamp = extractTimestampFromKey(filename);
+//         timeline.setCurrentFrameDate(timestamp);
+//     } catch (e) {
+//         timeline.clearCurrentFrameDate();
+//     }
+// });
+//
+// document.addEventListener('display-reset', () => {
+//     timeline.clearCurrentFrameDate();
+// });
 
 document.getElementById('zoom-in-btn').addEventListener('click', () => {
-    const timelineEl = document.getElementById('timeline');
-    const timelineSpans = timelineEl.children;
-    if (timelineSpans.length === 0) return;
-
-    const middleTimeSpan = timelineSpans[Math.floor((timelineSpans.length - 1) / 2)];
-    const isoDate = middleTimeSpan.getAttribute('date');
-    const zoomToDate = new Date(isoDate);
-
-    timeline.zoom('in', zoomToDate);
+    timeline.zoomIn();
 });
 
 document.getElementById('zoom-out-btn').addEventListener('click', () => {
-    timeline.zoom('out');
+    timeline.zoomOut();
 });
 
 document.addEventListener('timezone-change', (event) => {
