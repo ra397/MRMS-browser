@@ -1,15 +1,36 @@
-import { MarkerCollection } from "./base/MarkerCollection.js";
+import MarkerCollection from "./base/MarkerCollection.js";
 import Pbf from 'pbf';
 import geobuf from 'geobuf';
-import { getMarkerSizeForZoom } from "../components/map/map.js";
 
 // Initialize layer
 let markers = null;
-let sizeInput = null;
+const MARKER_STYLE = '<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6">' +
+    '<circle cx="3" cy="3" r="3" fill="#087151" stroke="white" stroke-width="1.5"/></svg>';
+const SELECTED_MARKER_STYLE = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12">' +
+    '<circle cx="6" cy="6" r="5" fill="#e67e22" stroke="white" stroke-width="2"/></svg>';
+
 document.addEventListener("map-ready", async () => {
-    markers = new MarkerCollection(map);
-    markers.setColor("#008000");
-    markers.setSize(getMarkerSizeForZoom(map.getZoom()));
+    markers = new MarkerCollection(map, {
+        style: MARKER_STYLE,
+        selectedStyle: SELECTED_MARKER_STYLE,
+        onClick: (marker) => {
+            if (currentBasin.id) {
+                if (currentBasin.id === marker.id) {
+                    currentBasin.layer.setMap(null);
+                    currentBasin.layer = null;
+                    currentBasin.id = null;
+                } else {
+                    currentBasin.layer.setMap(null);
+                    currentBasin.layer = null;
+                    currentBasin.id = null;
+                    showBasin(marker.id);
+                }
+            } else {
+                showBasin(marker.id);
+            }
+            markers.select(marker.id);
+        }
+    });
 
     const response = await fetch(`${import.meta.env.BASE_URL}data/usgs_markers.pbf`);
     const arrayBuffer = await response.arrayBuffer();
@@ -24,45 +45,25 @@ document.addEventListener("map-ready", async () => {
         const id = feature.properties['usgs_id'];
         const name = feature.properties['name'];
 
-        const markerObj = markers.add(lat, lng, {
-            id: id,
-            name: name,
-        });
-
-        markerObj.marker.addListener('click', () => {
-            if (currentBasin.id) {
-                if (currentBasin.id === markerObj.properties.id) {
-                    currentBasin.layer.setMap(null);
-                    currentBasin.layer = null;
-                    currentBasin.id = null;
-                } else {
-                    currentBasin.layer.setMap(null);
-                    currentBasin.layer = null;
-                    currentBasin.id = null;
-                    showBasin(markerObj.properties.id);
-                }
-            } else {
-                showBasin(markerObj.properties.id);
-            }
+        markers.add({
+            id,
+            name,
+            lat,
+            lng,
         });
     }
 
-    markers.hide();
+    markers.hideAll();
 
     // Add menu listeners
     const layerItemElement = document.querySelector('[data-layer="usgs"]');
     const toggle = layerItemElement.querySelector('.toggle-switch input');
-    const colorInput = layerItemElement.querySelector('input[type="color"]');
-    sizeInput = layerItemElement.querySelector('input[type="number"]');
-
-    colorInput.value = markers.getColor();
-    sizeInput.value = markers.getSize();
 
     toggle.addEventListener('change', (e) => {
         if (e.target.checked) {
-            markers.show();
+            markers.showAll();
         } else {
-            markers.hide();
+            markers.hideAll();
             // Close basin if one is open
             if (currentBasin.id) {
                 currentBasin.layer.setMap(null);
@@ -79,22 +80,6 @@ document.addEventListener("map-ready", async () => {
             toggle: toggle,
         }
     }));
-
-    colorInput.addEventListener('change', (e) => {
-        markers.setColor(e.target.value);
-    });
-
-    sizeInput.addEventListener('input', (e) => {
-        markers.setSize(parseFloat(e.target.value));
-    });
-});
-
-document.addEventListener('map-zoom-changed', (e) => {
-    const newSize = getMarkerSizeForZoom(e.detail.zoom);
-    markers.setSize(newSize);
-
-    // update value displayed in for size input
-    sizeInput.value = newSize;
 });
 
 const currentBasin = {

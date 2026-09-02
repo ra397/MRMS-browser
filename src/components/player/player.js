@@ -10,7 +10,7 @@ const playPause = document.getElementById("play-pause-btn");
 
 const playSVG = `
     <svg height="100%" width="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="0,0 0,100 75,50 0,0" fill="black"/>
+        <polygon points="12.5,0 12.5,100 87.5,50" fill="black"/>
     </svg>
 `;
 

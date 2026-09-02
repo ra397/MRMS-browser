@@ -63,7 +63,8 @@ function handleSearchInput(e) {
 }
 
 function performSearch(query) {
-    if (!markersCollection || !markersCollection.markers) {
+    if (!markersCollection || !markersCollection.getMarkers()) {
+        console.error('USGS Search: Markers collection not initialized');
         return;
     }
 
@@ -71,14 +72,15 @@ function performSearch(query) {
     const results = [];
 
     // Search through all markers
-    for (const markerObj of markersCollection.markers) {
-        const id = markerObj.properties.id || '';
-        const name = markerObj.properties.name || '';
+    for (const marker of markersCollection.getMarkers()) {
+        console.log(marker);
+        const id = marker.id || '';
+        const name = marker.name || '';
 
         // Match by ID or name
         if (id.toLowerCase().includes(queryLower) ||
             name.toLowerCase().includes(queryLower)) {
-            results.push(markerObj);
+            results.push(marker);
 
             // Stop at max results
             if (results.length >= MAX_RESULTS) {
@@ -105,8 +107,8 @@ function displayResults(results) {
         const item = document.createElement('div');
         item.className = 'usgs-search-result-item';
 
-        const id = markerObj.properties.id || '';
-        const name = markerObj.properties.name || '';
+        const id = markerObj.id || '';
+        const name = markerObj.name || '';
 
         // Display both ID and name
         item.innerHTML = `
@@ -137,15 +139,12 @@ function handleResultClick(markerObj) {
     }
 
     // 2. Pan to the marker location
-    const position = markerObj.marker.getPosition();
-    if (map && position) {
-        map.panTo(position);
+    if (map) {
+        map.panTo({ lat: markerObj.lat, lng: markerObj.lng });
     }
 
-    // 3. Simulate marker click to toggle basin boundary
-    google.maps.event.trigger(markerObj.marker, 'click');
+    markersCollection.click(markerObj);
 
-    // Close dropdown and clear search
     hideDropdown();
     searchInput.value = '';
     clearButton.style.display = 'none';
